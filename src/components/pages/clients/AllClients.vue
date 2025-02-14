@@ -67,7 +67,7 @@ export default {
 					index: (this.paginationOptions.page - 1) * this.paginationOptions.limit + index + 1,
 					avatar: user.userAvatar
 						? `${env.VITE_APP_STATIC_URL}${user.userAvatar}`
-						: "src/assets/images/default_avatar.svg",
+						: "/src/assets/images/default_avatar.svg",
 					fullName: `${user.firstName} ${user.lastName}`,
 					phone: user.userPhone || "Не указан",
 					id: user.userId,
