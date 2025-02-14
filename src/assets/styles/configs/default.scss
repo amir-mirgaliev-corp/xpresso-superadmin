@@ -1,0 +1,150 @@
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+	//transition: all 300ms;
+}
+
+html {
+	font-family: "Inter", sans-serif;
+}
+
+li {
+	list-style: none;
+}
+
+a {
+	text-decoration: none;
+}
+
+img {
+	object-fit: cover;
+}
+
+input[readonly] {
+	background-color: rgba(239, 239, 239, 0.3);
+}
+
+i[class^="fi"],
+i[class*=" fi-"] {
+	display: block;
+	width: 1em;
+	height: 1em;
+	line-height: 1;
+}
+
+/* clears the 'X' from Internet Explorer */
+input[type="search"]::-ms-clear,
+input[type="search"]::-ms-reveal {
+	display: none;
+	width: 0;
+	height: 0;
+}
+
+/* clears the 'X' from Chrome */
+input[type="search"]::-webkit-search-decoration,
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-results-button,
+input[type="search"]::-webkit-search-results-decoration {
+	display: none;
+}
+
+.container {
+	max-width: 1550px;
+	width: 100%;
+	margin: 0 auto;
+	padding: 0 15px;
+}
+
+::-webkit-scrollbar {
+	display: none;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+	transition: all 0.2s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+	opacity: 0;
+}
+
+.chart-container {
+	color: #000000;
+}
+
+.login {
+	background: url("@/assets/images/login/background.webp") no-repeat center / cover;
+	position: relative;
+	backdrop-filter: blur(3px);
+}
+
+.hover-card-animation {
+	transition: all 200ms;
+	cursor: pointer;
+
+	&:hover {
+		transform: scale(1.08);
+	}
+}
+
+.grid-template-enter-active,
+.grid-template-leave-active {
+	transition: opacity 0.3s;
+}
+
+.grid-template-enter-from,
+.grid-template-leave-to {
+	opacity: 0;
+}
+
+.grid-template-enter-active,
+.grid-template-leave-active {
+	transition:
+		opacity 0.3s,
+		transform 0.3s;
+}
+.grid-template-enter-from,
+.grid-template-leave-to {
+	opacity: 0;
+	transform: translateY(10px);
+}
+.visible-order-enter-active,
+.visible-order-leave-active {
+	transition: opacity 0.3s;
+}
+.visible-order-enter-from,
+.visible-order-leave-to {
+	opacity: 0;
+}
+
+.modal-enter-active,
+.modal-leave-active {
+	transition: opacity 0.3s ease;
+}
+
+.modal-enter-from,
+.modal-leave-to {
+	opacity: 0;
+}
+
+.settings-layout-enter-active,
+.settings-layout-leave-active {
+	transition: opacity 0.3s ease;
+}
+
+.settings-layout-enter-from,
+.settings-layout-leave-to {
+	opacity: 0;
+}
+
+.settings-piker-enter-active,
+.settings-piker-leave-active {
+	transition: opacity 0.5s ease;
+}
+
+.settings-piker-enter-from,
+.settings-piker-leave-to {
+	opacity: 0;
+}

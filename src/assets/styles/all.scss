@@ -1,0 +1,171 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import "./configs/fonts.scss";
+@import "./configs/default.scss";
+@import "./configs/vars.scss";
+@import "./configs/mixins.scss";
+
+@import "@flaticon/flaticon-uicons/css/all/all";
+
+.table-title {
+	font-size: 1.25rem;
+	font-weight: bold;
+	padding-bottom: 0.75rem;
+	width: 100%;
+	border-bottom: 1px solid #ebedee;
+	margin-bottom: 1.25rem;
+}
+
+// tabs
+.tabs {
+	&__header {
+		display: flex;
+		&-item {
+			font-size: 0.875rem;
+			background-color: $white;
+			padding: 0.75rem 1rem;
+			border: 1px solid #d0d5dd;
+			color: #1d2939;
+			font-weight: 600;
+			cursor: pointer;
+			user-select: none;
+			min-width: 4rem;
+			text-align: center;
+			&.active {
+				background-color: #f5f7f9;
+			}
+			&:not(:last-child) {
+				border-right: 0;
+			}
+			&:first-child {
+				border-top-left-radius: 0.5rem;
+				border-bottom-left-radius: 0.5rem;
+			}
+			&:last-child {
+				border-top-right-radius: 0.5rem;
+				border-bottom-right-radius: 0.5rem;
+			}
+		}
+	}
+}
+
+// form
+.form {
+	&__label {
+		display: block;
+		font-size: 0.875rem;
+		margin-bottom: 0.375rem;
+	}
+	.input-wrapper {
+		position: relative;
+		input {
+			position: relative;
+			z-index: 1;
+			padding-right: 2rem;
+		}
+		span {
+			position: absolute;
+			top: 50%;
+			right: 1rem;
+			transform: translateY(-50%);
+			z-index: 2;
+			cursor: pointer;
+		}
+	}
+	&__input {
+		display: block;
+		width: 100%;
+		font-size: 16px;
+		border-radius: 0.75rem;
+		border: 1px solid #dcdcdc;
+		padding: 0.75rem;
+		outline: none;
+		transition: border-color 0.15s ease;
+		&:focus {
+			border-color: $black;
+		}
+		&[readonly]:focus {
+			border-color: #dcdcdc;
+		}
+		&.error {
+			border-color: $primary;
+			&::placeholder {
+				color: $primary;
+			}
+		}
+	}
+	&__error {
+		display: block;
+		color: $primary;
+		margin-top: 0.5rem;
+	}
+}
+
+// MODALS
+.modal-overlay {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: rgba($color: #000, $alpha: 0.5);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: 1000;
+}
+.modal {
+	position: relative;
+	background-color: $white;
+	padding: 1.5rem;
+	border-radius: 1rem;
+	max-width: 500px;
+	width: 95%;
+	max-height: 85%;
+	overflow: auto;
+	&__close {
+		@include flex-center;
+		position: absolute;
+		top: 1rem;
+		right: 1rem;
+		width: 2.75rem;
+		height: 2.75rem;
+		background-color: $white;
+		border-radius: 50%;
+		cursor: pointer;
+	}
+	&__icon {
+		@include flex-center;
+		width: 5rem;
+		height: 5rem;
+		border-radius: 50%;
+		margin: 0 auto 1rem auto;
+		& > i {
+			font-size: 2.25rem;
+		}
+	}
+	&__title {
+		text-align: center;
+		font-size: 1.75rem;
+		margin: 0 0 2rem 0;
+	}
+	&__message {
+		text-align: center;
+		margin: -1rem 0 2rem 0;
+		line-height: 1.5;
+	}
+}
+
+.vue-recycle-scroller__item-wrapper {
+	position: relative;
+}
+
+.vue-recycle-scroller.ready .vue-recycle-scroller__item-view {
+	position: absolute;
+	top: 0;
+	left: 0;
+	will-change: transform;
+	padding: 8px;
+}
