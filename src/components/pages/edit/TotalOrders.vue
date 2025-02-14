@@ -78,7 +78,7 @@ export default {
 					: "Не указан";
 
 				return {
-					id: index + 1,
+					index: index + 1,
 					restaurant: order.orderRestaurant,
 					date: formatDate(order.orderDate),
 					products: order.orderCount,

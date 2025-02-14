@@ -29,7 +29,7 @@ export default {
 
 			this.tableOptions.content = this.getTopBranches.result.branches.map((branch, index) => {
 				return {
-					id: (index += 1),
+					index: (index += 1),
 					restaurant: branch.restaurantName,
 					order: branch.restaurantOrders,
 					amount: formatNumberWithSpaces(branch.restaurantProfit) + " UZS",

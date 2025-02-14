@@ -58,7 +58,7 @@ export default {
 
 		getModel(models) {
 			return models.map(model => {
-				return { id: model.rank, name: model.name };
+				return { index: model.rank, name: model.name };
 			});
 		},
 	},
