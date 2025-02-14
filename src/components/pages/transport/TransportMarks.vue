@@ -35,7 +35,7 @@
 </template>
 
 <script>
-import DangerModal from "@/components/shared/DangerModal.vue";
+import DangerModal from "@/components/shared/modals/DangerModal.vue";
 import CustomButton from "../../shared/ui/CustomButton.vue";
 import TransportItem from "./TransportItem.vue";
 import transport from "@/api/transport";

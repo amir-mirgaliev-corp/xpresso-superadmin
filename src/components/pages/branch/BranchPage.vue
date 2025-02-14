@@ -19,7 +19,7 @@
 <script>
 import CustomButton from "@/components/shared/ui/CustomButton.vue";
 import BranchForm from "./BranchForm.vue";
-import DangerModal from "@/components/shared/DangerModal.vue";
+import DangerModal from "@/components/shared/modals/DangerModal.vue";
 import { mapGetters, mapActions } from "vuex";
 
 import branches from "@/api/branches";

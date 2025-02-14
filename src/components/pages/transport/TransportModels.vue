@@ -51,7 +51,7 @@ import { mapGetters, mapActions } from "vuex";
 import CustomButton from "../../shared/ui/CustomButton.vue";
 import TransportItem from "./TransportItem.vue";
 import transport from "@/api/transport";
-import DangerModal from "@/components/shared/DangerModal.vue";
+import DangerModal from "@/components/shared/modals/DangerModal.vue";
 
 export default {
 	data: () => ({

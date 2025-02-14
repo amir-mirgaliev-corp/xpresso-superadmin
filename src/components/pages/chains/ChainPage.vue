@@ -7,6 +7,7 @@
 		<Tabs :initial-tab="initialTab">
 			<Tab name="branches" title="Филиалы"><ChainBranches /></Tab>
 			<Tab name="categories" title="Категории"><ChainCategories /></Tab>
+			<Tab name="admins" title="Администраторы"><ChainAdmins /></Tab>
 			<Tab name="menu" title="Меню"><ChainMenu /></Tab>
 		</Tabs>
 
@@ -25,11 +26,12 @@
 import chains from "@/api/chains";
 import Tabs from "@/components/shared/ui/Tabs.vue";
 import Tab from "@/components/shared/ui/Tab.vue";
-import DangerModal from "@/components/shared/DangerModal.vue";
+import DangerModal from "@/components/shared/modals/DangerModal.vue";
 import CustomButton from "@/components/shared/ui/CustomButton.vue";
 import ChainBranches from "./tabs/ChainBranches.vue";
 import ChainCategories from "./tabs/ChainCategories.vue";
 import ChainMenu from "./tabs/ChainMenu.vue";
+import ChainAdmins from "./tabs/ChainAdmins.vue";
 
 export default {
 	data: () => ({
@@ -45,6 +47,7 @@ export default {
 		ChainBranches,
 		ChainCategories,
 		ChainMenu,
+		ChainAdmins,
 	},
 
 	computed: {},

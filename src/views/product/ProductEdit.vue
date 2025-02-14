@@ -17,7 +17,7 @@
 <script>
 import ProductForm from "@/components/pages/product/ProductForm.vue";
 import CustomButton from "@/components/shared/ui/CustomButton.vue";
-import DangerModal from "@/components/shared/DangerModal.vue";
+import DangerModal from "@/components/shared/modals/DangerModal.vue";
 import products from "@/api/products";
 
 export default {
