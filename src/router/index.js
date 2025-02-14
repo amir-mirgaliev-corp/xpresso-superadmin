@@ -27,7 +27,7 @@ const router = createRouter({
 		{
 			path: "/analytics",
 			name: "analytics",
-			component: () => import("../views/Analitics.vue"),
+			component: () => import("../views/Analytics.vue"),
 			meta: {
 				layout: "content",
 				page: "Аналитика",

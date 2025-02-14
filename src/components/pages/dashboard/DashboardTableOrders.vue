@@ -1,45 +1,38 @@
 <template>
-	<section class="dashboard__table-oreder mb-6">
-		<ContentContainer>
+	<section class="mb-6">
+		<TableLayout
+			:table-options="tableOptions"
+			:pagination-options="paginationOptions"
+			@update:page="handlePageChange"
+		>
 			<template #title>
 				<h2 class="table-title">Активные заказы</h2>
 			</template>
-
-			<template #content>
-				<Table :content="table" />
-			</template>
-
-			<template #paginate>
-				<Pagination :page="page" :limit="limit" :count="count" @update:page="handlePageChange" />
-			</template>
-		</ContentContainer>
+		</TableLayout>
 	</section>
 </template>
 
 <script>
-import Table from "@/components/shared/ui/Table.vue";
-import Pagination from "@/components/shared/ui/Pagination.vue";
-import ContentContainer from "@/components/ui/ContentContainer.vue";
-
 import { mapActions, mapGetters } from "vuex";
 import formatNumberWithSpaces from "@/utils/formatters/formatNumbers";
+import TableLayout from "@/components/shared/TableLayout.vue";
 
 export default {
 	data: () => ({
-		page: 1,
-		limit: 10,
-		totalPages: 10,
-		count: 10,
-		table: {
-			thead: ["№", "Позиция (Заведение)", "Количество товаров", "Статус", "Стоимость", "Номер заказа"],
+		paginationOptions: {
+			page: 1,
+			limit: 10,
+			count: 0,
+			totalPages: 10,
+		},
+		tableOptions: {
+			thead: ["Позиция (Заведение)", "Количество товаров", "Статус", "Стоимость", "Номер заказа"],
 			content: [],
 		},
 	}),
 
 	components: {
-		Table,
-		Pagination,
-		ContentContainer,
+		TableLayout,
 	},
 
 	computed: {
@@ -50,7 +43,7 @@ export default {
 		...mapActions(["fetchDashboardOrders"]),
 
 		async setOrderToTable() {
-			const { page, limit } = this;
+			const { page, limit } = this.paginationOptions;
 
 			await this.fetchDashboardOrders({ page, limit });
 
@@ -62,11 +55,10 @@ export default {
 				canceled: "Отменено",
 			};
 
-			this.count = this.getDashboardOrders.count;
+			this.paginationOptions.count = this.getDashboardOrders.count;
 
-			this.table.content = this.getDashboardOrders.orders
-				.map((order, index) => ({
-					id: (page - 1) * limit + index + 1,
+			this.tableOptions.content = this.getDashboardOrders.orders
+				.map((order) => ({
 					branch: order.orderBranches.orderBranchName,
 					productCount: order.orderProductsCount,
 					status: statusTranslation[order.orderStatus] || "Неизвестно",

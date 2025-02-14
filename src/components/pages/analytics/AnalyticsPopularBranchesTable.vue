@@ -1,35 +1,21 @@
 <template>
 	<section class="dashboard__table-oreder w-full mb-6">
-		<ContentContainer>
+		<TableLayout :table-options="tableOptions">
 			<template #title>
 				<h2 class="table-title">Популярные заведения</h2>
 			</template>
-
-			<template #content>
-				<Table :content="table" />
-			</template>
-
-			<template #paginate>
-				<Pagination :page="page" :limit="limit" :count="count" @update:page="handlePageChange" />
-			</template>
-		</ContentContainer>
+		</TableLayout>
 	</section>
 </template>
 
 <script>
-import Table from "@/components/shared/ui/Table.vue";
-import Pagination from "@/components/shared/ui/Pagination.vue";
-import ContentContainer from "@/components/ui/ContentContainer.vue";
 import { mapActions, mapGetters } from "vuex";
 import formatNumberWithSpaces from "@/utils/formatters/formatNumbers";
+import TableLayout from "@/components/shared/TableLayout.vue";
 
 export default {
 	data: () => ({
-		page: 1,
-		limit: 10,
-		totalPages: 10,
-		count: 10,
-		table: {
+		tableOptions: {
 			thead: ["№", "Заведение", "Количество заказов", "Общая сумма"],
 			content: [],
 		},
@@ -41,7 +27,7 @@ export default {
 		async setTopBranches() {
 			await this.fetchTopBranches();
 
-			this.table.content = this.getTopBranches.result.branches.map((branch, index) => {
+			this.tableOptions.content = this.getTopBranches.result.branches.map((branch, index) => {
 				return {
 					id: (index += 1),
 					restaurant: branch.restaurantName,
@@ -49,10 +35,6 @@ export default {
 					amount: formatNumberWithSpaces(branch.restaurantProfit) + " UZS",
 				};
 			});
-		},
-
-		handlePageChange(newPage) {
-			this.page = newPage;
 		},
 	},
 
@@ -74,9 +56,7 @@ export default {
 	},
 
 	components: {
-		Table,
-		Pagination,
-		ContentContainer,
+		TableLayout,
 	},
 };
 </script>
