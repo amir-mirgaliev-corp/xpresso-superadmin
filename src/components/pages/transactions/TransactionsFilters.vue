@@ -30,9 +30,9 @@
 </template>
 
 <script>
-import Calendar from "@/components/shared/Calendar.vue";
-import CustomButton from "../../shared/CustomButton.vue";
-import CustomSelect from "../../shared/CustomSelect.vue";
+import Calendar from "@/components/shared/ui/Calendar.vue";
+import CustomButton from "../../shared/ui/CustomButton.vue";
+import CustomSelect from "../../shared/ui/CustomSelect.vue";
 
 export default {
 	components: {

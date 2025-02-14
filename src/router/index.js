@@ -1,5 +1,4 @@
 import { createRouter, createWebHistory } from "vue-router";
-import profile from "@/stores/models/profile";
 
 const env = import.meta.env;
 
@@ -38,7 +37,7 @@ const router = createRouter({
 		{
 			path: "/chains",
 			name: "chains",
-			component: () => import("../views/Chains.vue"),
+			component: () => import("../views/chain/Chains.vue"),
 			meta: {
 				layout: "content",
 				page: "Сети кофеен",
@@ -48,7 +47,7 @@ const router = createRouter({
 		{
 			path: "/chains/create",
 			name: "chains-create",
-			component: () => import("../views/CreateChain.vue"),
+			component: () => import("../views/chain/CreateChain.vue"),
 			meta: {
 				layout: "content",
 				page: "Создание сети",
@@ -58,7 +57,7 @@ const router = createRouter({
 		{
 			path: "/chains/edit/:chain_id",
 			name: "chains-edit",
-			component: () => import("../views/EditChain.vue"),
+			component: () => import("../views/chain/EditChain.vue"),
 			meta: {
 				layout: "content",
 				page: "Редактирование сети",
@@ -68,7 +67,7 @@ const router = createRouter({
 		{
 			path: "/branch/create/:chain_id",
 			name: "branch-create",
-			component: () => import("../views/CreateBranch.vue"),
+			component: () => import("../views/branch/CreateBranch.vue"),
 			meta: {
 				layout: "content",
 				page: "Создание филиала",
@@ -78,7 +77,7 @@ const router = createRouter({
 		{
 			path: "/chain/:chain_id",
 			name: "chain",
-			component: () => import("../views/Chain.vue"),
+			component: () => import("../views/chain/Chain.vue"),
 			meta: {
 				layout: "content",
 				page: "Сеть",
@@ -88,7 +87,7 @@ const router = createRouter({
 		{
 			path: "/branch/:branch_id",
 			name: "branch",
-			component: () => import("../views/Branch.vue"),
+			component: () => import("../views/branch/Branch.vue"),
 			meta: {
 				layout: "content",
 				page: "Филиал",
@@ -98,7 +97,7 @@ const router = createRouter({
 		{
 			path: "/product/create/:chain_id",
 			name: "product-create",
-			component: () => import("../views/ProductCreate.vue"),
+			component: () => import("../views/product/ProductCreate.vue"),
 			meta: {
 				layout: "content",
 				page: "Продукт",
@@ -108,7 +107,7 @@ const router = createRouter({
 		{
 			path: "/product/edit/:product_id",
 			name: "product-edit",
-			component: () => import("../views/ProductEdit.vue"),
+			component: () => import("../views/product/ProductEdit.vue"),
 			meta: {
 				layout: "content",
 				page: "Редактирование продукта",
@@ -118,7 +117,7 @@ const router = createRouter({
 		{
 			path: "/orders",
 			name: "orders",
-			component: () => import("../views/Orders.vue"),
+			component: () => import("../views/orders/Orders.vue"),
 			meta: {
 				layout: "content",
 				page: "Заказы",
@@ -128,20 +127,10 @@ const router = createRouter({
 		{
 			path: "/order/:order_id",
 			name: "order",
-			component: () => import("../views/Order.vue"),
+			component: () => import("../views/orders/Order.vue"),
 			meta: {
 				layout: "content",
 				page: "",
-				auth: true,
-			},
-		},
-		{
-			path: "/content",
-			name: "content",
-			component: () => import("../views/Content.vue"),
-			meta: {
-				layout: "content",
-				page: "Контент",
 				auth: true,
 			},
 		},
@@ -166,19 +155,9 @@ const router = createRouter({
 			},
 		},
 		{
-			path: "/settings",
-			name: "settings",
-			component: () => import("../views/Settings.vue"),
-			meta: {
-				layout: "content",
-				page: "Настройки",
-				auth: true,
-			},
-		},
-		{
 			path: "/transport",
 			name: "transport",
-			component: () => import("../views/Transport.vue"),
+			component: () => import("../views/transport/Transport.vue"),
 			meta: {
 				layout: "content",
 				page: "Транспорт",
@@ -187,7 +166,7 @@ const router = createRouter({
 		{
 			path: "/transport/add/mark",
 			name: "add-mark",
-			component: () => import("../views/AddTransportMark.vue"),
+			component: () => import("../views/transport/AddTransportMark.vue"),
 			meta: {
 				layout: "content",
 				page: "Транспорт",
@@ -196,7 +175,7 @@ const router = createRouter({
 		{
 			path: "/transport/add/model/:mark_id",
 			name: "add-model",
-			component: () => import("../views/AddTransportModel.vue"),
+			component: () => import("../views/transport/AddTransportModel.vue"),
 			meta: {
 				layout: "content",
 				page: "Транспорт",
@@ -205,7 +184,7 @@ const router = createRouter({
 		{
 			path: "/transport/add/colors",
 			name: "add-color",
-			component: () => import("../views/AddTransportColor.vue"),
+			component: () => import("../views/transport/AddTransportColor.vue"),
 			meta: {
 				layout: "content",
 				page: "Транспорт",
@@ -228,16 +207,6 @@ const router = createRouter({
 			meta: {
 				layout: "content",
 				page: "Новости",
-				auth: true,
-			},
-		},
-		{
-			path: "/loading",
-			name: "loading",
-			component: () => import("../views/Loading.vue"),
-			meta: {
-				layout: "content",
-				page: "Профиль пользователя",
 				auth: true,
 			},
 		},

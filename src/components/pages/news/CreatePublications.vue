@@ -100,9 +100,9 @@
 <script>
 import { useVuelidate } from "@vuelidate/core";
 import { required } from "@vuelidate/validators";
-import ImageUploader from "@/components/shared/ImageUploader.vue";
-import CustomButton from "@/components/shared/CustomButton.vue";
-import CustomSelect from "@/components/shared/CustomSelect.vue";
+import ImageUploader from "@/components/shared/ui/ImageUploader.vue";
+import CustomButton from "@/components/shared/ui/CustomButton.vue";
+import CustomSelect from "@/components/shared/ui/CustomSelect.vue";
 
 export default {
 	setup() {

@@ -23,10 +23,10 @@
 
 <script>
 import chains from "@/api/chains";
-import Tabs from "@/components/shared/Tabs.vue";
-import Tab from "@/components/shared/Tab.vue";
+import Tabs from "@/components/shared/ui/Tabs.vue";
+import Tab from "@/components/shared/ui/Tab.vue";
 import DangerModal from "@/components/shared/DangerModal.vue";
-import CustomButton from "@/components/shared/CustomButton.vue";
+import CustomButton from "@/components/shared/ui/CustomButton.vue";
 import ChainBranches from "./tabs/ChainBranches.vue";
 import ChainCategories from "./tabs/ChainCategories.vue";
 import ChainMenu from "./tabs/ChainMenu.vue";

@@ -105,7 +105,7 @@
 
 <script>
 import ProgressTimer from "./ProgressTimer.vue";
-import formatNumberWithSpaces from "@/utils/formatNumbers";
+import formatNumberWithSpaces from "@/utils/formatters/formatNumbers";
 
 export default {
 	props: {

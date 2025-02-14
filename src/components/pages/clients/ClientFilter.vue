@@ -26,8 +26,8 @@
 </template>
 
 <script>
-import CustomButton from "../../shared/CustomButton.vue";
-import CustomSelect from "../../shared/CustomSelect.vue";
+import CustomButton from "../../shared/ui/CustomButton.vue";
+import CustomSelect from "../../shared/ui/CustomSelect.vue";
 
 import { mapGetters, mapActions } from "vuex";
 

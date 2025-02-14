@@ -83,7 +83,7 @@
 <script>
 import { useVuelidate } from "@vuelidate/core";
 import { required } from "@vuelidate/validators";
-import CustomButton from "@/components/shared/CustomButton.vue";
+import CustomButton from "@/components/shared/ui/CustomButton.vue";
 
 export default {
 	setup() {

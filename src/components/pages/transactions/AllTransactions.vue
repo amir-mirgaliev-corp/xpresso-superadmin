@@ -14,8 +14,8 @@
 
 <script>
 import TableLayout from "@/components/shared/TableLayout.vue";
-import formatNumberWithSpaces from "@/utils/formatNumbers";
-import { formatDate } from "@/utils/formatDate";
+import formatNumberWithSpaces from "@/utils/formatters/formatNumbers";
+import { formatDate } from "@/utils/formatters/formatDate";
 import { mapGetters, mapActions } from "vuex";
 
 export default {

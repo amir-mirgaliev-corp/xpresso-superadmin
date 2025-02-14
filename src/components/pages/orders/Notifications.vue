@@ -36,9 +36,9 @@ import { ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import { useSocket } from "@/composables/useSockets";
 import { onClickOutside } from "@vueuse/core";
-import { formatDate } from "@/utils/formatDate";
+import { formatDate } from "@/utils/formatters/formatDate";
 
-import CustomButton from "@/components/shared/CustomButton.vue";
+import CustomButton from "@/components/shared/ui/CustomButton.vue";
 
 const { notifications } = useSocket("https://api.expresso.uz");
 

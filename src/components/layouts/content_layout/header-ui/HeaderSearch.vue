@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import { debounce } from "@/utils/debounce";
+import { useDebounceFn } from "@vueuse/core";
 
 import { mapActions } from "vuex";
 
@@ -97,7 +97,7 @@ export default {
 	},
 
 	created() {
-		this.debouncedSearch = debounce(this.searchItemsByPage, 250);
+		this.debouncedSearch = useDebounceFn(this.searchItemsByPage, 250);
 	},
 
 	watch: {

@@ -2,7 +2,7 @@
 	<div v-if="profile" ref="profileTrigger" class="header__profile" @click="toggleProfileDropdown">
 		<div class="header__profile-wrapper">
 			<div class="header__profile-avatar">
-				<img src="@/assets/images/avatars/default_avatar.svg" alt="Avatar" class="profile__avatar-img" />
+				<img src="@/assets/images/default_avatar.svg" alt="Avatar" class="profile__avatar-img" />
 			</div>
 
 			<div class="header__profile-info">

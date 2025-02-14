@@ -36,8 +36,8 @@
 <script>
 import { useVuelidate } from "@vuelidate/core";
 import { required } from "@vuelidate/validators";
-import CustomButton from "@/components/shared/CustomButton.vue";
-import ImageUploader from "@/components/shared/ImageUploader.vue";
+import CustomButton from "@/components/shared/ui/CustomButton.vue";
+import ImageUploader from "@/components/shared/ui/ImageUploader.vue";
 import chains from "@/api/chains";
 
 const env = import.meta.env;

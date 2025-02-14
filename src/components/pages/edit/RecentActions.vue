@@ -54,9 +54,9 @@
 </template>
 
 <script>
-import { formatDate } from "@/utils/formatDate";
+import { formatDate } from "@/utils/formatters/formatDate";
 import { mapActions, mapGetters } from "vuex";
-import Pagination from "@/components/shared/Pagination.vue";
+import Pagination from "@/components/shared/ui/Pagination.vue";
 
 export default {
 	data: () => ({

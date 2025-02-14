@@ -164,7 +164,7 @@ import { toRaw } from "vue";
 import { useToast } from "vue-toastification";
 import { useVuelidate } from "@vuelidate/core";
 import { required } from "@vuelidate/validators";
-import CustomButton from "@/components/shared/CustomButton.vue";
+import CustomButton from "@/components/shared/ui/CustomButton.vue";
 import DangerModal from "@/components/shared/DangerModal.vue";
 import users from "@/api/users";
 

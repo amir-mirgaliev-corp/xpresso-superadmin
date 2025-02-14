@@ -3,15 +3,13 @@
 </template>
 
 <script>
-import Error from '@/components/pages/error/Error.vue';
+import Error from "@/components/pages/not-found/Error.vue";
 
 export default {
-	components:{
-		Error
-	}
-}
+	components: {
+		Error,
+	},
+};
 </script>
 
-<style>
-
-</style>
+<style></style>

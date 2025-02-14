@@ -43,9 +43,9 @@
 
 <script>
 import ModifierModal from "./ModifierModal.vue";
-import CustomButton from "@/components/shared/CustomButton.vue";
+import CustomButton from "@/components/shared/ui/CustomButton.vue";
 
-import formatNumberWithSpaces from "@/utils/formatNumbers";
+import formatNumberWithSpaces from "@/utils/formatters/formatNumbers";
 
 export default {
 	data: () => ({

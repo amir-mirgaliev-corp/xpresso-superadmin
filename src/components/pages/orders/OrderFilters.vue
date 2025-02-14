@@ -22,7 +22,7 @@
 </template>
 
 <script>
-import Calendar from "@/components/shared/Calendar.vue";
+import Calendar from "@/components/shared/ui/Calendar.vue";
 
 export default {
 	data: () => ({

@@ -19,7 +19,7 @@
 </template>
 
 <script>
-import CustomButton from "@/components/shared/CustomButton.vue";
+import CustomButton from "@/components/shared/ui/CustomButton.vue";
 import TableLayout from "@/components/shared/TableLayout.vue";
 
 import { mapActions, mapGetters } from "vuex";

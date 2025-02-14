@@ -23,13 +23,13 @@
 </template>
 
 <script>
-import CustomButton from "@/components/shared/CustomButton.vue";
-import CustomSelect from "@/components/shared/CustomSelect.vue";
+import CustomButton from "@/components/shared/ui/CustomButton.vue";
+import CustomSelect from "@/components/shared/ui/CustomSelect.vue";
 import TableLayout from "@/components/shared/TableLayout.vue";
 
 import products from "@/api/products";
 
-import formatNumberWithSpaces from "@/utils/formatNumbers";
+import formatNumberWithSpaces from "@/utils/formatters/formatNumbers";
 
 const env = import.meta.env;
 

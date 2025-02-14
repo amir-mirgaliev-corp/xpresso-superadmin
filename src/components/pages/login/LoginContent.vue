@@ -1,7 +1,7 @@
 <template>
 	<div class="login__content" @submit.prevent="submitForm" @keyup.enter="submitForm">
 		<div class="login__logo">
-			<img src="@/assets/images/login/logo.svg" alt="Logo" />
+			<img src="@/assets/images/logo.svg" alt="Logo" />
 		</div>
 
 		<form class="login__form form">
@@ -51,7 +51,7 @@
 <script>
 import { useVuelidate } from "@vuelidate/core";
 import { required, minLength } from "@vuelidate/validators";
-import CustomButton from "@/components/shared/CustomButton.vue";
+import CustomButton from "@/components/shared/ui/CustomButton.vue";
 
 import auth from "@/api/auth";
 

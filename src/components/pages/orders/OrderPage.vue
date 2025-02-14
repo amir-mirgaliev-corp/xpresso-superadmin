@@ -121,10 +121,10 @@
 </template>
 
 <script>
-import CustomButton from "@/components/shared/CustomButton.vue";
+import CustomButton from "@/components/shared/ui/CustomButton.vue";
 import OrderCancelModal from "./OrderCancelModal.vue";
 
-import formatNumberWithSpaces from "@/utils/formatNumbers";
+import formatNumberWithSpaces from "@/utils/formatters/formatNumbers";
 import { mapGetters, mapActions } from "vuex";
 
 import orders from "@/api/orders";

@@ -24,8 +24,8 @@
 </template>
 
 <script>
-import CustomButton from "@/components/shared/CustomButton.vue";
-import CustomSelect from "@/components/shared/CustomSelect.vue";
+import CustomButton from "@/components/shared/ui/CustomButton.vue";
+import CustomSelect from "@/components/shared/ui/CustomSelect.vue";
 
 import orders from "@/api/orders";
 

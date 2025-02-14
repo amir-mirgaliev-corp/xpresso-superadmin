@@ -1,7 +1,7 @@
 <template>
 	<section class="sidebar">
 		<div class="sidebar__logo flex justify-center items-center">
-			<img src="@/assets/images/sidebar/logo.svg" alt="Logo" class="sidebar__logo-img w-[175px]" />
+			<img src="@/assets/images/logo-sidebar.svg" alt="Logo" class="sidebar__logo-img w-[175px]" />
 		</div>
 
 		<div class="sidebar__content mt-[20px]">
@@ -67,11 +67,6 @@ export default {
 				icon: "fi-rr-newspaper",
 				path: "/news",
 				text: "Новости",
-			},
-			{
-				icon: "fi-rr-settings",
-				path: "/settings",
-				text: "Настройки",
 			},
 		],
 	}),

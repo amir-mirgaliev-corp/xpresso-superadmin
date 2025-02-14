@@ -26,8 +26,8 @@
 </template>
 
 <script>
-import Table from "../ui/Table.vue";
-import Pagination from "./Pagination.vue";
+import Table from "./ui/Table.vue";
+import Pagination from "./ui/Pagination.vue";
 
 export default {
 	emits: ["update:page", "action"],

@@ -1,5 +1,5 @@
 import axios from "axios";
-import convertKeysToCamelCase from "@/utils/translateToCamelCase";
+import convertKeysToCamelCase from "@/utils/translators/translateToCamelCase";
 
 const base_url = import.meta.env.VITE_APP_BASE_URL;
 

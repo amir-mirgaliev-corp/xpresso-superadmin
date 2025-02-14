@@ -18,12 +18,12 @@
 
 <script>
 import TableLayout from "@/components/shared/TableLayout.vue";
-import Calendar from "@/components/shared/Calendar.vue";
+import Calendar from "@/components/shared/ui/Calendar.vue";
 
-import formatNumberWithSpaces from "@/utils/formatNumbers";
+import formatNumberWithSpaces from "@/utils/formatters/formatNumbers";
 
 import { mapActions, mapGetters } from "vuex";
-import { formatDate } from "@/utils/formatDate";
+import { formatDate } from "@/utils/formatters/formatDate";
 
 export default {
 	data: () => ({

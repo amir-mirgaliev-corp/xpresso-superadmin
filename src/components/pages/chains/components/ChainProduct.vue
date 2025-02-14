@@ -20,7 +20,7 @@
 </template>
 
 <script>
-import CustomButton from "@/components/shared/CustomButton.vue";
+import CustomButton from "@/components/shared/ui/CustomButton.vue";
 
 export default {
 	props: {

@@ -158,10 +158,10 @@
 import { useVuelidate } from "@vuelidate/core";
 import { required, requiredIf, numeric, minValue } from "@vuelidate/validators";
 
-import CustomSelect from "@/components/shared/CustomSelect.vue";
-import CustomButton from "@/components/shared/CustomButton.vue";
-import ImageUploader from "@/components/shared/ImageUploader.vue";
-import WorkSchedule from "@/components/ui/WorkSchedule.vue";
+import CustomSelect from "@/components/shared/ui/CustomSelect.vue";
+import CustomButton from "@/components/shared/ui/CustomButton.vue";
+import ImageUploader from "@/components/shared/ui/ImageUploader.vue";
+import BranchSchedule from "./components/BranchSchedule.vue";
 
 import branches from "@/api/branches";
 
@@ -206,7 +206,7 @@ export default {
 
 	components: {
 		ImageUploader,
-		WorkSchedule,
+		BranchSchedule,
 		CustomSelect,
 		CustomButton,
 	},

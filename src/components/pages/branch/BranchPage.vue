@@ -17,7 +17,7 @@
 </template>
 
 <script>
-import CustomButton from "@/components/shared/CustomButton.vue";
+import CustomButton from "@/components/shared/ui/CustomButton.vue";
 import BranchForm from "./BranchForm.vue";
 import DangerModal from "@/components/shared/DangerModal.vue";
 import { mapGetters, mapActions } from "vuex";

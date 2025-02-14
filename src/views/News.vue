@@ -8,8 +8,8 @@
 </template>
 
 <script>
-import Tabs from "@/components/shared/Tabs.vue";
-import Tab from "@/components/shared/Tab.vue";
+import Tabs from "@/components/shared/ui/Tabs.vue";
+import Tab from "@/components/shared/ui/Tab.vue";
 import CreatePublications from "@/components/pages/news/CreatePublications.vue";
 import CreatePushNotifications from "@/components/pages/news/CreatePushNotifications.vue";
 

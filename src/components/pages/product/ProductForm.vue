@@ -147,13 +147,13 @@
 <script>
 import { useVuelidate } from "@vuelidate/core";
 import { required, requiredIf } from "@vuelidate/validators";
-import ImageUploader from "@/components/shared/ImageUploader.vue";
+import ImageUploader from "@/components/shared/ui/ImageUploader.vue";
 import Modifiers from "./Modifiers.vue";
-import CustomButton from "@/components/shared/CustomButton.vue";
-import CustomSelect from "@/components/shared/CustomSelect.vue";
+import CustomButton from "@/components/shared/ui/CustomButton.vue";
+import CustomSelect from "@/components/shared/ui/CustomSelect.vue";
 
 import { mapGetters } from "vuex";
-import formatNumberWithSpaces from "@/utils/formatNumbers";
+import formatNumberWithSpaces from "@/utils/formatters/formatNumbers";
 
 import products from "@/api/products";
 import categories from "@/api/categories";
