@@ -74,7 +74,7 @@ export default {
 	},
 
 	watch: {
-		page: {
+		"paginationOptions.page": {
 			deep: true,
 			async handler() {
 				await this.setOrderToTable();
