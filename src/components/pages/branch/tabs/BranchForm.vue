@@ -161,7 +161,7 @@ import { required, requiredIf, numeric, minValue } from "@vuelidate/validators";
 import CustomSelect from "@/components/shared/ui/CustomSelect.vue";
 import CustomButton from "@/components/shared/ui/CustomButton.vue";
 import ImageUploader from "@/components/shared/ui/ImageUploader.vue";
-import BranchSchedule from "./components/BranchSchedule.vue";
+import BranchSchedule from "../components/BranchSchedule.vue";
 
 import branches from "@/api/branches";
 
