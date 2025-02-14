@@ -69,7 +69,7 @@ export default {
 		},
 
 		handlePageChange(newPage) {
-			this.page = newPage;
+			this.paginationOptions.page = newPage;
 		},
 	},
 
