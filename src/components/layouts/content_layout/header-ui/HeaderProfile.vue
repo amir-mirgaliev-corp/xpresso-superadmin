@@ -60,7 +60,7 @@
 
 <script>
 import { mapActions, mapGetters } from "vuex";
-import DangerModal from "@/components/shared/DangerModal.vue";
+import DangerModal from "@/components/shared/modals/DangerModal.vue";
 
 export default {
 	data: () => ({

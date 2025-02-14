@@ -3,9 +3,9 @@
 		<thead>
 			<tr>
 				<th
-					class="border-[1px] p-[12px_16px] text-left"
-					v-for="(head, index) in content.thead"
+					v-for="(head, index) in filteredThead"
 					:key="head"
+					class="border-[1px] p-[12px_16px] text-left"
 					:class="{
 						'rounded-tr-[10px]': index === content.thead.length - 1,
 						'rounded-tl-[10px]': index === 0,
@@ -19,9 +19,9 @@
 		<tbody v-if="content.content.length">
 			<tr v-for="(row, rowIndex) in content.content" :key="row.id" @click="handleRowClick(row.id)">
 				<td
-					class="border-[1px] p-[12px_16px]"
-					v-for="(value, key) in row"
+					v-for="(value, key) in filteredRow(row)"
 					:key="key"
+					class="border-[1px] p-[12px_16px]"
 					:class="{
 						'cursor-pointer': editLink,
 						'w-[1%]': ['index', 'avatar', 'actions'].includes(key),
@@ -68,7 +68,17 @@ export default {
 		},
 	},
 
+	computed: {
+		filteredThead() {
+			return this.content.thead.filter(head => head.toLowerCase() !== "id");
+		},
+	},
+
 	methods: {
+		filteredRow(row) {
+			return Object.fromEntries(Object.entries(row).filter(([key]) => key !== "id"));
+		},
+
 		handleRowClick(rowId) {
 			if (this.editLink) {
 				this.$router.push(`${this.editLink}/${rowId}`);

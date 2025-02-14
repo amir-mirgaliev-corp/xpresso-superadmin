@@ -165,7 +165,7 @@ import { useToast } from "vue-toastification";
 import { useVuelidate } from "@vuelidate/core";
 import { required } from "@vuelidate/validators";
 import CustomButton from "@/components/shared/ui/CustomButton.vue";
-import DangerModal from "@/components/shared/DangerModal.vue";
+import DangerModal from "@/components/shared/modals/DangerModal.vue";
 import users from "@/api/users";
 
 const env = import.meta.env;

@@ -40,7 +40,7 @@
 import TableLayout from "@/components/shared/TableLayout.vue";
 import CustomButton from "@/components/shared/ui/CustomButton.vue";
 import CategoryModal from "../components/CategoryModal.vue";
-import DangerModal from "@/components/shared/DangerModal.vue";
+import DangerModal from "@/components/shared/modals/DangerModal.vue";
 
 import categories from "@/api/categories";
 
