@@ -203,7 +203,47 @@ const router = createRouter({
 		{
 			path: "/news",
 			name: "news",
-			component: () => import("../views/News.vue"),
+			component: () => import("../views/news/News.vue"),
+			meta: {
+				layout: "content",
+				page: "Новости",
+				auth: true,
+			},
+		},
+		{
+			path: "/news/publication/create",
+			name: "create-publication",
+			component: () => import("../views/news/publications/CreatePublication.vue"),
+			meta: {
+				layout: "content",
+				page: "Новости",
+				auth: true,
+			},
+		},
+		{
+			path: "/news/publication/:publication_id",
+			name: "publication",
+			component: () => import("../views/news/publications/Publication.vue"),
+			meta: {
+				layout: "content",
+				page: "Новости",
+				auth: true,
+			},
+		},
+		{
+			path: "/news/notification/create",
+			name: "create-notification",
+			component: () => import("../views/news/notifications/CreateNotification.vue"),
+			meta: {
+				layout: "content",
+				page: "Новости",
+				auth: true,
+			},
+		},
+		{
+			path: "/news/notification/:notification_id",
+			name: "notification",
+			component: () => import("../views/news/notifications/Notification.vue"),
 			meta: {
 				layout: "content",
 				page: "Новости",

@@ -1,16 +1,10 @@
 <template>
-	<form action="" role="search" class="header__search">
-		<input
-			type="search"
-			class="header__search-input"
-			placeholder="Поиск"
-			v-model="search"
-			@input="debouncedSearch"
-		/>
+	<form action="" role="search" class="search-form">
+		<input type="search" class="search-form__input" placeholder="Поиск" v-model="search" @input="debouncedSearch" />
 
-		<span class="header__search-icon">
+		<span class="search-form__icon">
 			<i v-if="!search" class="fi fi-rr-search"></i>
-			<i v-else class="fi fi-rr-cross-small header__search-clear text-xl" @click="clearSearch"></i>
+			<i v-else class="fi fi-rr-cross-small search-form__clear text-xl" @click="clearSearch"></i>
 		</span>
 	</form>
 </template>
@@ -114,12 +108,12 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.header__search {
+.search-form {
 	position: relative;
 	display: block;
 	width: 300px;
 	height: 42px;
-	&-input {
+	&__input {
 		position: absolute;
 		top: 0;
 		left: 0;
@@ -145,7 +139,7 @@ export default {
 			}
 		}
 	}
-	&-icon {
+	&__icon {
 		position: absolute;
 		top: 50%;
 		right: 1rem;
@@ -156,7 +150,7 @@ export default {
 			transition: all 0.15s ease-in-out;
 		}
 	}
-	&-clear {
+	&__clear {
 		cursor: pointer;
 	}
 }
