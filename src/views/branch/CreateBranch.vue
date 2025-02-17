@@ -7,18 +7,10 @@
 </template>
 
 <script>
-import BranchForm from "@/components/pages/branch/BranchForm.vue";
+import BranchForm from "@/components/pages/branch/components/BranchForm.vue";
 import CustomButton from "@/components/shared/ui/CustomButton.vue";
 
 export default {
-	components: {
-		BranchForm,
-		CustomButton,
-	},
-	methods: {
-		linkAddChainPage() {
-			this.$router.replace({ path: "" });
-		},
-	},
+	components: { BranchForm, CustomButton },
 };
 </script>
