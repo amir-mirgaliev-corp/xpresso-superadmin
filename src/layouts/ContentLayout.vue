@@ -5,10 +5,7 @@
 		<section class="w-full max-w-mainContent p-[0_auto]">
 			<Navbar />
 
-			<main
-				class="p-[30px] h-section bg-[#F7F7F7] overflow-x-clip"
-				:class="$route.name === 'orders' ? 'overflow-y-hidden' : 'overflow-y-auto'"
-			>
+			<main class="p-[30px] h-section bg-[#F7F7F7] overflow-x-clip overflow-y-auto">
 				<Router-view />
 			</main>
 		</section>

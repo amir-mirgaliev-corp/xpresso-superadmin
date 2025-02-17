@@ -116,13 +116,10 @@
 			<CustomButton type="secondary" class="h-14" @click="cancelModalOpen = true">Отменить заказ</CustomButton>
 		</div>
 	</div>
-
-	<OrderCancelModal v-if="cancelModalOpen" @close="cancelModalOpen = false" />
 </template>
 
 <script>
 import CustomButton from "@/components/shared/ui/CustomButton.vue";
-import OrderCancelModal from "./OrderCancelModal.vue";
 
 import formatNumberWithSpaces from "@/utils/formatters/formatNumbers";
 import { mapGetters, mapActions } from "vuex";
@@ -133,7 +130,6 @@ export default {
 	data() {
 		return {
 			order: null,
-			cancelModalOpen: false,
 		};
 	},
 	computed: {
@@ -271,10 +267,7 @@ export default {
 		},
 	},
 
-	components: {
-		CustomButton,
-		OrderCancelModal,
-	},
+	components: { CustomButton },
 };
 </script>
 

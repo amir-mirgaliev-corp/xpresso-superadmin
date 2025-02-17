@@ -2,13 +2,14 @@
 	<div class="calendar">
 		<VueDatePicker
 			v-model="date"
-			model-auto
+			:model-auto="rangeDisabled ? false : true"
 			locale="ru"
 			:enable-time-picker="false"
 			placeholder="Выберите дату"
 			select-text="Выбрать"
 			:format="format"
-			:range="true"
+			:range="!rangeDisabled"
+			:clearable="clearDisabled ? false : true"
 			@cleared="clear"
 		/>
 	</div>
@@ -20,6 +21,12 @@ import "@vuepic/vue-datepicker/dist/main.css";
 
 export default {
 	components: { VueDatePicker },
+
+	props: {
+		initialDate: String,
+		clearDisabled: Boolean,
+		rangeDisabled: Boolean,
+	},
 
 	data() {
 		return {
@@ -54,6 +61,8 @@ export default {
 			},
 		},
 		date: {
+			immediate: true,
+
 			handler(newDate) {
 				this.updateQueryParams(newDate);
 			},
@@ -83,7 +92,10 @@ export default {
 				return [new Date(this.$route.query.from_date), new Date(this.$route.query.to_date)];
 			} else if (this.$route.query.to_date) {
 				return new Date(this.$route.query.to_date);
+			} else if (this.initialDate) {
+				return new Date(this.initialDate);
 			}
+
 			return "";
 		},
 
@@ -92,7 +104,7 @@ export default {
 				this.date = [new Date(from_date), new Date(to_date)];
 			} else if (to_date) {
 				this.date = new Date(to_date);
-			} else {
+			} else if (!from_date && !to_date && !this.initialDate) {
 				this.date = "";
 			}
 		},
