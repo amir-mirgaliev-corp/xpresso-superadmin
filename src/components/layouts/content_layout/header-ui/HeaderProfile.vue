@@ -22,13 +22,6 @@
 					<div v-if="profileDropdown" class="dropdown">
 						<ul class="dropdown__list">
 							<li class="dropdown__item">
-								<a :href="`tel:${profile.phone}`">
-									<i class="fi fi-rr-user"></i>
-									{{ profileFullName }}
-								</a>
-							</li>
-
-							<li class="dropdown__item">
 								<router-link to="/settings">
 									<i class="fi fi-rr-settings"></i>
 									Настройки
