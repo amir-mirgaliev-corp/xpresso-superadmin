@@ -75,7 +75,7 @@ export default {
 					userName: transaction.userName + " " + transaction.userSurname,
 					amount: formatNumberWithSpaces(transaction.amount) + " UZS",
 					paymentMethod: transaction.paymentMethod,
-					id: transaction.id,
+					transactionId: transaction.id,
 					orderId: transaction.orderId || "-",
 					date: formatDate(transaction.createdAt),
 					status: statusTranslations[transaction.status],

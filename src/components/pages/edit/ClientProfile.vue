@@ -191,7 +191,7 @@ export default {
 		blockModalOpen: false,
 		isBaned: false,
 		baseUrl: env.VITE_APP_STATIC_URL,
-		defaultAvatar: require("@/assets/images/avatars/default_avatar.svg"),
+		defaultAvatar: "/src/assets/images/default_avatar.svg",
 	}),
 
 	validations() {

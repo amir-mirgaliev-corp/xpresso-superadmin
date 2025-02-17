@@ -59,9 +59,9 @@ export default {
 			this.tableOptions.content = this.chains.rows.map((chain, index) => {
 				return {
 					index: (this.paginationOptions.page - 1) * this.paginationOptions.limit + index + 1,
-					avatar: chain.preview
-						? `${env.VITE_APP_STATIC_URL}${chain.preview}`
-						: require("@/assets/images/avatars/default_avatar.svg"),
+					avatar: chain.preview1
+						? `${env.VITE_APP_STATIC_URL}${chain.preview1}`
+						: "/src/assets/images/default_avatar.svg",
 					name: chain.name,
 					id: chain.id,
 				};
