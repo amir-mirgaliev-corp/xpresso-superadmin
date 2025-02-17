@@ -1,8 +1,8 @@
 <template>
-	<section class="orders">
+	<section class="news">
 		<Tabs :initial-tab="initialTab">
-			<Tab name="publications" title="Публикации"><CreatePublications /></Tab>
-			<Tab name="push" title="PUSH уведомления"><CreatePushNotifications /></Tab>
+			<Tab name="publications" title="Публикации"><Publications /></Tab>
+			<Tab name="push" title="PUSH уведомления"><PushNotifications /></Tab>
 		</Tabs>
 	</section>
 </template>
@@ -10,8 +10,8 @@
 <script>
 import Tabs from "@/components/shared/ui/Tabs.vue";
 import Tab from "@/components/shared/ui/Tab.vue";
-import CreatePublications from "@/components/pages/news/CreatePublications.vue";
-import CreatePushNotifications from "@/components/pages/news/CreatePushNotifications.vue";
+import Publications from "@/components/pages/news/Publications.vue";
+import PushNotifications from "@/components/pages/news/PushNotifications.vue";
 
 export default {
 	data() {
@@ -23,8 +23,8 @@ export default {
 	components: {
 		Tabs,
 		Tab,
-		CreatePublications,
-		CreatePushNotifications,
+		Publications,
+		PushNotifications,
 	},
 
 	mounted() {
