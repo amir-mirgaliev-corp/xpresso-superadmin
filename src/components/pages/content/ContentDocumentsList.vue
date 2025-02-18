@@ -9,9 +9,9 @@
 		<div v-if="documentsList?.length" class="flex flex-col gap-y-2">
 			<ContentDocumentCard
 				v-for="document in documentsList"
-				:key="document.id"
-				:file_link="document.links"
-				:name="document.name"
+				:key="document?.id"
+				:links="document?.links"
+				:name="document?.name"
 				@openEditModal="openEditModal"
 				@deleteQuestion="deleteQuestion"
 			/>
