@@ -211,6 +211,16 @@ const router = createRouter({
 			},
 		},
 		{
+			path: "/content",
+			name: "content",
+			component: () => import("../views/Content.vue"),
+			meta: {
+				layout: "content",
+				page: "Контент",
+				auth: true,
+			},
+		},
+		{
 			path: "/:pathMatch(.*)*",
 			name: "404",
 			component: () => import("../views/NotFound.vue"),
