@@ -1,102 +1,37 @@
 <template>
-	<OrderGridType :active-layout="layout" @setLayout="updateLayout" />
+	<div class="orders__content mt-4">
+		<div v-if="orders.length" class="orders__grid" :class="layout">
+			<OrderCard v-for="order in orders" :order="order" :key="order.orderId" :layout="layout" />
+		</div>
 
-	<div v-if="orders.length" class="orders__wrapper">
-		<RecycleScroller
-			ref="scroller"
-			:items="orders"
-			:item-size="itemSize"
-			:grid-items="gridColumns"
-			:item-secondary-size="itemSecondarySize"
-			key-field="orderId"
-			class="orders__grid"
-		>
-			<template #default="{ item }">
-				<OrderCard :order="item" :key="item.orderId" :layout="layout" :status="$route.query.status" />
-			</template>
-		</RecycleScroller>
-	</div>
+		<div v-else class="p-6 bg-white border rounded-[12px]">
+			<p>Нет заказов</p>
+		</div>
 
-	<div v-else>
-		<p>Нет заказов</p>
+		<div v-if="!$route.query.branch_id" class="p-6 bg-white border rounded-[12px]">
+			<p>Выберите сеть и филиал что бы увидеть заказы</p>
+		</div>
 	</div>
 </template>
 
 <script>
-import OrderGridType from "./OrderGridType.vue";
 import OrderCard from "./OrderCard.vue";
 import { mapActions, mapGetters } from "vuex";
-import { RecycleScroller } from "vue-virtual-scroller";
-
 import orders from "@/api/orders";
 
 export default {
-	data: () => ({
-		orders: [],
-		layout: localStorage.getItem("orders_layout") || "grid",
-		windowWidth: window.innerWidth,
-		containerWidth: 0,
-	}),
+	data() {
+		return {
+			orders: [],
+		};
+	},
+
+	props: {
+		layout: String,
+	},
 
 	computed: {
 		...mapGetters(["getGlobalOrders"]),
-
-		gridColumns() {
-			let cols;
-
-			switch (this.layout) {
-				case "grid":
-					cols = this.windowWidth >= 1260 ? 4 : 3;
-					break;
-				case "column":
-					switch (true) {
-						case this.windowWidth >= 1500:
-							cols = 5;
-							break;
-						case this.windowWidth >= 1200:
-							cols = 4;
-							break;
-						case this.windowWidth >= 700:
-							cols = 3;
-							break;
-						default:
-							cols = 2;
-					}
-
-					break;
-				case "line":
-					cols = 1;
-					break;
-				default:
-					break;
-			}
-
-			return cols;
-		},
-
-		itemSize() {
-			let size;
-
-			switch (this.layout) {
-				case "grid":
-					size = 150;
-					break;
-				case "column":
-					size = 270;
-					break;
-				case "line":
-					size = 140;
-					break;
-				default:
-					break;
-			}
-
-			return size;
-		},
-
-		itemSecondarySize() {
-			return (this.containerWidth - (this.gridColumns - 1)) / this.gridColumns;
-		},
 	},
 
 	methods: {
@@ -104,17 +39,13 @@ export default {
 
 		async getOrders() {
 			const status = this.$route.query.status;
-			const from_date = this.$route.query.from_date;
 			const to_date = this.$route.query.to_date;
 
-			const params = { from_date, to_date };
+			const params = { to_date };
 			if (status && status !== "all") params.status = status;
-
-			console.log(params);
 
 			await this.fetchGlobalOrders(params);
 			this.orders = this.sortedOrders(this.getGlobalOrders.orders);
-			console.log(this.orders);
 		},
 
 		sortedOrders(orders) {
@@ -162,16 +93,6 @@ export default {
 				return 0; // Если ничего не изменилось, оставляем порядок
 			});
 		},
-
-		updateWidth() {
-			this.containerWidth = this.$refs.scroller.$el.clientWidth;
-			this.windowWidth = window.innerWidth;
-		},
-
-		updateLayout(newLayout) {
-			this.layout = newLayout;
-			localStorage.setItem("orders_layout", newLayout);
-		},
 	},
 
 	watch: {
@@ -181,7 +102,6 @@ export default {
 
 			async handler() {
 				await this.getOrders();
-				this.updateWidth();
 			},
 		},
 
@@ -196,30 +116,24 @@ export default {
 		},
 	},
 
-	mounted() {
-		window.addEventListener("resize", this.updateWidth);
-	},
-
-	beforeDestroy() {
-		window.removeEventListener("resize", this.updateWidth);
-	},
-
-	components: {
-		OrderGridType,
-		OrderCard,
-		RecycleScroller,
-	},
+	components: { OrderCard },
 };
 </script>
 
 <style lang="scss" scoped>
 .orders {
-	&__wrapper {
-		height: 100%;
-	}
 	&__grid {
-		height: 100%;
-		overflow-y: auto;
+		display: grid;
+		grid-gap: 1rem;
+		&.compact {
+			grid-template-columns: repeat(4, 1fr);
+		}
+		&.vertical {
+			grid-template-columns: repeat(5, 1fr);
+		}
+		&.row {
+			grid-template-columns: 1fr;
+		}
 	}
 }
 </style>

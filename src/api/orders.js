@@ -14,8 +14,6 @@ export default {
 	},
 
 	async getAllOrdersByFilter(filter) {
-		console.log(filter);
-
 		try {
 			const params = {
 				limit: 9999999999,
@@ -25,8 +23,6 @@ export default {
 				to_date: filter?.to_date,
 				search: filter?.search || undefined,
 			};
-
-			console.log(params);
 
 			const response = await api.get("/admin-orders-by-filter", { params });
 

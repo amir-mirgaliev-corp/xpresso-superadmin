@@ -6,7 +6,7 @@
 			</button>
 
 			<div class="modal">
-				<h2 class="text-center mb-8 text-2xl">{{ modalTitle }}</h2>
+				<h2 class="text-center mb-8 text-2xl">{{ title }}</h2>
 
 				<form class="form" @submit.prevent="submitForm">
 					<div class="form__field">
@@ -63,6 +63,10 @@
 								<i v-else class="fi fi-rr-eye-crossed"></i>
 							</span>
 						</div>
+
+						<span v-if="v$.admin.password.minLength.$invalid" class="form__error">
+							Пароль должен содержать минимум 8 символов
+						</span>
 					</div>
 
 					<CustomButton class="mt-4 h-14" :loading="loading">{{ submitText }}</CustomButton>
@@ -79,8 +83,9 @@ import { useVuelidate } from "@vuelidate/core";
 import { required, requiredIf, minLength } from "@vuelidate/validators";
 
 export default {
-	emits: ["close"],
+	emits: ["create", "update", "close"],
 	props: {
+		title: String,
 		initialData: {
 			type: Object || null,
 			default: null,
@@ -123,40 +128,20 @@ export default {
 	},
 
 	computed: {
-		modalTitle() {
-			return this.initialData ? "Редактирование админа сети" : "Создание админа сети";
-		},
-
 		submitText() {
 			return this.initialData ? "Сохранить" : "Создать";
 		},
 	},
 
 	methods: {
-		async createAdmin() {
-			// const params = { chain_id: +this.$route.params.chain_id, ...this.admin };
-			// this.loading = true;
-			// const response_status = await admins.createAdmin(params);
-			// this.loading = false;
-			// if (response_status === 200) location.reload();
-		},
-
-		async updateAdmin() {
-			// const params = { chain_id: +this.$route.params.chain_id, ...this.admin };
-			// this.loading = true;
-			// const response_status = await admins.createAdmin(params);
-			// this.loading = false;
-			// if (response_status === 200) location.reload();
-		},
-
 		async submitForm() {
 			const result = await this.v$.$validate();
 
 			if (result) {
 				if (this.initialData) {
-					this.updateAdmin();
+					this.$emit("update", this.admin);
 				} else {
-					this.createAdmin();
+					this.$emit("create", this.admin);
 				}
 			}
 		},
@@ -167,7 +152,6 @@ export default {
 			this.admin.first_name = this.initialData.first_name;
 			this.admin.last_name = this.initialData.last_name;
 			this.admin.login = this.initialData.login;
-			this.admin.role = this.initialData.role;
 		}
 	},
 

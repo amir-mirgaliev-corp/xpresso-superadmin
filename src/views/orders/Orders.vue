@@ -1,19 +1,15 @@
 <template>
-    <section class="orders h-full">
-        <OrderFilters />
-        <OrderContent />
-    </section>
+	<section class="orders">
+		<Orders />
+	</section>
 </template>
 
-
 <script>
-import OrderFilters from '@/components/pages/orders/OrderFilters.vue';
-import OrderContent from '@/components/pages/orders/OrderContent.vue';
+import Orders from "@/components/pages/orders/Orders.vue";
 
 export default {
-    components: {
-        OrderFilters,
-        OrderContent,
-    }
-}
+	components: {
+		Orders,
+	},
+};
 </script>

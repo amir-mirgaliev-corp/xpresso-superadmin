@@ -8,21 +8,21 @@
 	<div v-if="admins.length">
 		<TableLayout :table-options="tableOptions" @action="handleAction">
 			<template #title>
-				<h2 class="table-title">Список администраторов сети</h2>
+				<h2 class="table-title">Список администраторов филиала</h2>
 			</template>
 		</TableLayout>
 	</div>
 
 	<div v-else class="p-6 bg-white border rounded-[12px]">
-		<p>У этой сети еще нет администраторов</p>
+		<p>У этого филиала еще нет администраторов</p>
 	</div>
 
 	<AdminModal
 		v-if="adminModalOpen"
-		:title="adminUnderAction ? 'Редактирование админа сети' : 'Создание админа сети'"
+		:title="adminUnderAction ? 'Редактирование админа филиала' : 'Создание админа филиала'"
 		:initial-data="adminUnderAction"
-		@create="createChainAdmin"
-		@update="updateChainAdmin"
+		@create="createBranchAdmin"
+		@update="updateBranchAdmin"
 		@close="closeAdminModal"
 	/>
 
@@ -75,7 +75,7 @@ export default {
 					index: i + 1,
 					name: `${admin.first_name} ${admin.last_name}`,
 					login: admin.login,
-					role: "Админ. сети",
+					role: "Админ. филиала",
 					actions: true,
 					id: admin.id,
 				};
@@ -102,11 +102,11 @@ export default {
 			}
 		},
 
-		createChainAdmin(data) {
+		createBranchAdmin(data) {
 			console.log("CREATE: ", data);
 		},
 
-		updateChainAdmin(data) {
+		updateBranchAdmin(data) {
 			console.log("UPDATE: ", data);
 		},
 
@@ -131,9 +131,9 @@ export default {
 };
 
 const admins = [
-	{ id: 0, first_name: "Данил", last_name: "Сабитов", login: "danil_admin", role: "CHAIN ADMIN" },
-	{ id: 1, first_name: "Данил", last_name: "Сабитов", login: "danil_admin1", role: "CHAIN ADMIN" },
-	{ id: 2, first_name: "Данил", last_name: "Сабитов", login: "danil_admin2", role: "CHAIN ADMIN" },
-	{ id: 3, first_name: "Данил", last_name: "Сабитов", login: "danil_admin3", role: "CHAIN ADMIN" },
+	{ id: 0, first_name: "Зохир", last_name: "Сабитов", login: "zoxir_admin", role: "CHAIN ADMIN" },
+	{ id: 1, first_name: "Зохир", last_name: "Сабитов", login: "zoxir_admin1", role: "CHAIN ADMIN" },
+	{ id: 2, first_name: "Зохир", last_name: "Сабитов", login: "zoxir_admin2", role: "CHAIN ADMIN" },
+	{ id: 3, first_name: "Зохир", last_name: "Сабитов", login: "zoxir_admin3", role: "CHAIN ADMIN" },
 ];
 </script>
