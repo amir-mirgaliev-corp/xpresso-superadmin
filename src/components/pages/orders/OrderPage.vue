@@ -4,25 +4,36 @@
 	<div v-if="order" class="order bg-white p-6 border-[1px] rounded-[12px]">
 		<div class="order__header">
 			<div class="flex justify-between items-center mb-4">
-				<div class="order__status" :style="{ backgroundColor: orderStatus.color }">{{ orderStatus.name }}</div>
+				<div class="flex gap-4">
+					<div class="order__status" :style="{ backgroundColor: orderStatus.color }">
+						{{ orderStatus.name }}
+					</div>
+
+					<span v-if="isOrderEnded" class="order__status ended">Просрочен</span>
+
+					<OrderTimer
+						v-if="showTimer"
+						:endTime="order.schedule_time"
+						:currentTime="order.current_time"
+						style="font-size: 1rem; padding: 0.675rem 1rem; gap: 0.5rem"
+						@ended="handleOrderEnd"
+					/>
+				</div>
 
 				<div class="order__actions">
-					<button class="order__actions-btn">
-						<i class="fi fi-rs-map"></i>
-					</button>
-
 					<button class="order__actions-btn">
 						<i class="fi fi-rr-call-outgoing"></i>
 					</button>
 				</div>
 			</div>
 
-			<h3 class="order__id">#{{ order.orderId }}</h3>
+			<h3 class="order__id">
+				Номер заказа: <strong>#{{ order.orderId }}</strong>
+			</h3>
 
-			<p class="order__info">
-				{{ order.orderBranches.orderBranchName }} • Заказ создан в
-				{{ orderCreatedTime }}
-			</p>
+			<p class="order__info">• Филиал: {{ order.orderBranches.orderBranchName }}</p>
+			<p class="order__info my-2">• Заказ создан {{ orderCreatedTime }}</p>
+			<p class="order__info">• Оператор: Максим Иванов</p>
 		</div>
 
 		<div class="order__details">
@@ -63,15 +74,18 @@
 		</div>
 
 		<div class="order__products">
-			<h3 class="mb-[4px]">Заказы:</h3>
+			<h3 class="mb-2 flex items-end gap-2 leading-none">
+				Товары
+				<strong class="text-lg leading-none">({{ order.orderProducts.orderProductsList.length }}):</strong>
+			</h3>
 
 			<div
-				v-for="product in order.orderProducts.orderProductsList"
+				v-for="(product, index) in order.orderProducts.orderProductsList"
 				:key="product.orderProductName"
 				class="order__products-item"
 			>
 				<div class="flex justify-between items-center">
-					<p>{{ product.orderProductName }}</p>
+					<p>{{ index + 1 }}) {{ product.orderProductName }}</p>
 					<p>{{ formatPrice(product.orderProductPrice) }}</p>
 				</div>
 
@@ -91,11 +105,6 @@
 			</div>
 		</div>
 
-		<div v-if="order.orderComment" class="order__comment my-4">
-			<h3>Коментарии к заказу:</h3>
-			<p>{{ order.orderComment }}</p>
-		</div>
-
 		<div class="order__total">
 			<div class="flex justify-between items-center">
 				<span>Комиссия</span>
@@ -108,32 +117,35 @@
 			</div>
 		</div>
 
-		<div
-			v-if="['received', 'processing', 'pending'].includes(order.orderStatus)"
-			class="order__controls grid grid-cols-2 gap-4 mt-4"
-		>
-			<CustomButton class="h-14" @click="updateOrderStatus">{{ submitButtonText }}</CustomButton>
-			<CustomButton type="secondary" class="h-14" @click="cancelModalOpen = true">Отменить заказ</CustomButton>
+		<div class="order__comment">
+			<h3>Коментарии к заказу:</h3>
+			<p>Побольше сахара, повкуснее пожирнее</p>
 		</div>
 	</div>
 </template>
 
 <script>
 import CustomButton from "@/components/shared/ui/CustomButton.vue";
+import OrderTimer from "./components/OrderTimer.vue";
 
 import formatNumberWithSpaces from "@/utils/formatters/formatNumbers";
+import { formatDate } from "@/utils/formatters/formatDate";
 import { mapGetters, mapActions } from "vuex";
-
-import orders from "@/api/orders";
 
 export default {
 	data() {
 		return {
 			order: null,
+			isOrderEnded: false,
 		};
 	},
+
 	computed: {
 		...mapGetters(["getOneOrder"]),
+
+		showTimer() {
+			return this.order.orderStatus === "processing";
+		},
 
 		orderStatus() {
 			let result = {
@@ -152,14 +164,11 @@ export default {
 					break;
 				case "canceled":
 					switch (this.order.orderCanceledBy) {
-						case "ADMIN":
-							result.name = "Отменено администратором";
-							break;
 						case "USER":
-							result.name = "Отменено пользователем";
+							result.name = "Отменен юзером";
 							break;
 						case "BRANCH":
-							result.name = "Отменено заведением";
+							result.name = "Отменен заведением";
 							break;
 						default:
 							result.name = "Отменено";
@@ -181,28 +190,7 @@ export default {
 		},
 
 		orderCreatedTime() {
-			const date = new Date(this.order.orderCreatedAt);
-			const hours = date.getHours().toString().padStart(2, "0");
-			const minutes = date.getMinutes().toString().padStart(2, "0");
-			return `${hours}:${minutes}`;
-		},
-
-		submitButtonText() {
-			let result = "Продолжить";
-
-			switch (this.order.orderStatus) {
-				case "received":
-					result = "Принять заказ";
-					break;
-				case "processing":
-					result = "Готов к выдаче";
-					break;
-				case "pending":
-					result = "Выдан";
-					break;
-			}
-
-			return result;
+			return formatDate(this.order.orderCreatedAt, true);
 		},
 	},
 
@@ -222,6 +210,10 @@ export default {
 			return `${hours}:${minutes}`;
 		},
 
+		handleOrderEnd() {
+			this.isOrderEnded = true;
+		},
+
 		calculateTotalPrice(product) {
 			const basePrice = product.orderProductPrice || 0;
 			const modificatorsPrice = product.orderModificators.reduce(
@@ -229,11 +221,6 @@ export default {
 				0,
 			);
 			return this.formatPrice(basePrice + modificatorsPrice);
-		},
-
-		async updateOrderStatus() {
-			const response_status = await orders.changeOrderStatus(this.$route.params.order_id);
-			if (response_status === 200) location.reload();
 		},
 	},
 
@@ -267,7 +254,7 @@ export default {
 		},
 	},
 
-	components: { CustomButton },
+	components: { CustomButton, OrderTimer },
 };
 </script>
 
@@ -289,13 +276,19 @@ export default {
 		margin: 2px 0;
 	}
 	&__status {
+		@include flex-center;
 		border-radius: 70px;
 		padding: 0.675rem 1rem;
 		line-height: 1;
 		color: $white;
+		&.ended {
+			background-color: $primary;
+			color: $white;
+		}
 	}
 	&__actions {
-		@include flex-center-vert;
+		// @include flex-center-vert;
+		display: none;
 		gap: 0.5rem;
 		&-btn {
 			@include flex-center;
@@ -324,25 +317,27 @@ export default {
 	}
 	&__details {
 		@include grid(3, 1rem);
-		padding: 1rem 0;
 		margin: 1rem 0;
-		align-items: center;
-		border-top: 2px dashed $primary;
-		border-bottom: 2px dashed $primary;
+		gap: 1rem;
 	}
 	&__detail {
 		@include flex-center;
 		gap: 1rem;
-		&:nth-child(2) {
-			border-left: 2px solid $primary;
-			border-right: 2px solid $primary;
-		}
+		border: 2px solid #5a5a5a;
+		padding: 1rem;
+		border-radius: 0.75rem;
+		color: #1d2939;
 		&-icon {
-			font-size: 2.25rem;
-			color: $primary;
+			@include flex-center;
+			font-size: 2rem;
+			background-color: #5a5a5a;
+			color: $white;
+			border-radius: 0.75rem;
+			width: 4rem;
+			height: 4rem;
+			flex-shrink: 0;
 		}
 		&-content {
-			color: #101828;
 			p {
 				font-size: 1rem;
 				margin-bottom: 4px;
@@ -367,6 +362,9 @@ export default {
 		}
 	}
 	&__comment {
+		border-top: 1px solid rgba(138, 143, 147, 0.16);
+		padding-top: 1rem;
+		margin-top: 1rem;
 		p {
 			color: #667085;
 		}

@@ -1,7 +1,7 @@
 <template>
 	<router-link :to="`/order/${order.orderId}`" :class="['order', { 'order--ended': isOrderEnded }]">
 		<div class="order__wrapper">
-			<div class="order__column flex items-center">
+			<div class="order__column">
 				<div class="flex gap-2">
 					<p class="order__id">#{{ order.orderId }}</p>
 
@@ -10,14 +10,12 @@
 					</span>
 
 					<span v-if="isOrderEnded" class="order__status ended">Просрочен</span>
-				</div>
 
-				<div v-if="showTimer" class="order__timer">
-					<ProgressTimer
-						:startTime="order.orderCreatedAt"
-						:endTime="order.orderEndedAt || ''"
-						:currentTime="order.orderCurrentTime"
-						@ended="isOrderEnded = true"
+					<OrderTimer
+						v-if="showTimer"
+						:endTime="order.schedule_time"
+						:currentTime="order.current_time"
+						@ended="handleOrderEnd"
 					/>
 				</div>
 			</div>
@@ -49,7 +47,7 @@
 </template>
 
 <script>
-import ProgressTimer from "../ProgressTimer.vue";
+import OrderTimer from "../OrderTimer.vue";
 import formatNumberWithSpaces from "@/utils/formatters/formatNumbers";
 
 export default {
@@ -76,7 +74,7 @@ export default {
 		},
 
 		showTimer() {
-			this.order.orderStatus === "processing" && !this.isOrderEnded;
+			return this.order.orderStatus === "processing" && !this.isOrderEnded;
 		},
 
 		orderStatus() {
@@ -97,13 +95,13 @@ export default {
 				case "canceled":
 					switch (this.order.orderCanceledBy) {
 						case "USER":
-							result.name = "Отменено пользователем";
+							result.name = "Отменен юзером";
 							break;
 						case "BRANCH":
-							result.name = "Отменено заведением";
+							result.name = "Отменен заведением";
 							break;
 						default:
-							result.name = "Отменено";
+							result.name = "Отменен";
 							break;
 					}
 					result.color = "#F6350D";
@@ -128,7 +126,7 @@ export default {
 		},
 	},
 
-	components: { ProgressTimer },
+	components: { OrderTimer },
 };
 </script>
 
@@ -157,7 +155,7 @@ export default {
 			}
 		}
 	}
-	.order__id {
+	&__id {
 		font-weight: normal;
 		font-size: 0.875rem;
 		padding: 0.5rem 0.875rem;
@@ -168,20 +166,20 @@ export default {
 		text-align: center;
 		line-height: 1;
 	}
-	.order__info {
+	&__info {
 		font-size: 1rem;
 		line-height: 1;
 		&:not(:last-child) {
 			margin-bottom: 0.75rem;
 		}
 	}
-	.order__amount {
+	&__amount {
 		font-size: 1.25rem;
 		font-weight: bold;
 	}
-	.order__wrapper {
+	&__wrapper {
 		display: grid;
-		grid-template-columns: repeat(4, auto);
+		grid-template-columns: minmax(150px, 250px) auto auto auto;
 		grid-gap: 2rem;
 		align-items: center;
 		.order__client {

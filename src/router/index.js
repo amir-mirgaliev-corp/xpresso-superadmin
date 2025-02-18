@@ -130,7 +130,7 @@ const router = createRouter({
 			component: () => import("../views/orders/Order.vue"),
 			meta: {
 				layout: "content",
-				page: "",
+				page: "Заказ",
 				auth: true,
 			},
 		},

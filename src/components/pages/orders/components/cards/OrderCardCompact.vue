@@ -1,7 +1,7 @@
 <template>
 	<router-link :to="`/order/${order.orderId}`" :class="['order', { 'order--ended': isOrderEnded }]">
-		<div class="order__wrapper">
-			<div class="order__content">
+		<div class="order__content">
+			<div class="flex justify-between items-center gap-2">
 				<div class="flex items-center gap-2">
 					<span class="order__status" :style="{ backgroundColor: orderStatus.color }">
 						{{ orderStatus.name }}
@@ -10,25 +10,23 @@
 					<span v-if="isOrderEnded" class="order__status ended">Просрочен</span>
 				</div>
 
-				<p class="order__id">#{{ order.orderId }}</p>
-
-				<h3 class="order__amount">{{ formattedAmount }}</h3>
-			</div>
-
-			<div v-if="showTimer" class="order__timer">
-				<ProgressTimer
-					:startTime="order.orderCreatedAt"
-					:endTime="order.orderEndedAt || ''"
-					:currentTime="order.orderCurrentTime"
+				<OrderTimer
+					v-if="showTimer"
+					:endTime="order.schedule_time"
+					:currentTime="order.current_time"
 					@ended="handleOrderEnd"
 				/>
 			</div>
+
+			<p class="order__id">#{{ order.orderId }}</p>
+
+			<h3 class="order__amount">{{ formattedAmount }}</h3>
 		</div>
 	</router-link>
 </template>
 
 <script>
-import ProgressTimer from "../ProgressTimer.vue";
+import OrderTimer from "../OrderTimer.vue";
 import formatNumberWithSpaces from "@/utils/formatters/formatNumbers";
 
 export default {
@@ -55,7 +53,7 @@ export default {
 		},
 
 		showTimer() {
-			this.order.orderStatus === "processing" && !this.isOrderEnded;
+			return this.order.orderStatus === "processing" && !this.isOrderEnded;
 		},
 
 		orderStatus() {
@@ -76,13 +74,13 @@ export default {
 				case "canceled":
 					switch (this.order.orderCanceledBy) {
 						case "USER":
-							result.name = "Отменено пользователем";
+							result.name = "Отменен юзером";
 							break;
 						case "BRANCH":
-							result.name = "Отменено заведением";
+							result.name = "Отменен заведением";
 							break;
 						default:
-							result.name = "Отменено";
+							result.name = "Отменен";
 							break;
 					}
 					result.color = "#F6350D";
@@ -107,7 +105,7 @@ export default {
 		},
 	},
 
-	components: { ProgressTimer },
+	components: { OrderTimer },
 };
 </script>
 
@@ -125,23 +123,22 @@ export default {
 		background-color: $primary;
 		color: $white;
 	}
-	.order__wrapper {
-		@include flex-center-sb;
+	&__content {
 		height: 100%;
-		.order__id {
-			font-size: 1.125rem;
-			margin: 0.75rem 0;
-			line-height: 1;
-		}
-		.order__amount {
-			font-size: 1.25rem;
-			font-weight: bold;
-			line-height: 1;
-		}
+	}
+	&__id {
+		font-size: 1.125rem;
+		margin: 0.75rem 0;
+		line-height: 1;
+	}
+	&__amount {
+		font-size: 1.25rem;
+		font-weight: bold;
+		line-height: 1;
 	}
 	&__status {
-		border-radius: 16px;
-		padding: 0.325rem 0.75rem;
+		border-radius: 3rem;
+		padding: 0.5rem 0.75rem;
 		line-height: 1;
 		color: $white;
 		font-size: 0.75rem;

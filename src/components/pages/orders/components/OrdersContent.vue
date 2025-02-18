@@ -149,6 +149,12 @@ export default {
 		}
 		&.vertical {
 			grid-template-columns: repeat(5, 1fr);
+			@media screen and (max-width: 1660px) {
+				grid-template-columns: repeat(4, 1fr);
+			}
+			@media screen and (max-width: 1360px) {
+				grid-template-columns: repeat(3, 1fr);
+			}
 		}
 		&.row {
 			grid-template-columns: 1fr;
