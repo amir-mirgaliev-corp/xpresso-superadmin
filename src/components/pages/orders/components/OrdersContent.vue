@@ -1,14 +1,14 @@
 <template>
 	<div class="orders__content mt-4">
-		<div v-if="orders.length" class="orders__grid" :class="layout">
+		<div v-if="showOrders" class="orders__grid" :class="layout">
 			<OrderCard v-for="order in orders" :order="order" :key="order.orderId" :layout="layout" />
 		</div>
 
-		<div v-else class="p-6 bg-white border rounded-[12px]">
+		<div v-else-if="noOrders" class="p-6 bg-white border rounded-[12px]">
 			<p>Нет заказов</p>
 		</div>
 
-		<div v-if="!$route.query.branch_id" class="p-6 bg-white border rounded-[12px]">
+		<div v-else-if="noFilters" class="p-6 bg-white border rounded-[12px]">
 			<p>Выберите сеть и филиал что бы увидеть заказы</p>
 		</div>
 	</div>
@@ -32,6 +32,18 @@ export default {
 
 	computed: {
 		...mapGetters(["getGlobalOrders"]),
+
+		showOrders() {
+			return this.$route.query.branch_id && this.orders.length;
+		},
+
+		noOrders() {
+			return this.$route.query.branch_id && !this.orders.length;
+		},
+
+		noFilters() {
+			return !this.$route.query.branch_id;
+		},
 	},
 
 	methods: {
@@ -93,6 +105,11 @@ export default {
 				return 0; // Если ничего не изменилось, оставляем порядок
 			});
 		},
+
+		clearOrders() {
+			this.orders = [];
+			this.getGlobalOrders.orders = [];
+		},
 	},
 
 	watch: {
@@ -100,8 +117,10 @@ export default {
 			deep: true,
 			immediate: true,
 
-			async handler() {
-				await this.getOrders();
+			handler() {
+				if (this.$route.query.branch_id && this.$route.query.to_date) {
+					this.getOrders();
+				}
 			},
 		},
 

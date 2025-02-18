@@ -1,6 +1,6 @@
 <template>
-	<OrdersFilters @change-layout="handleLayoutChange" />
-	<OrdersContent :layout="layout" />
+	<OrdersFilters @change-layout="handleLayoutChange" @clear="handleFiltersClear" />
+	<OrdersContent ref="ordersContent" :layout="layout" />
 </template>
 
 <script>
@@ -17,6 +17,14 @@ export default {
 	methods: {
 		handleLayoutChange(newLayout) {
 			this.layout = newLayout;
+		},
+
+		handleFiltersClear() {
+			this.$nextTick(() => {
+				if (this.$refs.ordersContent) {
+					this.$refs.ordersContent.clearOrders();
+				}
+			});
 		},
 	},
 

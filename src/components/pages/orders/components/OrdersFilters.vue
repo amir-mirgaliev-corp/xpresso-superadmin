@@ -55,6 +55,7 @@ import chains from "@/api/chains";
 import branches from "@/api/branches";
 
 export default {
+	emits: ["change-layout", "clear"],
 	data() {
 		return {
 			statuses,
@@ -109,6 +110,7 @@ export default {
 		clearFilters() {
 			this.filters = this.filters.filter(filter => filter.queryName !== "branch_id");
 			this.$router.replace({ query: { ...this.$route.query, chain_id: undefined, branch_id: undefined } });
+			this.$emit("clear");
 		},
 	},
 
@@ -155,7 +157,7 @@ export default {
 const statuses = [
 	{ name: "Все", value: "all" },
 	{ name: "Новый", value: "received" },
-	{ name: "Отложенные", value: "processing" },
+	{ name: "Отложенные", value: "scheduled" },
 	{ name: "Готовится", value: "processing" },
 	{ name: "Готов к выдаче", value: "pending" },
 	{ name: "Завершен", value: "completed" },
