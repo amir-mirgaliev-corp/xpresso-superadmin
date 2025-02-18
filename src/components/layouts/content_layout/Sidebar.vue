@@ -68,6 +68,11 @@ export default {
 				path: "/news",
 				text: "Новости",
 			},
+			{
+				icon: "fi-rr-newspaper",
+				path: "/content",
+				text: "Контент",
+			},
 		],
 	}),
 };

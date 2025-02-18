@@ -14,6 +14,9 @@ import statistic from "./models/statistic";
 import commission from "./models/commission";
 import modificator from "./models/modificator";
 import transactions from "./models/transactions";
+import avatar from "./models/avatar";
+import faq from "./models/faq";
+import docs from "./models/docs";
 
 export default createStore({
 	modules: {
@@ -31,5 +34,8 @@ export default createStore({
 		commission,
 		modificator,
 		transactions,
+		avatar,
+		faq,
+		docs,
 	},
 });
