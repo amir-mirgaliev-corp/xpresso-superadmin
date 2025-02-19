@@ -5,7 +5,7 @@
 				<th
 					v-for="(head, index) in filteredThead"
 					:key="head"
-					class="border-[1px] p-[12px_16px] text-left"
+					class="border-[1px] p-[12px_16px] text-left max-lg:px-3 max-lg:text-sm"
 					:class="{
 						'rounded-tr-[10px]': index === content.thead.length - 1,
 						'rounded-tl-[10px]': index === 0,
@@ -21,7 +21,7 @@
 				<td
 					v-for="(value, key) in filteredRow(row)"
 					:key="key"
-					class="border-[1px] p-[12px_16px]"
+					class="border-[1px] p-[12px_16px] max-lg:px-3 max-lg:text-sm"
 					:class="{
 						'cursor-pointer': editLink,
 						'w-[1%]': ['index', 'avatar', 'actions'].includes(key),

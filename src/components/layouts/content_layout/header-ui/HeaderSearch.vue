@@ -138,6 +138,10 @@ export default {
 				color: $black;
 			}
 		}
+
+		@media screen and (max-width: 1024px) {
+			padding: 0.75rem 1rem 0.75rem 1rem;
+		}
 	}
 	&__icon {
 		position: absolute;
@@ -152,6 +156,10 @@ export default {
 	}
 	&__clear {
 		cursor: pointer;
+	}
+
+	@media screen and (max-width: 1024px) {
+		width: 200px;
 	}
 }
 </style>

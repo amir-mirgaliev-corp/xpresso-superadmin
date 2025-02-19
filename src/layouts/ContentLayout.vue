@@ -5,7 +5,7 @@
 		<section class="w-full max-w-mainContent p-[0_auto]">
 			<Navbar />
 
-			<main class="p-[30px] h-section bg-[#F7F7F7] overflow-x-clip overflow-y-auto">
+			<main class="p-[30px] max-lg:p-[16px] h-section bg-[#F7F7F7] overflow-x-clip overflow-y-auto">
 				<Router-view />
 			</main>
 		</section>

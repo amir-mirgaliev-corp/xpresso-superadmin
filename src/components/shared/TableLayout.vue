@@ -4,7 +4,7 @@
 			<slot name="filter" />
 		</div>
 
-		<div class="bg-white gap-[16px] p-[16px_24px] rounded-[12px] border-[1px] w-full">
+		<div class="bg-white gap-[16px] p-[16px_24px] max-lg:p-4 rounded-[12px] border-[1px] w-full">
 			<div class="content__container-top">
 				<slot name="title" />
 			</div>
