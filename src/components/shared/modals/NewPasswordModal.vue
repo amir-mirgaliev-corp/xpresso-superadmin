@@ -9,6 +9,29 @@
 				<h2 class="text-center mb-8 text-2xl">Смена пароля</h2>
 
 				<form class="form" @submit.prevent="submitForm">
+					<div v-if="oldPasswordRequired" class="form__field">
+						<label class="form__label">Старый пароль:</label>
+						<div class="input-wrapper">
+							<input
+								v-model="formData.old_password"
+								:type="oldPasswordVisible ? 'text' : 'password'"
+								class="form__input"
+								placeholder="Введите старый пароль"
+								:class="{ error: v$.formData.old_password.$errors.length }"
+								@input="v$.formData.old_password.$reset()"
+							/>
+
+							<span @click="oldPasswordVisible = !oldPasswordVisible">
+								<i v-if="!oldPasswordVisible" class="fi fi-rr-eye"></i>
+								<i v-else class="fi fi-rr-eye-crossed"></i>
+							</span>
+						</div>
+
+						<span v-if="v$.formData.old_password.$errors.length" class="form__error">
+							{{ v$.formData.old_password.$errors[0]?.$message }}
+						</span>
+					</div>
+
 					<div class="form__field">
 						<label class="form__label">Новый пароль:</label>
 						<div class="input-wrapper">
@@ -66,7 +89,7 @@
 import CustomButton from "@/components/shared/ui/CustomButton.vue";
 
 import { useVuelidate } from "@vuelidate/core";
-import { required, minLength, sameAs, helpers } from "@vuelidate/validators";
+import { required, requiredIf, minLength, sameAs, helpers } from "@vuelidate/validators";
 
 export default {
 	emits: ["submit", "close"],
@@ -77,9 +100,19 @@ export default {
 		};
 	},
 
+	props: {
+		oldPasswordRequired: Boolean,
+	},
+
 	validations() {
 		return {
 			formData: {
+				old_password: {
+					required: helpers.withMessage(
+						"Заполните поле",
+						requiredIf(() => this.oldPasswordRequired),
+					),
+				},
 				password: {
 					required: helpers.withMessage("Заполните поле", required),
 					minLength: helpers.withMessage("Пароль должен содержать минимум 8 символов", minLength(8)),
@@ -95,9 +128,11 @@ export default {
 	data() {
 		return {
 			loading: false,
+			oldPasswordVisible: false,
 			passwordVisible: false,
 			confirmPasswordVisible: false,
 			formData: {
+				old_password: "",
 				password: "",
 				confirm_password: "",
 			},

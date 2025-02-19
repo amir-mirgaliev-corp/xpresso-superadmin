@@ -73,6 +73,11 @@ export default {
 				path: "/content",
 				text: "Контент",
 			},
+			{
+				icon: "fi-rr-settings",
+				path: "/settings",
+				text: "Настройки",
+			},
 		],
 	}),
 };

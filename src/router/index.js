@@ -261,6 +261,16 @@ const router = createRouter({
 			},
 		},
 		{
+			path: "/settings",
+			name: "settings",
+			component: () => import("../views/Settings.vue"),
+			meta: {
+				layout: "content",
+				page: "Настройки",
+				auth: true,
+			},
+		},
+		{
 			path: "/:pathMatch(.*)*",
 			name: "404",
 			component: () => import("../views/NotFound.vue"),
