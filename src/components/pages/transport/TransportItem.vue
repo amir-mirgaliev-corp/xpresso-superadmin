@@ -77,5 +77,9 @@ export default {
 	&__actions {
 		margin-left: auto;
 	}
+
+	@media screen and (max-width: 1450px) {
+		gap: 8px;
+	}
 }
 </style>

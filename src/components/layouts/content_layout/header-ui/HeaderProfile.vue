@@ -134,6 +134,10 @@ export default {
 		color: #1d2939;
 		line-height: 1;
 		margin-bottom: 6px;
+
+		@media screen and (max-width: 1024px) {
+			font-size: 12px;
+		}
 	}
 	&-role {
 		font-size: 0.75rem;

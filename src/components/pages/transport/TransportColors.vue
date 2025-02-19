@@ -1,9 +1,9 @@
 <template>
 	<section class="transport-colors__content">
-		<div class="transport-colors__container rounded-[12px] border border-[#DCDCDC] p-6">
-			<h1 class="text-2xl font-bold text-gray-800 mb-6">Список цветов</h1>
+		<div class="transport-colors__container rounded-[12px] border border-[#DCDCDC] p-6 max-lg:p-4">
+			<h1 class="text-2xl font-bold text-gray-800 mb-6 max-lg:text-xl">Список цветов</h1>
 
-			<div class="grid grid-cols-3 sm:grid-cols-3 gap-5" v-if="colors.length">
+			<div class="grid grid-cols-3 max-2xl:grid-cols-1 gap-5" v-if="colors.length">
 				<TransportItem
 					v-for="(color, index) in colors"
 					:key="index"

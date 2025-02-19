@@ -1,9 +1,9 @@
 <template>
-	<section class="bg-white p-[24px] rounded-[12px] border-[1px]">
+	<section class="bg-white p-[24px] rounded-[12px] border-[1px] max-lg:p-4">
 		<h2 class="table-title">Транспорт</h2>
 
 		<div class="flex justify-between items-center">
-			<div class="flex justify-center gap-[64px] w-full">
+			<div class="flex justify-center gap-16 max-2xl:gap-10 max-lg:gap-6 w-full">
 				<div>
 					<div
 						class="transport-tab"
@@ -137,9 +137,16 @@ export default {
 			border-radius: 50%;
 			background-color: $primary;
 		}
+		@media screen and (max-width: 768px) {
+			flex-shrink: 0;
+		}
 	}
 	&__arrow {
 		margin-left: auto;
+	}
+
+	@media screen and (max-width: 768px) {
+		width: 200px;
 	}
 }
 </style>

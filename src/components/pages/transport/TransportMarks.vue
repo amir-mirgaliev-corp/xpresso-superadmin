@@ -1,9 +1,9 @@
 <template>
 	<section class="transport-marks__content">
-		<div class="transport-marks__container max-w-4xl rounded-[12px] border border-[#DCDCDC] p-6">
-			<h1 class="text-2xl font-bold text-gray-800 mb-6">Марка автомобиля</h1>
+		<div class="transport-marks__container max-w-4xl rounded-[12px] border border-[#DCDCDC] p-6 max-lg:p-4">
+			<h1 class="text-2xl font-bold text-gray-800 mb-6 max-lg:text-xl">Марка автомобиля</h1>
 
-			<div class="grid grid-cols-3 sm:grid-cols-3 gap-5">
+			<div class="grid grid-cols-3 max-2xl:grid-cols-1 gap-5">
 				<TransportItem
 					v-for="(mark, index) in transportCategory"
 					:key="index"

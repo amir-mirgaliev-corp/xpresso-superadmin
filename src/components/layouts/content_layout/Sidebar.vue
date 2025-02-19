@@ -122,5 +122,8 @@ export default {
 			}
 		}
 	}
+	@media screen and (max-width: 1024px) {
+		max-width: 200px;
+	}
 }
 </style>

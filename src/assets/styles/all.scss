@@ -16,6 +16,10 @@
 	width: 100%;
 	border-bottom: 1px solid #ebedee;
 	margin-bottom: 1.25rem;
+	@media screen and (max-width: 1024px) {
+		font-size: 1rem;
+		margin-bottom: 1rem;
+	}
 }
 
 // tabs
