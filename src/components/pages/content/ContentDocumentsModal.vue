@@ -22,7 +22,12 @@
 								type="text"
 								:id="`name_${lang}`"
 								:placeholder="`Название документа (${lang.toUpperCase()})`"
-								class="border rounded-xl px-2 py-3"
+								:class="[
+									'form__input',
+									{
+										error: v$.formData[`name_${lang}`].$errors.length,
+									},
+								]"
 								v-model="formData[`name_${lang}`]"
 							/>
 							<span v-if="v$.formData[`name_${lang}`].$errors.length" class="form__error">

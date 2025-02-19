@@ -69,7 +69,7 @@ export default {
 				text: "Новости",
 			},
 			{
-				icon: "fi-rr-newspaper",
+				icon: "fi-rr-script",
 				path: "/content",
 				text: "Контент",
 			},

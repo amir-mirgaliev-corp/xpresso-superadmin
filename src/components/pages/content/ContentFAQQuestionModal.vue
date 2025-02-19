@@ -5,7 +5,7 @@
 				<i class="fi fi-br-cross"></i>
 			</button>
 
-			<div class="modal !max-w-[800px]">
+			<div class="modal !max-w-[1000px]">
 				<h2 class="text-center mb-4 text-2xl">
 					{{
 						initialFormData && Object.keys(initialFormData).length
@@ -22,7 +22,12 @@
 								type="text"
 								id="question_ru"
 								placeholder="Введите вопрос"
-								class="border rounded-xl px-2 py-3"
+								:class="[
+									'form__input',
+									{
+										error: v$.formData.question.en.$errors.length,
+									},
+								]"
 								v-model="formData.question.ru"
 							/>
 							<span v-if="v$.formData.question.ru.$errors.length" class="form__error"
@@ -34,7 +39,12 @@
 							<textarea
 								id="answer_ru"
 								placeholder="Введите ответ"
-								class="border rounded-xl px-2 py-3 resize-none min-h-[120px]"
+								:class="[
+									'form__input resize-none min-h-[120px]',
+									{
+										error: v$.formData.question.en.$errors.length,
+									},
+								]"
 								v-model="formData.answer.ru"
 							></textarea>
 							<span v-if="v$.formData.answer.ru.$errors.length" class="form__error">Введите ответ</span>
@@ -47,7 +57,12 @@
 								type="text"
 								id="question_uz"
 								placeholder="Savolni kiriting"
-								class="border rounded-xl px-2 py-3"
+								:class="[
+									'form__input',
+									{
+										error: v$.formData.question.en.$errors.length,
+									},
+								]"
 								v-model="formData.question.uz"
 							/>
 							<span v-if="v$.formData.question.uz.$errors.length" class="form__error"
@@ -59,7 +74,12 @@
 							<textarea
 								id="answer_uz"
 								placeholder="Javobni kiriting"
-								class="border rounded-xl px-2 py-3 resize-none min-h-[120px]"
+								:class="[
+									'form__input resize-none min-h-[120px]',
+									{
+										error: v$.formData.question.en.$errors.length,
+									},
+								]"
 								v-model="formData.answer.uz"
 							></textarea>
 							<span v-if="v$.formData.answer.uz.$errors.length" class="form__error">Введите ответ</span>
@@ -72,7 +92,12 @@
 								type="text"
 								id="question_en"
 								placeholder="Enter question"
-								class="border rounded-xl px-2 py-3"
+								:class="[
+									'form__input',
+									{
+										error: v$.formData.question.en.$errors.length,
+									},
+								]"
 								v-model="formData.question.en"
 							/>
 							<span v-if="v$.formData.question.en.$errors.length" class="form__error"
@@ -84,7 +109,12 @@
 							<textarea
 								id="answer_en"
 								placeholder="Enter answer"
-								class="border rounded-xl px-2 py-3 resize-none min-h-[120px]"
+								:class="[
+									'form__input resize-none min-h-[120px]',
+									{
+										error: v$.formData.question.en.$errors.length,
+									},
+								]"
 								v-model="formData.answer.en"
 							></textarea>
 							<span v-if="v$.formData.answer.en.$errors.length" class="form__error">Введите ответ</span>

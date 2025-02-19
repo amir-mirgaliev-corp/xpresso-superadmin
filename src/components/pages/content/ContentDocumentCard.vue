@@ -1,6 +1,6 @@
 <template>
 	<div class="bg-white gap-[16px] p-[16px_24px] rounded-[12px] border-[1px] w-full question-card">
-		<div class="flex items-center justify-between accordion__header" @click="toggleAccordion">
+		<div class="flex items-center justify-between accordion__header select-none" @click="toggleAccordion">
 			{{ name }}
 			<div class="flex items-center gap-x-2">
 				<button @click.stop="openEdit"><i class="fi fi-rs-pencil"></i></button>
@@ -11,7 +11,11 @@
 			<div class="accordion__inner">
 				<ul>
 					<li v-for="lang in ['ru', 'uz', 'en']" :key="lang">
-						<a class="cursor-pointer inline-flex items-center gap-x-2 text-sm" :href="links[lang]" download>
+						<a
+							class="cursor-pointer inline-flex items-center gap-x-2 text-sm border-b py-4 w-full select-none"
+							:href="links[lang]"
+							download
+						>
 							<span><i class="fi fi-rr-file"></i></span>
 							<span>
 								{{ lang.toUpperCase() }}
