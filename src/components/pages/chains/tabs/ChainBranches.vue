@@ -1,5 +1,5 @@
 <template>
-	<div class="flex justify-end mt-[-63px] mb-6">
+	<div class="flex justify-end mt-[-63px] mb-6 max-lg:mt-0 max-lg:justify-start">
 		<CustomButton
 			icon="fi-br-plus"
 			class="h-12 width-fit"

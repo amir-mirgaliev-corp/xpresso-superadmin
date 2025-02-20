@@ -19,7 +19,7 @@
 					name="new-chain"
 					v-model="formData.name"
 					placeholder="Введите название сети"
-					class="form__input"
+					class="form__input max-lg:placeholder:text-lg"
 					:class="{ error: v$.formData.name.$errors.length }"
 				/>
 

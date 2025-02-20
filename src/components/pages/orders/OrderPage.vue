@@ -88,9 +88,12 @@
 					<p>{{ index + 1 }}) {{ product.orderProductName }}</p>
 					<p>{{ formatPrice(product.orderProductPrice) }}</p>
 				</div>
-
 				<div v-if="product.orderModificators.length">
-					<div v-for="modificator in product.orderModificators" class="flex justify-between items-center">
+					<div
+						v-for="modificator in product.orderModificators"
+						:key="modificator"
+						class="flex justify-between items-center"
+					>
 						<span>{{ modificator.orderModificatorName }}</span>
 						<span>{{ formatPrice(modificator.orderModificatorPrice) }}</span>
 					</div>
@@ -319,6 +322,9 @@ export default {
 		@include grid(3, 1rem);
 		margin: 1rem 0;
 		gap: 1rem;
+		@media screen and (max-width: 1024px) {
+			grid-template-columns: repeat(1, 1fr);
+		}
 	}
 	&__detail {
 		@include flex-center;

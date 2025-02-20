@@ -2,7 +2,7 @@
 	<section
 		class="flex justify-between items-end bg-white gap-[16px] p-[16px_24px] rounded-[12px] border-[1px] w-full"
 	>
-		<div class="flex gap-4 items-end">
+		<div class="flex gap-4 items-end max-lg:flex-col">
 			<CustomSelect
 				v-for="filter in filters"
 				:key="filter.id"

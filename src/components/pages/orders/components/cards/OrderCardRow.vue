@@ -1,8 +1,8 @@
 <template>
 	<router-link :to="`/order/${order.orderId}`" :class="['order', { 'order--ended': isOrderEnded }]">
 		<div class="order__wrapper">
-			<div class="order__column">
-				<div class="flex gap-2">
+			<div class="order__column max-lg:max-w-[150px]">
+				<div class="flex gap-2 max-lg:flex-col">
 					<p class="order__id">#{{ order.orderId }}</p>
 
 					<span class="order__status" :style="{ backgroundColor: orderStatus.color }">
@@ -141,6 +141,9 @@ export default {
 	padding: 1.75rem 1.5rem;
 	border: 1px solid #d0d5dd;
 	cursor: pointer;
+	@media screen and (max-width: 1024px) {
+		padding: 1rem;
+	}
 	&--ended {
 		background-color: $primary;
 		color: $white;
@@ -152,6 +155,9 @@ export default {
 			color: $white;
 			i {
 				color: $white;
+			}
+			@media screen and (max-width: 1024px) {
+				font-size: 14px;
 			}
 		}
 	}
@@ -172,10 +178,16 @@ export default {
 		&:not(:last-child) {
 			margin-bottom: 0.75rem;
 		}
+		@media screen and (max-width: 1024px) {
+			font-size: 14px;
+		}
 	}
 	&__amount {
 		font-size: 1.25rem;
 		font-weight: bold;
+		@media screen and (max-width: 1024px) {
+			font-size: 14px;
+		}
 	}
 	&__wrapper {
 		display: grid;
@@ -196,6 +208,10 @@ export default {
 					margin-bottom: 1rem;
 				}
 			}
+		}
+		@media screen and (max-width: 1024px) {
+			grid-gap: 16px;
+			grid-template-columns: minmax(100px, 250px) auto auto auto;
 		}
 	}
 	&__status {
