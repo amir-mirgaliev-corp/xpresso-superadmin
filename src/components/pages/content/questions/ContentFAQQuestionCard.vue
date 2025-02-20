@@ -4,7 +4,7 @@
 			<h4 class="font-bold">{{ title }}</h4>
 			<div class="flex items-center gap-x-2">
 				<button @click="openEdit"><i class="fi fi-rs-pencil"></i></button>
-				<button @click="deleteQuestion"><i class="fi fi-rr-trash"></i></button>
+				<button @click="onDeleteClick"><i class="fi fi-rr-trash"></i></button>
 			</div>
 		</div>
 		<div class="w-full h-[1px] bg-[#ebedee] my-2"></div>
@@ -28,15 +28,17 @@ export default {
 		id: {
 			type: String,
 			required: true,
+			default: "2",
 		},
 	},
-	emits: ["openEditModal", "deleteQuestion"],
+	emits: ["openEditModal", "onDeleteClick"],
 	methods: {
 		openEdit() {
 			this.$emit("openEditModal", this.id);
 		},
-		deleteQuestion() {
-			this.$emit("deleteQuestion", this.id);
+		onDeleteClick() {
+			console.log("clicked delete", this.id);
+			this.$emit("onDeleteClick", this.id);
 		},
 	},
 };

@@ -11,9 +11,9 @@
 <script>
 import Tab from "@/components/shared/ui/Tab.vue";
 import Tabs from "@/components/shared/ui/Tabs.vue";
-import ContentAvatarsList from "./ContentAvatarsList.vue";
-import ContentFAQQuestionsList from "./ContentFAQQuestionsList.vue";
-import ContentDocumentsList from "./ContentDocumentsList.vue";
+import ContentAvatarsList from "./avatars/ContentAvatarsList.vue";
+import ContentFAQQuestionsList from "./questions/ContentFAQQuestionsList.vue";
+import ContentDocumentsList from "./documents/ContentDocumentsList.vue";
 
 export default {
 	data: () => ({

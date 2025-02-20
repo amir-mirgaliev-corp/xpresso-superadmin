@@ -13,7 +13,7 @@
 				:links="document?.links"
 				:name="document?.name"
 				@openEditModal="openEditModal"
-				@deleteQuestion="deleteQuestion"
+				@onDeleteClick="onDeleteClick"
 			/>
 		</div>
 		<div v-else>
@@ -21,31 +21,35 @@
 		</div>
 		<!-- <ContentDocumentCard @openEditModal="openEditModal" @deleteQuestion="deleteQuestion" /> -->
 		<ContentDocumentsModal v-if="documentModalOpen" @close="closeModal" :initialFormData="documentData" />
-		<ContentDocumentDeleteModal v-if="documentDeleteModalOpen" @close="closeModal" :name="deleteName" />
+		<DangerModal
+			v-if="documentDeleteModalOpen"
+			@close="closeModal"
+			@confirm="deleteDocument"
+			title="Вы уверены что хотите удалить документ?"
+		/>
 	</div>
 </template>
 
 <script>
 import CustomButton from "@/components/shared/ui/CustomButton.vue";
-import ContentFAQQuestionCard from "./ContentFAQQuestionCard.vue";
 import ContentDocumentsModal from "./ContentDocumentsModal.vue";
 import { mapActions, mapGetters } from "vuex";
 import ContentDocumentCard from "./ContentDocumentCard.vue";
-import ContentDocumentDeleteModal from "./ContentDocumentDeleteModal.vue";
-// import documents from "@/api/docs";
+import docs from "@/api/docs";
+import DangerModal from "@/components/shared/modals/DangerModal.vue";
 
 export default {
 	components: {
 		CustomButton,
-		ContentFAQQuestionCard,
 		ContentDocumentsModal,
 		ContentDocumentCard,
-		ContentDocumentDeleteModal,
+		DangerModal,
 	},
 	data: () => ({
 		documentModalOpen: false,
 		documentDeleteModalOpen: false,
 		deleteName: "",
+		deleteLoading: false,
 	}),
 	computed: {
 		...mapGetters(["getDocuments", "getOneDocument"]),
@@ -67,9 +71,20 @@ export default {
 			this.documentDeleteModalOpen = false;
 			this.clearOneDocument();
 		},
-		deleteQuestion(name) {
+		onDeleteClick(name) {
 			this.deleteName = name;
 			this.documentDeleteModalOpen = true;
+		},
+		async deleteDocument() {
+			try {
+				this.deleteLoading = true;
+				const status = await docs.deleteDocument(this.deleteName);
+				if (status === 201) this.$router.push("/content");
+			} catch (err) {
+				console.log("Error creating avatar: ", err);
+			} finally {
+				this.deleteLoading = false;
+			}
 		},
 	},
 	async mounted() {
