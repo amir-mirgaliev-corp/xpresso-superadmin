@@ -32,31 +32,34 @@
 				</button>
 			</div> -->
 		</div>
-		<ContentAvatarUploadModal v-if="uploadModalOpen" @close="uploadModalOpen = false" />
-		<ContentAvatarDeleteModal
+		<DangerModal
 			v-if="deleteModalOpen"
 			@close="deleteModalOpen = false"
-			:avatarId="selectedAvatarId"
+			@confirm="deleteAvatar"
+			title="Вы уверены что хотите удалить аватар?"
 		/>
+		<ContentAvatarUploadModal v-if="uploadModalOpen" @close="uploadModalOpen = false" />
 	</div>
 </template>
 
 <script>
 import CustomButton from "@/components/shared/ui/CustomButton.vue";
-import ContentAvatarUploadModal from "./ContentAvatarUploadModal.vue";
-import ContentAvatarDeleteModal from "./ContentAvatarDeleteModal.vue";
+import ContentAvatarUploadModal from "../avatars/ContentAvatarUploadModal.vue";
 import { mapActions, mapGetters } from "vuex";
+import DangerModal from "@/components/shared/modals/DangerModal.vue";
+import avatars from "@/api/avatars";
 
 export default {
 	components: {
 		CustomButton,
 		ContentAvatarUploadModal,
-		ContentAvatarDeleteModal,
+		DangerModal,
 	},
 	data: () => ({
 		uploadModalOpen: false,
 		deleteModalOpen: false,
 		selectedAvatarId: null,
+		deleteLoading: false
 	}),
 	computed: {
 		...mapGetters(["getAvatars"]),
@@ -69,6 +72,17 @@ export default {
 		openDeleteModal(id) {
 			this.deleteModalOpen = true;
 			this.selectedAvatarId = id;
+		},
+		async deleteAvatar() {
+			try {
+				this.deleteLoading = true;
+				const status = await avatars.deleteAvatar(this.id);
+				if (status === 201) this.$router.push("/content");
+			} catch (err) {
+				console.log("Error creating avatar: ", err);
+			} finally {
+				this.deleteLoading = false;
+			}
 		},
 	},
 	async mounted() {

@@ -14,16 +14,20 @@
 				:title="question?.question?.ru"
 				:id="question.id"
 				@openEditModal="openEditModal"
-				@deleteQuestion="deleteQuestion"
+				@onDeleteClick="onDeleteClick"
 			/>
 		</div>
 		<div v-else>
 			<p>Нет созданных вопросов</p>
 		</div>
-		<!-- <ContentFAQQuestionCard @openEditModal="openEditModal" @deleteQuestion="deleteQuestion" /> -->
-
+		<!-- <ContentFAQQuestionCard @openEditModal="openEditModal" @onDeleteClick="onDeleteClick" /> -->
+		<DangerModal
+			v-if="questionDeleteModalOpen"
+			@close="closeModal"
+			@confirm="deleteQuestion"
+			title="Вы уверены что хотите удалить вопрос?"
+		/>
 		<ContentFAQQuestionModal v-if="questionModalOpen" @close="closeModal" :initialFormData="questionData" />
-		<ContentFAQDeleteModal v-if="questionDeleteModalOpen" @close="closeModal" :id="questionDeleteId" />
 	</div>
 </template>
 
@@ -33,13 +37,15 @@ import ContentFAQQuestionCard from "./ContentFAQQuestionCard.vue";
 import ContentFAQQuestionModal from "./ContentFAQQuestionModal.vue";
 import { mapActions, mapGetters } from "vuex";
 import faq from "@/api/faq";
+import DangerModal from "@/components/shared/modals/DangerModal.vue";
 
 export default {
-	components: { CustomButton, ContentFAQQuestionCard, ContentFAQQuestionModal },
+	components: { CustomButton, ContentFAQQuestionCard, ContentFAQQuestionModal, DangerModal },
 	data: () => ({
 		questionModalOpen: false,
 		questionDeleteModalOpen: false,
 		questionDeleteId: null,
+		deleteLoading: false,
 	}),
 	computed: {
 		...mapGetters(["getQuestions", "getOneQuestion"]),
@@ -61,9 +67,21 @@ export default {
 			this.questionModalOpen = false;
 			this.questionDeleteModalOpen = false;
 		},
-		deleteQuestion(id) {
+		onDeleteClick(id) {
+			console.log('delete emit works')
 			this.questionDeleteId = id;
 			this.questionDeleteModalOpen = true;
+		},
+		async deleteQuestion() {
+			try {
+				this.deleteLoading = true;
+				const status = await faq.deleteQuestion(this.questionDeleteId);
+				if (status === 201) this.$router.push("/content");
+			} catch (err) {
+				console.log("Error creating avatar: ", err);
+			} finally {
+				this.deleteLoading = false;
+			}
 		},
 	},
 	async mounted() {

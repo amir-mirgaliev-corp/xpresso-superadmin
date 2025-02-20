@@ -4,7 +4,7 @@
 			{{ name }}
 			<div class="flex items-center gap-x-2">
 				<button @click.stop="openEdit"><i class="fi fi-rs-pencil"></i></button>
-				<button @click.stop="deleteQuestion"><i class="fi fi-rr-trash"></i></button>
+				<button @click.stop="onDeleteClick"><i class="fi fi-rr-trash"></i></button>
 			</div>
 		</div>
 		<div class="accordion__content" ref="content" :style="{ maxHeight: isOpen ? contentHeight + 'px' : '0px' }">
@@ -46,13 +46,13 @@ export default {
 		contentHeight: 0,
 		isOpen: false,
 	}),
-	emits: ["openEditModal", "deleteQuestion"],
+	emits: ["openEditModal", "onDeleteClick"],
 	methods: {
 		openEdit() {
 			this.$emit("openEditModal", this.name);
 		},
-		deleteQuestion() {
-			this.$emit("deleteQuestion", this.name);
+		onDeleteClick() {
+			this.$emit("onDeleteClick", this.name);
 		},
 		toggleAccordion() {
 			this.isOpen = !this.isOpen;
