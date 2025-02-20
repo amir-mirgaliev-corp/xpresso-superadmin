@@ -7,15 +7,17 @@
 			</CustomButton>
 		</div>
 		<div>
-			<div v-if="avatarsList?.length">
-				<div v-for="avatar in avatarsList" :key="avatar" class="flex items-center flex-wrap gap-3">
+			<div v-if="avatarsList?.length" class="flex items-center flex-wrap gap-3">
+				<div v-for="avatar in avatarsList" :key="avatar">
 					<div class="size-[120px] avatar__img-wrapper">
-						<img
-							class="rounded-full w-full h-full object-contain"
-							:src="avatar.avatar_url"
-							alt="profile image"
-						/>
-						<button class="avatar__img-wrapper__btn--edit" @click="deleteModalOpen = true">
+						<img class="rounded-full w-full h-full object-cover" :src="avatar.image" alt="profile image" />
+						<button
+							class="avatar__img-wrapper__btn--edit"
+							@click="
+								deleteModalOpen = true;
+								selectedAvatarId = avatar.id;
+							"
+						>
 							<i class="fi fi-rr-trash"></i>
 						</button>
 					</div>
@@ -25,12 +27,6 @@
 			<div v-else>
 				<p>Нет созданных аватарок</p>
 			</div>
-			<!-- <div class="size-[120px] avatar__img-wrapper">
-				<img class="rounded-full w-full h-full object-contain" :src="avatar?.avatar_url" alt="profile image" />
-				<button class="avatar__img-wrapper__btn--edit" @click="openDeleteModal(avatar?.id)">
-					<i class="fi fi-rr-trash"></i>
-				</button>
-			</div> -->
 		</div>
 		<DangerModal
 			v-if="deleteModalOpen"
@@ -59,7 +55,7 @@ export default {
 		uploadModalOpen: false,
 		deleteModalOpen: false,
 		selectedAvatarId: null,
-		deleteLoading: false
+		deleteLoading: false,
 	}),
 	computed: {
 		...mapGetters(["getAvatars"]),
@@ -76,8 +72,12 @@ export default {
 		async deleteAvatar() {
 			try {
 				this.deleteLoading = true;
-				const status = await avatars.deleteAvatar(this.id);
-				if (status === 201) this.$router.push("/content");
+				const { status } = await avatars.deleteAvatar(this.selectedAvatarId);
+				console.log(status);
+				if (status === 200) {
+					await this.fetchAvatars();
+					this.deleteModalOpen = false;
+				}
 			} catch (err) {
 				console.log("Error creating avatar: ", err);
 			} finally {

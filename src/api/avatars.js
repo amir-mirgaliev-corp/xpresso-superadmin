@@ -3,17 +3,7 @@ import api from "./axios";
 export default {
     async getAvatars () {
         try {
-            const response = await api.get('/avatars');
-            return response.data;
-        }
-        catch (error) {
-            console.log(error);
-        }
-    },
-
-    async getOneAvatar (id) {
-        try {
-            const response = await api.get(`/avatars/${id}`);
+            const response = await api.get('/avatars/');
             return response.data;
         }
         catch (error) {
@@ -24,7 +14,7 @@ export default {
     async deleteAvatar (id) {
         try {
             const deleted = await api.delete(`/avatars/${id}`);
-            return deleted.data;
+            return deleted;
         }
         catch (error) {
             console.log(error);
@@ -33,11 +23,7 @@ export default {
 
     async updateAvatar (id, data) {
         try {
-            const updateAvatar = await api.patch(`/avatars/${id}`, data, {
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                }
-            })
+            const updateAvatar = await api.put(`/avatars/${id}`, data)
 
             return updateAvatar.data;
         }
@@ -48,13 +34,9 @@ export default {
 
     async createAvatar (data) {
         try {
-            const newAvatar = await api.post('/avatars', data, {
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                }
-            })
+            const newAvatar = await api.post('/avatars/', data)
 
-            return newAvatar.data;
+            return newAvatar;
         }
         catch (error) {
             console.log(error);

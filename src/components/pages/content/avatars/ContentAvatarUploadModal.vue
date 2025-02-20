@@ -30,9 +30,10 @@ import ImageUploader from "@/components/shared/ui/ImageUploader.vue";
 import { required } from "@vuelidate/validators";
 import avatars from "@/api/avatars";
 import useVuelidate from "@vuelidate/core";
+import { mapActions } from "vuex";
 
 export default {
-    setup() {
+	setup() {
 		return {
 			v$: useVuelidate(),
 		};
@@ -56,6 +57,7 @@ export default {
 		};
 	},
 	methods: {
+		...mapActions(["fetchAvatars"]),
 		async submit() {
 			const result = await this.v$.$validate();
 
@@ -65,12 +67,15 @@ export default {
 		},
 		async createAvatar() {
 			const fd = new FormData();
-			fd.append("image", this.formData.avatar);
+			fd.append("file", this.formData.avatar);
 
 			try {
 				this.loading = true;
-				const status = await avatars.createAvatar(fd);
-				if (status === 201) this.$router.push("/content");
+				const { status } = await avatars.createAvatar(fd);
+				if (status === 201) {
+					this.$emit("close");
+					await this.fetchAvatars();
+				}
 			} catch (err) {
 				console.log("Error creating avatar: ", err);
 			} finally {
