@@ -5,7 +5,7 @@
 
 			<h1 class="text-2xl font-bold text-gray-800 mt-4 mb-8">Модели {{ selectedMark.name }}:</h1>
 
-			<div v-if="getTransportModels.length && filteredModels.length" class="grid grid-cols-3 gap-5">
+			<div v-if="getTransportModels.length && filteredModels.length" class="grid grid-cols-3 gap-5 max-xl:grid-cols-1">
 				<TransportItem
 					v-for="(model, index) in filteredModels"
 					:key="index"
