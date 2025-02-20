@@ -16,7 +16,7 @@
 				<div class="form__field">
 					<label for="admin-profile-surname" class="form__label">Фамилия:</label>
 					<input
-						v-model="profile.surname"
+						v-model="profile.lastName"
 						type="text"
 						id="admin-profile-surname"
 						class="form__input"
@@ -53,7 +53,7 @@ export default {
 			newPasswordModalOpen: false,
 			profile: {
 				name: "",
-				surname: "",
+				lastName: "",
 				login: "",
 			},
 		};
@@ -78,10 +78,8 @@ export default {
 			deep: true,
 			immediate: true,
 			handler(newProfile) {
-				if (newProfile && newProfile.admin) {
-					this.profile.name = newProfile.admin.name;
-					this.profile.surname = newProfile.admin.surname;
-					console.log(this.profile);
+				if (newProfile) {
+					this.profile = newProfile;
 				}
 			},
 		},

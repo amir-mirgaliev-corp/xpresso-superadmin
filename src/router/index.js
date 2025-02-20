@@ -297,26 +297,14 @@ router.beforeEach(async (to, from, next) => {
 	}
 });
 
-import axios from "axios";
+import api from "@/api/axios";
 
 async function checkAuth() {
-	const token = localStorage.getItem("accessToken");
-
-	if (token) {
-		try {
-			const response = await axios.get(env.VITE_APP_BASE_URL + "/admin-profile", {
-				headers: {
-					Authorization: `Bearer ${token}`,
-					"Content-Type": "application/json",
-				},
-			});
-
-			return response.status === 200;
-		} catch (error) {
-			console.error("Ошибка проверки авторизации:", error);
-			return false;
-		}
-	} else {
+	try {
+		const response = await api.get("/superuser/auth/profile");
+		return response.status === 200;
+	} catch (error) {
+		console.error("Ошибка проверки авторизации:", error);
 		return false;
 	}
 }

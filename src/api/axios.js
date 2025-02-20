@@ -6,9 +6,8 @@ const base_url = import.meta.env.VITE_APP_BASE_URL;
 const api = axios.create({
 	baseURL: base_url,
 	withCredentials: false,
-	//timeout: 1500,
 	headers: {
-		Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+		Authorization: localStorage.getItem("accessToken"),
 	},
 	validateStatus: status => {
 		return (status >= 200 && status < 300) || status === 304;

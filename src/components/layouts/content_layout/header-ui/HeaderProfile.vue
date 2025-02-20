@@ -1,25 +1,25 @@
 <template>
-	<div v-if="profile" ref="profileTrigger" class="header__profile" @click="toggleProfileDropdown">
+	<div v-if="profile" ref="profileDropdown" class="header__profile" @click="toggleDropdown">
 		<div class="header__profile-wrapper">
 			<div class="header__profile-avatar">
 				<img src="@/assets/images/default_avatar.svg" alt="Avatar" class="profile__avatar-img" />
 			</div>
 
 			<div class="header__profile-info">
-				<h2 class="header__profile-name">{{ profileFullName }}</h2>
-				<p class="header__profile-role">{{ profile.role.name }}</p>
+				<h2 class="header__profile-name">{{ profile.name }}</h2>
+				<p class="header__profile-role">SUPER ADMIN</p>
 			</div>
 
 			<div class="header__profile-arrow">
 				<i
 					class="fi fi-rr-angle-small-down transition-all duration-200"
-					:class="profileDropdown ? 'rotate-180' : 'rotate-0'"
+					:class="dropdownOpen ? 'rotate-180' : 'rotate-0'"
 				></i>
 			</div>
 
-			<div class="header__profile-dropdown drop-shadow-lg" ref="profileDropdown">
+			<div class="header__profile-dropdown drop-shadow-lg">
 				<Transition name="fade">
-					<div v-if="profileDropdown" class="dropdown">
+					<div v-if="dropdownOpen" class="dropdown">
 						<ul class="dropdown__list">
 							<li class="dropdown__item">
 								<router-link to="/settings">
@@ -51,66 +51,43 @@
 	/>
 </template>
 
-<script>
-import { mapActions, mapGetters } from "vuex";
+<script setup>
+import { ref, computed, onMounted } from "vue";
+import { useRouter } from "vue-router";
+import { useStore } from "vuex";
+import { onClickOutside } from "@vueuse/core";
 import DangerModal from "@/components/shared/modals/DangerModal.vue";
 
-export default {
-	data: () => ({
-		profileDropdown: false,
-		profile: null,
-		logoutModalOpen: false,
-	}),
+const router = useRouter();
+const store = useStore();
 
-	computed: {
-		...mapGetters(["getProfile"]),
+const profile = computed(() => store.getters.getProfile);
 
-		profileFullName() {
-			return this.profile.name + " " + this.profile.surname;
-		},
-	},
+const profileDropdown = ref(null);
+const dropdownOpen = ref(null);
+const logoutModalOpen = ref(false);
 
-	methods: {
-		...mapActions(["fetchProfile"]),
+onMounted(async () => {
+	await fetchProfile();
+	console.log(profile.value);
+});
 
-		toggleProfileDropdown() {
-			this.profileDropdown = !this.profileDropdown;
-		},
+const toggleDropdown = () => {
+	dropdownOpen.value = !dropdownOpen.value;
+};
 
-		closeProfileDropdown() {
-			this.profileDropdown = false;
-		},
+const closeDropdown = () => {
+	dropdownOpen.value = false;
+};
 
-		logout() {
-			localStorage.removeItem("refreshToken");
-			localStorage.removeItem("accessToken");
-			this.$router.push("/login");
-		},
+onClickOutside(profileDropdown, closeDropdown);
 
-		handleClickOutside(e) {
-			if (
-				this.profileDropdown &&
-				!this.$refs.profileDropdown.contains(e.target) &&
-				!this.$refs.profileTrigger.contains(e.target)
-			) {
-				this.closeProfileDropdown();
-			}
-		},
-	},
+const fetchProfile = () => store.dispatch("fetchProfile");
 
-	async mounted() {
-		await this.fetchProfile();
-		this.profile = this.getProfile.admin;
-		document.addEventListener("click", this.handleClickOutside);
-	},
-
-	beforeDestroy() {
-		document.removeEventListener("click", this.handleClickOutside);
-	},
-
-	components: {
-		DangerModal,
-	},
+const logout = () => {
+	localStorage.removeItem("refreshToken");
+	localStorage.removeItem("accessToken");
+	router.push("/login");
 };
 </script>
 

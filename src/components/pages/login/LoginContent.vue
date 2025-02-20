@@ -108,7 +108,7 @@ export default {
 			const response = await auth.login(this.formData.login, this.formData.password);
 			this.loading = false;
 
-			if (response === 401) {
+			if (response === 400) {
 				this.error = "Неверный логин или пароль";
 			} else if (response.refreshToken && response.accessToken) {
 				localStorage.setItem("accessToken", response.accessToken);

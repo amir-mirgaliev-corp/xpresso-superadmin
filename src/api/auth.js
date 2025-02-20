@@ -3,7 +3,7 @@ import api from "./axios.js";
 export default {
 	async login(login, password) {
 		try {
-			const response = await api.post("/admin/auth", {
+			const response = await api.post("/superuser/auth/login", {
 				login,
 				password,
 			});
@@ -15,18 +15,9 @@ export default {
 		}
 	},
 
-	async registration() {
+	async getProfile() {
 		try {
-			const response = await api.get("/admin/auth");
-			return response.data;
-		} catch (error) {
-			console.log(error);
-		}
-	},
-
-	async profile() {
-		try {
-			const response = await api.get("/admin-profile");
+			const response = await api.get("/superuser/auth/profile");
 			return response.data;
 		} catch (error) {
 			console.log(error);

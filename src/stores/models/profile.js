@@ -1,26 +1,26 @@
-import auth from "@/api/auth"
+import auth from "@/api/auth";
 
 export default {
-    state: {
-        profile: {},
-    },
+	state: {
+		profile: {},
+	},
 
-    actions: {
-        async fetchProfile(context, userId) {
-            const resProfile = await auth.profile(userId);
-            context.commit('setProfile', resProfile);
-        }
-    },
+	actions: {
+		async fetchProfile(context) {
+			const resProfile = await auth.getProfile();
+			context.commit("setProfile", resProfile);
+		},
+	},
 
-    mutations: {
-        setProfile(state, profileData) {
-            state.profile = profileData;
-        }
-    },
+	mutations: {
+		setProfile(state, profileData) {
+			state.profile = profileData;
+		},
+	},
 
-    getters: {
-        getProfile(state) {
-            return state.profile;
-        }
-    }
-}
+	getters: {
+		getProfile(state) {
+			return state.profile;
+		},
+	},
+};
