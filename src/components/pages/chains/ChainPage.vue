@@ -8,6 +8,7 @@
 			<Tab name="info" title="Информация"><ChainInfo /></Tab>
 			<Tab name="branches" title="Филиалы"><ChainBranches /></Tab>
 			<Tab name="categories" title="Категории"><ChainCategories /></Tab>
+			<Tab name="additives" title="Добавки"><ChainAdditives /></Tab>
 		</Tabs>
 	</div>
 </template>
@@ -20,6 +21,7 @@ import CustomButton from "@/components/shared/ui/CustomButton.vue";
 import ChainInfo from "./tabs/ChainInfo.vue";
 import ChainBranches from "./tabs/ChainBranches.vue";
 import ChainCategories from "./tabs/ChainCategories.vue";
+import ChainAdditives from "./tabs/ChainAdditives.vue";
 import ChainMenu from "./tabs/ChainMenu.vue";
 import ChainAdmins from "./tabs/ChainAdmins.vue";
 
@@ -35,6 +37,7 @@ export default {
 		ChainInfo,
 		ChainBranches,
 		ChainCategories,
+		ChainAdditives,
 		ChainMenu,
 		ChainAdmins,
 	},
