@@ -4,7 +4,7 @@
 			Назад
 		</CustomButton>
 
-		<ChainForm />
+		<ChainForm :edit-enabled="true" />
 	</section>
 </template>
 
