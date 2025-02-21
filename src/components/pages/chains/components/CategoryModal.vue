@@ -24,12 +24,12 @@
 					<div class="form__field">
 						<label for="category-uz" class="form__label">Название на узбекском:</label>
 						<input
-							v-model="category.name_la"
+							v-model="category.name_uz"
 							type="text"
 							class="form__input"
 							placeholder="Issiq ichimliklar"
 							id="category-uz"
-							:class="{ error: v$.category.name_la.$errors.length }"
+							:class="{ error: v$.category.name_uz.$errors.length }"
 						/>
 					</div>
 
@@ -45,7 +45,15 @@
 						/>
 					</div>
 
-					<CustomButton class="mt-4 h-14" :loading="loading">{{ submitText }}</CustomButton>
+					<CustomButton v-if="!initialData" class="mt-4 h-14" :loading="loading">Создать</CustomButton>
+
+					<div v-else class="grid grid-cols-2 gap-2 mt-2">
+						<CustomButton class="h-14" type="secondary" btn-type="button" @click="cancelEdit">
+							Отменить
+						</CustomButton>
+
+						<CustomButton class="h-14" :loading="loading">Сохранить</CustomButton>
+					</div>
 				</form>
 			</div>
 		</div>
@@ -55,13 +63,14 @@
 <script>
 import CustomButton from "@/components/shared/ui/CustomButton.vue";
 
+import { useToast } from "vue-toastification";
 import { useVuelidate } from "@vuelidate/core";
 import { required } from "@vuelidate/validators";
 
 import categories from "@/api/categories";
 
 export default {
-	emits: ["close"],
+	emits: ["close", "update"],
 	props: {
 		initialData: {
 			type: Object || null,
@@ -72,6 +81,7 @@ export default {
 	setup() {
 		return {
 			v$: useVuelidate(),
+			toast: useToast(),
 		};
 	},
 
@@ -79,7 +89,7 @@ export default {
 		return {
 			category: {
 				name_ru: { required },
-				name_la: { required },
+				name_uz: { required },
 				name_en: { required },
 			},
 		};
@@ -90,7 +100,7 @@ export default {
 			loading: false,
 			category: {
 				name_ru: "",
-				name_la: "",
+				name_uz: "",
 				name_en: "",
 			},
 		};
@@ -100,64 +110,70 @@ export default {
 		modalTitle() {
 			return this.initialData ? "Редактирование категории" : "Создание категории";
 		},
-
-		submitText() {
-			return this.initialData ? "Сохранить" : "Создать";
-		},
 	},
 
 	methods: {
 		async createCategory() {
-			const params = {
-				chain_id: +this.$route.params.chain_id,
-				...this.category,
-				description_la: " ",
-				description_ru: " ",
-				description_en: " ",
-			};
+			const chain_id = this.$route.params.chain_id;
 
 			this.loading = true;
-			const response_status = await categories.createCategory(params);
+			const response_status = await categories.createCategory({ chain_id, ...this.category });
 			this.loading = false;
 
-			if (response_status === 200) location.reload();
+			if (response_status === 201) {
+				this.$emit("update");
+				this.$emit("close");
+			}
 		},
 
 		async updateCategory() {
-			const category_id = +this.initialData.id;
+			const category_id = this.initialData.id;
+			const updatedFields = {};
 
-			const params = {
-				...this.category,
-				description_la: " ",
-				description_ru: " ",
-				description_en: " ",
-			};
+			Object.keys(this.category).forEach(key => {
+				if (this.category[key] !== this.initialData[key]) {
+					updatedFields[key] = this.category[key];
+				}
+			});
 
-			this.loading = true;
-			const response_status = await categories.updateCategory(category_id, params);
-			this.loading = false;
+			if (Object.keys(updatedFields).length > 0) {
+				this.loading = true;
+				const response_status = await categories.updateCategory(category_id, updatedFields);
+				this.loading = false;
 
-			if (response_status === 200) location.reload();
+				if (response_status === 200) {
+					this.$emit("update");
+					this.$emit("close");
+				}
+			} else {
+				this.toast.info("Нет изменений для обновления");
+				return;
+			}
 		},
 
 		async submitForm() {
 			const result = await this.v$.$validate();
 
 			if (result) {
-				if (this.initialData) {
-					this.updateCategory();
-				} else {
-					this.createCategory();
-				}
+				this.initialData ? this.updateCategory() : this.createCategory();
 			}
+		},
+
+		setCategoryData() {
+			this.category.name_ru = this.initialData.name_ru;
+			this.category.name_uz = this.initialData.name_uz;
+			this.category.name_en = this.initialData.name_en;
+		},
+
+		cancelEdit() {
+			this.setCategoryData;
+			this.$emit("close");
 		},
 	},
 
 	mounted() {
 		if (this.initialData) {
-			this.category.name_ru = this.initialData.name.ru;
-			this.category.name_la = this.initialData.name.uz;
-			this.category.name_en = this.initialData.name.en;
+			this.setCategoryData();
 		}
 	},
 

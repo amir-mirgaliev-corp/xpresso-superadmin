@@ -7,6 +7,7 @@
 		<Tabs :initial-tab="initialTab">
 			<Tab name="info" title="Информация"><ChainInfo /></Tab>
 			<Tab name="branches" title="Филиалы"><ChainBranches /></Tab>
+			<Tab name="categories" title="Категории"><ChainCategories /></Tab>
 		</Tabs>
 	</div>
 </template>
