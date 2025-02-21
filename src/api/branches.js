@@ -1,23 +1,12 @@
 import api from "./axios";
+import { useToast } from "vue-toastification";
+
+const toast = useToast();
 
 export default {
-	async getBranches(id, params) {
+	async getBranchesByChain(id) {
 		try {
-			const response = await api.get(`/chain-with-branchs/${id}`, {
-				params,
-			});
-
-			return response.data;
-		} catch (error) {
-			console.log(error);
-		}
-	},
-
-	async getTopBranches(params) {
-		try {
-			const response = await api.get("/top-branches", {
-				params,
-			});
+			const response = await api.get(`/superuser/branches/by_chain/${id}`);
 			return response.data;
 		} catch (error) {
 			console.log(error);
@@ -26,35 +15,38 @@ export default {
 
 	async getOneBranch(id) {
 		try {
-			const response = await api.get(`/branch/${id}`);
+			const response = await api.get(`/superuser/branch/${id}`);
 			return response.data;
 		} catch (error) {
 			console.log(error);
 		}
 	},
 
-	async createBranch(data) {
+	async createBranch(chain_id, data) {
 		try {
-			const newBranch = await api.post("/branch", data);
-			return newBranch.status;
+			const response = await api.post(`/superuser/branch/${chain_id}`, data);
+			toast.success("Филиал успешно создан");
+			return response.status;
 		} catch (error) {
 			console.log(error);
 		}
 	},
 
-	async updateBranch(id, data) {
+	async updateBranch(branch_id, data) {
 		try {
-			const updatedBranch = await api.patch(`/branch/${id}`, data);
-			return updatedBranch.status;
+			const response = await api.patch(`/superuser/branches/${branch_id}`, data);
+			toast.success("Филиал успешно обновлен");
+			return response.status;
 		} catch (error) {
 			console.log(error);
 		}
 	},
 
-	async deleteBranch(id) {
+	async deleteBranch(branch_id) {
 		try {
-			const deletedBranch = await api.delete(`/branch/${id}`);
-			return deletedBranch.status;
+			const response = await api.delete(`/superuser/branch/${branch_id}`);
+			toast.success("Филиал успешно удален");
+			return response.status;
 		} catch (error) {
 			console.log(error);
 		}

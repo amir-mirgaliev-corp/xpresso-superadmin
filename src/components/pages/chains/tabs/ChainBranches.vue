@@ -25,9 +25,8 @@
 <script>
 import TableLayout from "@/components/shared/TableLayout.vue";
 import CustomButton from "@/components/shared/ui/CustomButton.vue";
-import { mapActions, mapGetters } from "vuex";
 
-const env = import.meta.env;
+import { mapActions, mapGetters } from "vuex";
 
 export default {
 	data: () => ({
@@ -50,50 +49,42 @@ export default {
 	},
 
 	computed: {
-		...mapGetters(["getBranches", "getOneChain"]),
+		...mapGetters(["getBranches"]),
 	},
 
 	methods: {
-		...mapActions(["fetchBranches", "fetchOneChainById"]),
+		...mapActions(["fetchBranches"]),
 
 		async loadBranches() {
-			const id = this.$route.params.chain_id;
+			const chain_id = this.$route.params.chain_id;
 
-			await this.fetchBranches({ id });
-			this.branches = this.getBranches.data.branches;
+			await this.fetchBranches({ chain_id });
+			console.log(this.getBranches);
+			this.branches = this.getBranches || [];
 
 			this.tableOptions.content = this.branches.map((branch, i) => {
 				return {
 					index: i + 1,
-					avatar: env.VITE_APP_STATIC_URL + branch.logo,
-					name: branch.name,
+					avatar: branch.chain_logo || "/src/assets/images/coffee_avatar.svg",
+					name: branch.full_name,
+					phone: branch.phone_number,
 					id: branch.id,
-					phone: branch.phone,
 				};
 			});
 		},
+	},
 
-		async getPageName() {
-			const id = this.$route.params.chain_id;
-			await this.fetchOneChainById(id);
-
-			this.$route.meta.page = this.getOneChain.name;
-		},
+	mounted() {
+		this.loadBranches();
 	},
 
 	watch: {
 		getBranches: {
 			deep: true,
-
-			handler() {
-				this.branches = this.getBranches.data.branches;
+			handler(newValue) {
+				if (newValue) this.branches = newValue;
 			},
 		},
-	},
-
-	async mounted() {
-		await this.loadBranches();
-		await this.getPageName();
 	},
 };
 </script>

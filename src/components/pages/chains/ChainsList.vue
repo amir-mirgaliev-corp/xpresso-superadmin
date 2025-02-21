@@ -24,8 +24,6 @@ import TableLayout from "@/components/shared/TableLayout.vue";
 
 import { mapActions, mapGetters } from "vuex";
 
-const env = import.meta.env;
-
 export default {
 	data: () => ({
 		chains: null,
@@ -35,7 +33,7 @@ export default {
 			count: 0,
 		},
 		tableOptions: {
-			thead: ["№", "Логотип", "Название", "ID"],
+			thead: ["№", "Логотип", "Название", "Дополнительная информация"],
 			editLink: "/chain",
 			content: [],
 		},
@@ -56,18 +54,15 @@ export default {
 			await this.fetchChains(pagination);
 			this.chains = this.getChains;
 
-			this.tableOptions.content = this.chains.rows.map((chain, index) => {
+			this.tableOptions.content = this.chains.map((chain, index) => {
 				return {
 					index: (this.paginationOptions.page - 1) * this.paginationOptions.limit + index + 1,
-					avatar: chain.preview
-						? `${env.VITE_APP_STATIC_URL}${chain.preview}`
-						: "/src/assets/images/default_avatar.svg",
+					avatar: chain.logo || "/src/assets/images/coffee_avatar.svg",
 					name: chain.name,
+					info: chain.additional_info,
 					id: chain.id,
 				};
 			});
-
-			console.log(this.chains);
 		},
 
 		handlePageChange(newPage) {
@@ -94,9 +89,6 @@ export default {
 		},
 	},
 
-	components: {
-		CustomButton,
-		TableLayout,
-	},
+	components: { CustomButton, TableLayout },
 };
 </script>
