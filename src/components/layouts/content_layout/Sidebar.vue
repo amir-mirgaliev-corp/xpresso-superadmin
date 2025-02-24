@@ -1,20 +1,38 @@
 <template>
-	<section class="sidebar">
-		<div class="sidebar__logo flex justify-center items-center">
-			<img src="@/assets/images/logo-sidebar.svg" alt="Logo" class="sidebar__logo-img w-[175px]" />
+	<section
+		class="sidebar transition-width duration-300"
+		:class="{
+			'w-[250px] md:w-[200px]': getIsSidebarShown,
+			'w-16': !getIsSidebarShown,
+		}"
+	>
+		<div class="sidebar__logo flex justify-center items-center h-[47.63px] max-sm:h-[39.29px]">
+			<transition>
+				<img
+					v-if="getIsSidebarShown"
+					src="@/assets/images/logo-sidebar.svg"
+					alt="Logo"
+					class="sidebar__logo-img w-[175px]"
+				/>
+			</transition>
 		</div>
 
-		<div class="sidebar__content mt-[20px]">
+		<div class="sidebar__content mt-5">
 			<ul class="sidebar__list">
 				<li v-for="link in pages" :key="link.path" class="mb-[2px]">
 					<router-link
 						ref="links"
 						:to="link.path"
 						class="sidebar__list-link"
-						:class="{ 'router-link-active': link.relatedRoutes?.includes($route.name) }"
+						:class="{
+							'router-link-active': link.relatedRoutes?.includes($route.name),
+							'md:!pl-4': !getIsSidebarShown,
+						}"
 					>
 						<i :class="['fi', link.icon]"></i>
-						<p>{{ link.text }}</p>
+						<!-- <transition> -->
+						<p v-if="getIsSidebarShown">{{ link.text }}</p>
+						<!-- </transition> -->
 					</router-link>
 				</li>
 			</ul>
@@ -23,6 +41,8 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex";
+
 export default {
 	data: () => ({
 		pages: [
@@ -80,13 +100,14 @@ export default {
 			},
 		],
 	}),
+	computed: {
+		...mapGetters(["getIsSidebarShown"]),
+	},
 };
 </script>
 
 <style lang="scss" scoped>
 .sidebar {
-	max-width: 250px;
-	width: 100%;
 	background-color: #fff;
 	border: 1px solid #e5e7eb;
 	padding: 1rem 0.5rem;
@@ -125,10 +146,22 @@ export default {
 			&:not(.router-link-active):hover {
 				color: $primary;
 			}
+			@media screen and (max-width: 640px) {
+				padding: 12px;
+			}
 		}
 	}
 	@media screen and (max-width: 1024px) {
 		max-width: 200px;
 	}
+}
+.v-enter-active,
+.v-leave-active {
+	transition: opacity 0.2s ease;
+}
+
+.v-enter-from,
+.v-leave-to {
+	opacity: 0;
 }
 </style>

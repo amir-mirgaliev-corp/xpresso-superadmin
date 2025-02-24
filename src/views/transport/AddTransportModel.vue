@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import AddModel from '@/components/pages/transport/AddModel.vue';
+import AddModel from '@/components/pages/transport/model/AddModel.vue';
 
 export default {
     components: {

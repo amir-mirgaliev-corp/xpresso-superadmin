@@ -16,14 +16,19 @@
 
 						<input
 							type="text"
-							class="form__input"
+							:class="[
+								'form__input',
+								{
+									error: v$.model.$errors.length,
+								},
+							]"
 							id="model-name"
 							name="model"
 							placeholder="Cobalt"
-							v-model="model.value"
+							v-model="model"
 						/>
 
-						<span v-if="!model.isValid" class="form__error" v-text="model.message" />
+						<span v-if="v$.model.$errors.length" class="form__error"> Введите модель </span>
 					</div>
 
 					<CustomButton class="h-14 mt-5 radius-75" :loading="loading">Сохранить</CustomButton>
@@ -34,52 +39,57 @@
 </template>
 
 <script>
-import transport from "@/api/transport";
+import { transportModelApi } from "@/api/transport";
 import CustomButton from "@/components/shared/ui/CustomButton.vue";
+import useVuelidate from "@vuelidate/core";
+import { required } from "@vuelidate/validators";
 
 export default {
 	components: {
 		CustomButton,
 	},
 
+	setup() {
+		return {
+			v$: useVuelidate(),
+		};
+	},
+
 	data: () => ({
 		isEditMode: false,
 		loading: false,
 		transportMark: null,
-		model: {
-			value: "",
-			isValid: true,
-			message: "",
-		},
+		model: "",
 	}),
+
+	validations() {
+		return {
+			model: { required },
+		};
+	},
 
 	methods: {
 		async setTransportMark() {
-			const response = await transport.getOneTransportCategory(this.$route.params.mark_id);
+			const response = await transportModelApi.getOneTransportCategory(this.$route.params.mark_id);
 			this.transportMark = response;
 		},
 
-		submitForm() {
-			const model = this.model.value;
+		async submitForm() {
+			const isValid = await this.v$.$validate();
+			if (!isValid) return;
 
-			if (!model) {
-				this.model.isValid = false;
-				this.model.message = "Название не может быть пустым";
-			} else {
-				this.isEditMode ? this.updateModel() : this.createModel();
-			}
+			this.isEditMode ? this.updateModel() : this.createModel();
 		},
 
 		async createModel() {
 			const data = {
-				name: this.model.value,
-				description: "123",
-				category_id: this.$route.params.mark_id,
+				name: this.model,
+				make_id: this.$route.params.mark_id,
 			};
 
 			try {
 				this.loading = true;
-				const response = await transport.createTransportModel(data);
+				const response = await transportModelApi.createTransportModel(data);
 				if (response) this.$router.push(`/transport?mark_id=${this.$route.params.mark_id}`);
 			} catch (err) {
 				console.log("Ошибка при добавлении модели: ", err);
@@ -90,14 +100,13 @@ export default {
 
 		async updateModel() {
 			const data = {
-				name: this.model.value,
-				description: "123",
-				category_id: this.$route.params.mark_id,
+				name: this.model,
+				make_id: this.$route.params.mark_id,
 			};
 
 			try {
 				this.loading = true;
-				const response = await transport.updateTransportModel(data, this.$route.query.model_id);
+				const response = await transportModelApi.updateTransportModel(this.$route.query.model_id, data);
 				if (response) this.$router.push(`/transport?mark_id=${this.$route.params.mark_id}`);
 			} catch (err) {
 				console.log("Ошибка при обновлении модели: ", err);
@@ -113,8 +122,8 @@ export default {
 		this.isEditMode = this.$route.query.model_id && this.$route.query.mode === "edit";
 
 		if (this.isEditMode) {
-			const response = await transport.getOneTransportModel(this.$route.query.model_id);
-			this.model.value = response.name;
+			const response = await transportModelApi.getTransportModelById(this.$route.query.model_id);
+			this.model = response.name;
 		}
 	},
 };

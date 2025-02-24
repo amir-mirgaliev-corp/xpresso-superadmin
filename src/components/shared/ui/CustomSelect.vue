@@ -1,5 +1,5 @@
 <template>
-	<div class="custom-select-wrapper" ref="target">
+	<div class="custom-select-wrapper max-sm:w-full" ref="target">
 		<p v-if="label" class="custom-select__label" v-text="label" />
 
 		<div
@@ -147,9 +147,8 @@ const selectItem = item => {
 
 	if (props.queryName) {
 		router.replace({ query: { ...route.query, [props.queryName]: item.name } });
-	} else {
-		emit("update:modelValue", item);
 	}
+	emit("update:modelValue", item.name);
 };
 
 const computedOptions = computed(() => (props.sort ? props.sort_options : props.options));

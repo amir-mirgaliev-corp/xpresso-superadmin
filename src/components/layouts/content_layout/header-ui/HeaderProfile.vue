@@ -5,7 +5,7 @@
 				<img src="@/assets/images/default_avatar.svg" alt="Avatar" class="profile__avatar-img" />
 			</div>
 
-			<div class="header__profile-info">
+			<div class="header__profile-info max-sm:hidden">
 				<h2 class="header__profile-name">{{ profile.name }}</h2>
 				<p class="header__profile-role">SUPER ADMIN</p>
 			</div>

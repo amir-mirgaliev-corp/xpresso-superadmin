@@ -1,55 +1,57 @@
 <template>
-	<table class="table border-separate border-spacing-0 w-full overflow-hidden">
-		<thead>
-			<tr>
-				<th
-					v-for="(head, index) in filteredThead"
-					:key="head"
-					class="border-[1px] p-[12px_16px] text-left max-lg:px-3 max-lg:text-sm"
-					:class="{
-						'rounded-tr-[10px]': index === content.thead.length - 1,
-						'rounded-tl-[10px]': index === 0,
-					}"
-				>
-					{{ head }}
-				</th>
-			</tr>
-		</thead>
+	<div class="w-full overflow-x-auto whitespace-nowrap">
+		<table class="table border-separate border-spacing-0 w-full overflow-hidden">
+			<thead>
+				<tr>
+					<th
+						v-for="(head, index) in filteredThead"
+						:key="head"
+						class="border-[1px] p-[12px_16px] text-left max-lg:px-3 max-lg:text-sm"
+						:class="{
+							'rounded-tr-[10px]': index === content.thead.length - 1,
+							'rounded-tl-[10px]': index === 0,
+						}"
+					>
+						{{ head }}
+					</th>
+				</tr>
+			</thead>
 
-		<tbody v-if="content.content.length">
-			<tr v-for="(row, rowIndex) in content.content" :key="row.id" @click="handleRowClick(row.id)">
-				<td
-					v-for="(value, key) in filteredRow(row)"
-					:key="key"
-					class="border-[1px] p-[12px_16px] max-lg:px-3 max-lg:text-sm"
-					:class="{
-						'cursor-pointer': editLink,
-						'w-[1%]': ['index', 'avatar', 'actions'].includes(key),
-						'text-center': ['actions'].includes(key),
-					}"
-				>
-					<div v-if="key === 'avatar'" class="flex justify-center items-center drop-shadow">
-						<img :src="value" alt="avatar" class="w-[36px] h-[36px] rounded-[8px]" />
-					</div>
+			<tbody v-if="content.content.length">
+				<tr v-for="(row, rowIndex) in content.content" :key="row.id" @click="handleRowClick(row.id)">
+					<td
+						v-for="(value, key) in filteredRow(row)"
+						:key="key"
+						class="border-[1px] p-[12px_16px] max-lg:px-3 max-lg:text-sm"
+						:class="{
+							'cursor-pointer': editLink,
+							'w-[1%]': ['index', 'avatar', 'actions'].includes(key),
+							'text-center': ['actions'].includes(key),
+						}"
+					>
+						<div v-if="key === 'avatar'" class="flex justify-center items-center drop-shadow">
+							<img :src="value" alt="avatar" class="w-[36px] h-[36px] rounded-[8px]" />
+						</div>
 
-					<template v-else-if="content.actions && key === 'actions'">
-						<ActionsList :actions="content.actions" @action="action => handleAction(action, row)" />
-					</template>
+						<template v-else-if="content.actions && key === 'actions'">
+							<ActionsList :actions="content.actions" @action="action => handleAction(action, row)" />
+						</template>
 
-					<p v-else class="table__value table__status" :class="getStatusClass(value)">
-						{{ value }}
-					</p>
-				</td>
-			</tr>
-		</tbody>
-		<tbody v-else>
-			<tr>
-				<td class="border-[1px] p-[12px_16px] text-center" :colspan="content.thead.length">
-					Отсутствуют данные в таблице или не были найдены
-				</td>
-			</tr>
-		</tbody>
-	</table>
+						<p v-else class="table__value table__status" :class="getStatusClass(value)">
+							{{ value }}
+						</p>
+					</td>
+				</tr>
+			</tbody>
+			<tbody v-else>
+				<tr>
+					<td class="border-[1px] p-[12px_16px] text-center" :colspan="content.thead.length">
+						Отсутствуют данные в таблице или не были найдены
+					</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
 </template>
 
 <script>

@@ -1,8 +1,8 @@
 <template>
-	<div class="bg-white gap-[16px] p-[16px_24px] rounded-[12px] border-[1px] w-full">
-		<div class="flex gap-x-6">
+	<div class="bg-white gap-[16px] px-4 py-6 rounded-[12px] border-[1px] w-full max-sm:px-3 max-sm:py-3">
+		<div class="flex gap-x-6 max-sm:gap-x-3">
 			<h2 class="table-title">Аватарки</h2>
-			<CustomButton icon="fi-br-plus" class="width-fit h-12 mb-6 ml-auto" @click="uploadModalOpen = true">
+			<CustomButton icon="fi-br-plus" class="width-fit h-12 mb-6 ml-auto max-sm:!w-[160px]" @click="uploadModalOpen = true">
 				Загрузить
 			</CustomButton>
 		</div>

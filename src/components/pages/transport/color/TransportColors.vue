@@ -1,16 +1,18 @@
 <template>
 	<section class="transport-colors__content">
-		<div class="transport-colors__container rounded-[12px] border border-[#DCDCDC] p-6 max-lg:p-4">
+		<div class="transport-colors__container rounded-[12px] border border-[#DCDCDC] p-6 max-lg:p-4 max-sm:border-none max-sm:p-0">
 			<h1 class="text-2xl font-bold text-gray-800 mb-6 max-lg:text-xl">Список цветов</h1>
 
-			<div class="grid grid-cols-3 max-xl:grid-cols-1 gap-5" v-if="colors.length">
-				<TransportItem
-					v-for="(color, index) in colors"
-					:key="index"
-					:color="color.color"
-					:title="color.name"
-					@action="action => handleAction(action, color.id)"
-				/>
+			<div class="grid grid-cols-3 max-xl:grid-cols-1 gap-5">
+				<template v-if="getTransportColorList.length">
+					<TransportItem
+						v-for="(color, index) in getTransportColorList"
+						:key="index"
+						:color="color.hexCode"
+						:title="color.nameEn"
+						@action="action => handleAction(action, color.id)"
+					/>
+				</template>
 
 				<CustomButton
 					class="min-h-[60px] radius-75"
@@ -34,9 +36,10 @@
 </template>
 
 <script>
-import CustomButton from "../../shared/ui/CustomButton.vue";
-import TransportItem from "./TransportItem.vue";
-import colors from "@/api/color";
+import CustomButton from "../../../shared/ui/CustomButton.vue";
+import TransportItem from "../TransportItem.vue";
+import { transportColorApi } from "@/api/transport";
+
 import DangerModal from "@/components/shared/modals/DangerModal.vue";
 
 import { mapActions, mapGetters } from "vuex";
@@ -49,21 +52,17 @@ export default {
 	}),
 
 	computed: {
-		...mapGetters(["getColors"]),
+		...mapGetters(["getTransportColorList"]),
 	},
 
 	methods: {
-		...mapActions(["fetchColors"]),
-
-		async setColors() {
-			await this.fetchColors();
-			this.colors = this.getColors;
-		},
+		...mapActions(["fetchTransportColorList"]),
 
 		async deleteColor() {
-			await colors.deleteColor(this.deleteColorId);
+			await transportColorApi.deleteTransportColor(this.deleteColorId);
 			this.deleteColorId = null;
-			location.reload();
+			this.deleteModalOpen = false;
+			await this.fetchTransportColorList();
 		},
 
 		handleAction(action, color_id) {
@@ -89,7 +88,7 @@ export default {
 	},
 
 	async mounted() {
-		await this.setColors();
+		await this.fetchTransportColorList();
 	},
 };
 </script>

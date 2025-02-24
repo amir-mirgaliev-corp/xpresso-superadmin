@@ -5,9 +5,9 @@
 
 			<h1 class="text-2xl font-bold text-gray-800 mt-4 mb-8">Модели {{ selectedMark.name }}:</h1>
 
-			<div v-if="getTransportModels.length && filteredModels.length" class="grid grid-cols-3 gap-5 max-xl:grid-cols-1">
+			<div v-if="getTransportModelList.length" class="grid grid-cols-3 gap-5 max-xl:grid-cols-1">
 				<TransportItem
-					v-for="(model, index) in filteredModels"
+					v-for="(model, index) in getTransportModelList"
 					:key="index"
 					:title="model.name"
 					@action="action => handleAction(action, model.id)"
@@ -48,9 +48,9 @@
 
 <script>
 import { mapGetters, mapActions } from "vuex";
-import CustomButton from "../../shared/ui/CustomButton.vue";
-import TransportItem from "./TransportItem.vue";
-import transport from "@/api/transport";
+import CustomButton from "../../../shared/ui/CustomButton.vue";
+import TransportItem from "../TransportItem.vue";
+import { transportModelApi } from "@/api/transport";
 import DangerModal from "@/components/shared/modals/DangerModal.vue";
 
 export default {
@@ -75,12 +75,13 @@ export default {
 	},
 
 	methods: {
-		...mapActions(["fetchTransportModels"]),
+		...mapActions(["fetchTransportModelList"]),
 
 		async deleteModel() {
-			await transport.deleteTransportModel(this.deleteModelId);
+			await transportModelApi.deleteTransportModel(this.deleteModelId);
 			this.deleteModelId = null;
-			location.reload();
+			this.deleteModalOpen = false;
+			await this.fetchTransportModelList(markId);
 		},
 
 		handleAction(action, model_id) {
@@ -100,16 +101,19 @@ export default {
 	},
 
 	computed: {
-		...mapGetters(["getTransportModels"]),
-
-		filteredModels() {
-			const markId = this.$route.query.mark_id;
-			return this.getTransportModels.filter(model => model.categoryId === markId);
-		},
+		...mapGetters(["getTransportModelList"]),
 	},
 
-	async mounted() {
-		await this.fetchTransportModels();
+	watch: {
+		"$route.query": {
+			async handler(query) {
+				if (query.mark_id) {
+					await this.fetchTransportModelList(query.mark_id);
+				}
+			},
+			deep: true,
+			immediate: true,
+		},
 	},
 };
 </script>

@@ -9,11 +9,7 @@
 
 			<div class="py-4 w-[400px]">
 				<form @submit.prevent="submitForm" class="form">
-					<ImageUploader
-						:image="preview"
-						@update:image="preview = $event"
-						@send:file="formData.logo = $event"
-					/>
+					<ImageUploader :image="preview" @update:image="preview = $event" @send:file="file = $event" />
 
 					<div class="form__field">
 						<label for="mark-name" class="form__label">Производитель:</label>
@@ -21,6 +17,9 @@
 						<input
 							type="text"
 							class="form__input h-14"
+							:class="{
+								error: !mark.isValid,
+							}"
 							name="mark"
 							id="mark-name"
 							placeholder="Chevrolet"
@@ -39,8 +38,9 @@
 
 <script>
 import ImageUploader from "@/components/shared/ui/ImageUploader.vue";
-import transport from "@/api/transport";
+import { transportMakeApi } from "@/api/transport";
 import CustomButton from "@/components/shared/ui/CustomButton.vue";
+import { mapActions, mapGetters } from "vuex";
 
 const env = import.meta.env;
 
@@ -52,7 +52,6 @@ export default {
 
 	data: () => ({
 		isEditMode: false,
-		baseUrl: env.VITE_APP_STATIC_URL,
 		preview: null,
 		file: null,
 		loading: false,
@@ -65,11 +64,13 @@ export default {
 
 	computed: {
 		imageSrc() {
-			return this.file ? this.preview : this.isEditMode && this.preview ? this.baseUrl + this.preview : null;
+			return this.file ? this.preview : this.isEditMode && this.preview ? this.preview : null;
 		},
 	},
 
 	methods: {
+		...mapActions(["fetchTransportMakeList"]),
+
 		submitForm() {
 			const mark = this.mark.value;
 
@@ -85,13 +86,15 @@ export default {
 			const data = new FormData();
 
 			data.append("name", this.mark.value);
-			data.append("description", "123");
-			data.append("photo", this.file);
+			data.append("file", this.file);
 
 			try {
 				this.loading = true;
-				const response = await transport.createTransportCategory(data);
-				if (response) this.$router.push("/transport?tab=marks");
+				const response = await transportMakeApi.createTransportMake(data);
+				if (response) {
+					this.$router.push("/transport?tab=marks");
+					this.fetchTransportMakeList();
+				}
 			} catch (err) {
 				console.log("Ошибка при добавлении марки: ", err);
 			} finally {
@@ -102,16 +105,20 @@ export default {
 		async updateMark() {
 			const data = new FormData();
 
-			console.log(this.file);
+			this.file !== null && data.append("logo", this.file);
 
-			data.append("name", this.mark.value);
-			data.append("description", "123");
-			data.append("photo", this.file);
+			const params = {
+				make_id: this.$route.query.id,
+				name: this.mark.value,
+			};
 
 			try {
 				this.loading = true;
-				const response = await transport.updateTransportCategory(data, this.$route.query.id);
-				if (response) this.$router.push("/transport?tab=marks");
+				const response = await transportMakeApi.updateTransportMake(params, data.has("logo") ? data : null);
+				if (response) {
+					this.$router.push("/transport?tab=marks");
+					this.fetchTransportMakeList();
+				}
 			} catch (err) {
 				console.log("Ошибка при обновлении марки марки: ", err);
 			} finally {
@@ -124,10 +131,9 @@ export default {
 		this.isEditMode = this.$route.query.id && this.$route.query.mode === "edit";
 
 		if (this.isEditMode) {
-			const response = await transport.getOneTransportCategory(this.$route.query.id);
-
+			const response = await transportMakeApi.getTransportMakeById(this.$route.query.id);
 			this.mark.value = response.name;
-			this.preview = response.photo;
+			this.preview = response.logo;
 		}
 	},
 };

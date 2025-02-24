@@ -1,10 +1,9 @@
 <template>
 	<div class="transport-item hover:bg-gray-100">
 		<div v-if="icon || color" class="transport-item__icon">
-			<img v-if="icon" :src="baseUrl + icon" :alt="`${icon} brand logo`" />
+			<img v-if="icon" :src="icon" :alt="`${icon} brand logo`" />
 			<span v-else-if="color" class="transport-item__color shadow" :style="{ backgroundColor: color }" />
 		</div>
-
 		<p class="transport-item__title" v-text="title" />
 
 		<div class="transport-item__actions">
