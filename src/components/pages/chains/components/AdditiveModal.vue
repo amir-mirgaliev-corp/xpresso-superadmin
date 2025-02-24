@@ -10,38 +10,50 @@
 
 				<form class="form" @submit.prevent="submitForm">
 					<div class="form__field">
-						<label for="category-ru" class="form__label">Название на русском:</label>
+						<label for="additive-ru" class="form__label">Название на русском:</label>
 						<input
-							v-model="category.name_ru"
+							v-model="additive.name_ru"
 							type="text"
 							class="form__input"
-							placeholder="Горячие напитки"
-							id="category-ru"
-							:class="{ error: v$.category.name_ru.$errors.length }"
+							placeholder="Сироп"
+							id="additive-ru"
+							:class="{ error: v$.additive.name_ru.$errors.length }"
 						/>
 					</div>
 
 					<div class="form__field">
-						<label for="category-uz" class="form__label">Название на узбекском:</label>
+						<label for="additive-uz" class="form__label">Название на узбекском:</label>
 						<input
-							v-model="category.name_uz"
+							v-model="additive.name_uz"
 							type="text"
 							class="form__input"
-							placeholder="Issiq ichimliklar"
-							id="category-uz"
-							:class="{ error: v$.category.name_uz.$errors.length }"
+							placeholder="Sirop"
+							id="additive-uz"
+							:class="{ error: v$.additive.name_uz.$errors.length }"
 						/>
 					</div>
 
 					<div class="form__field">
-						<label for="category-en" class="form__label">Название на английском:</label>
+						<label for="additive-en" class="form__label">Название на английском:</label>
 						<input
-							v-model="category.name_en"
+							v-model="additive.name_en"
 							type="text"
 							class="form__input"
-							placeholder="Hot drinks"
-							id="category-en"
-							:class="{ error: v$.category.name_en.$errors.length }"
+							placeholder="Syrup"
+							id="additive-en"
+							:class="{ error: v$.additive.name_en.$errors.length }"
+						/>
+					</div>
+
+					<div class="form__field">
+						<label for="additive-price" class="form__label">Цена добавки:</label>
+						<input
+							v-model="formattedPrice"
+							type="text"
+							class="form__input"
+							placeholder="Введите цену"
+							id="additive-price"
+							@input="handleInput"
 						/>
 					</div>
 
@@ -67,7 +79,9 @@ import { useToast } from "vue-toastification";
 import { useVuelidate } from "@vuelidate/core";
 import { required } from "@vuelidate/validators";
 
-import categories from "@/api/categories";
+import additives from "@/api/additives";
+
+import formatNumberWithSpaces from "@/utils/formatters/formatNumbers";
 
 export default {
 	emits: ["close", "update"],
@@ -87,7 +101,7 @@ export default {
 
 	validations() {
 		return {
-			category: {
+			additive: {
 				name_ru: { required },
 				name_uz: { required },
 				name_en: { required },
@@ -98,26 +112,31 @@ export default {
 	data() {
 		return {
 			loading: false,
-			category: {
+			additive: {
 				name_ru: "",
 				name_uz: "",
 				name_en: "",
+				price: "",
 			},
 		};
 	},
 
 	computed: {
 		modalTitle() {
-			return this.initialData ? "Редактирование категории" : "Создание категории";
+			return this.initialData ? "Редактирование добавки" : "Создание добавки";
+		},
+
+		formattedPrice() {
+			return formatNumberWithSpaces(this.additive.price);
 		},
 	},
 
 	methods: {
-		async createCategory() {
+		async createAdditive() {
 			const chain_id = this.$route.params.chain_id;
 
 			this.loading = true;
-			const response_status = await categories.createCategory({ chain_id, ...this.category });
+			const response_status = await additives.createAdditive({ chain_id, ...this.additive });
 			this.loading = false;
 
 			if (response_status === 201) {
@@ -126,19 +145,19 @@ export default {
 			}
 		},
 
-		async updateCategory() {
-			const category_id = this.initialData.id;
+		async updateAdditive() {
+			const additive_id = this.initialData.id;
 			const updatedFields = {};
 
-			Object.keys(this.category).forEach(key => {
-				if (this.category[key] !== this.initialData[key]) {
-					updatedFields[key] = this.category[key];
+			Object.keys(this.additive).forEach(key => {
+				if (this.additive[key] !== this.initialData[key]) {
+					updatedFields[key] = this.additive[key];
 				}
 			});
 
 			if (Object.keys(updatedFields).length > 0) {
 				this.loading = true;
-				const response_status = await categories.updateCategory(category_id, updatedFields);
+				const response_status = await additives.updateAdditive(additive_id, updatedFields);
 				this.loading = false;
 
 				if (response_status === 200) {
@@ -155,25 +174,38 @@ export default {
 			const result = await this.v$.$validate();
 
 			if (result) {
-				this.initialData ? this.updateCategory() : this.createCategory();
+				this.initialData ? this.updateAdditive() : this.createAdditive();
 			}
 		},
 
-		setCategoryData() {
-			this.category.name_ru = this.initialData.name_ru;
-			this.category.name_uz = this.initialData.name_uz;
-			this.category.name_en = this.initialData.name_en;
+		handleInput(event) {
+			let value = event.target.value.replace(/\D/g, "");
+
+			if (value === "") {
+				this.additive.price = "";
+				return;
+			}
+
+			value = value.replace(/^0+(?=\d)/, "");
+			this.additive.price = +value;
+		},
+
+		setAdditiveData() {
+			this.additive.name_ru = this.initialData.name_ru;
+			this.additive.name_uz = this.initialData.name_uz;
+			this.additive.name_en = this.initialData.name_en;
+			this.additive.price = this.initialData.price;
 		},
 
 		cancelEdit() {
-			this.setCategoryData;
+			this.setAdditiveData();
 			this.$emit("close");
 		},
 	},
 
 	mounted() {
 		if (this.initialData) {
-			this.setCategoryData();
+			this.setAdditiveData();
 		}
 	},
 

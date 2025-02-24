@@ -1,14 +1,13 @@
 import api from "./axios";
 
+import { useToast } from "vue-toastification";
+
+const toast = useToast();
+
 export default {
-	async getChains(pagination) {
+	async getChains() {
 		try {
-			const response = await api.get("/chain", {
-				params: {
-					limit: pagination?.limit || 10,
-					page: pagination?.page || 1,
-				},
-			});
+			const response = await api.get("/superuser/chains/");
 			return response.data;
 		} catch (error) {
 			console.log(error);
@@ -17,7 +16,7 @@ export default {
 
 	async getOneChain(id) {
 		try {
-			const response = await api.get(`/chain/${id}`);
+			const response = await api.get(`/superuser/chain/${id}`);
 			return response.data;
 		} catch (error) {
 			console.log(error);
@@ -26,12 +25,9 @@ export default {
 
 	async createChain(data) {
 		try {
-			const newChain = await api.post("/chain", data, {
-				headers: {
-					"Content-Type": "multipart/form-data",
-				},
-			});
-			return newChain.status;
+			const response = await api.post("/superuser/chain/", data);
+			toast.success("Сеть была успешно создана");
+			return response.status;
 		} catch (error) {
 			console.log(error);
 		}
@@ -39,7 +35,8 @@ export default {
 
 	async deleteChain(id) {
 		try {
-			const response = await api.delete(`/chain/${id}`);
+			const response = await api.delete(`/superuser/chain/${id}`);
+			toast.success("Сеть была успешно удалена");
 			return response.status;
 		} catch (error) {
 			console.log(error);
@@ -48,8 +45,9 @@ export default {
 
 	async updateChain(id, data) {
 		try {
-			const updatedChain = await api.put(`/chain/${id}`, data);
-			return updatedChain.status;
+			const response = await api.patch(`/superuser/chain/${id}`, data);
+			toast.success("Сеть была успешно обновлена");
+			return response.status;
 		} catch (error) {
 			console.log(error);
 		}

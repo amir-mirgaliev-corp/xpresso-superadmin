@@ -20,20 +20,11 @@
 	<CategoryModal
 		v-if="categoryModalOpen"
 		:initial-data="categoryUnderAction"
-		@close="
-			categoryModalOpen = false;
-			categoryUnderAction = null;
-		"
+		@update="loadCategories"
+		@close="closeCategoryModal"
 	/>
 
-	<DangerModal
-		v-if="deleteModalOpen"
-		@confirm="deleteCategory(categoryUnderAction.id)"
-		@close="
-			deleteModalOpen = false;
-			categoryUnderAction = null;
-		"
-	/>
+	<DangerModal v-if="deleteModalOpen" @confirm="deleteCategory(categoryUnderAction.id)" @close="closeDeleteModal" />
 </template>
 
 <script>
@@ -51,7 +42,7 @@ export default {
 		categoryUnderAction: null,
 		categories: [],
 		tableOptions: {
-			thead: ["№", "Название на русском", "Название на узб.", "Название на англ.", "ID", "Действия"],
+			thead: ["№", "Название на русском", "Название на узб.", "Название на англ.", "Действия"],
 			content: [],
 			actions: [
 				{ name: "edit", title: "Редактировать", icon: "fi-rs-file-edit" },
@@ -72,22 +63,36 @@ export default {
 			const chaid_id = this.$route.params.chain_id;
 
 			const response = await categories.getCategories(chaid_id);
-			this.categories = response;
+
+			if (response && response.length) {
+				this.categories = response;
+			} else {
+				this.categories = [];
+			}
 
 			this.tableOptions.content = this.categories.map((category, i) => {
 				return {
 					index: i + 1,
-					name_ru: category.name.ru,
-					name_uz: category.name.uz,
-					name_en: category.name.en,
+					name_ru: category.name_ru,
+					name_uz: category.name_uz,
+					name_en: category.name_en,
 					id: category.id,
 					actions: true,
 				};
 			});
 		},
 
+		async deleteCategory(id) {
+			const response_status = await categories.deleteCategory(id);
+
+			if (response_status === 204) {
+				this.loadCategories();
+				this.closeDeleteModal();
+			}
+		},
+
 		handleAction(data) {
-			this.categoryUnderAction = this.categories.find(cat => +cat.id === +data.id);
+			this.categoryUnderAction = this.categories.find(cat => cat.id === data.id);
 
 			if (data.action === "edit") {
 				this.categoryModalOpen = true;
@@ -96,9 +101,14 @@ export default {
 			}
 		},
 
-		async deleteCategory(id) {
-			const response_status = await categories.deleteCategory(id);
-			if (response_status === 200) location.reload();
+		closeCategoryModal() {
+			this.categoryModalOpen = false;
+			this.categoryUnderAction = null;
+		},
+
+		closeDeleteModal() {
+			this.deleteModalOpen = false;
+			this.categoryUnderAction = null;
 		},
 	},
 

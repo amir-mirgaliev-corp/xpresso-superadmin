@@ -1,9 +1,13 @@
 import api from "./axios";
 
+import { useToast } from "vue-toastification";
+
+const toast = useToast();
+
 export default {
 	async getCategories(chain_id) {
 		try {
-			const response = await api.get(`/products/category?chain_id=${chain_id}`);
+			const response = await api.get(`/superuser/categories/by_chain/${chain_id}`);
 			return response.data;
 		} catch (error) {
 			console.log(error);
@@ -12,7 +16,8 @@ export default {
 
 	async createCategory(data) {
 		try {
-			const response = await api.post("/products/category", data);
+			const response = await api.post("/superuser/category/", data);
+			toast.success("Категория была успешно создана");
 			return response.status;
 		} catch (error) {
 			console.log(error);
@@ -21,7 +26,8 @@ export default {
 
 	async updateCategory(category_id, data) {
 		try {
-			const response = await api.patch(`/products/category/${category_id}`, data);
+			const response = await api.patch(`/superuser/category/${category_id}`, data);
+			toast.success("Категория была успешно обновлена");
 			return response.status;
 		} catch (error) {
 			console.log(error);
@@ -30,7 +36,8 @@ export default {
 
 	async deleteCategory(category_id) {
 		try {
-			const response = await api.delete(`/products/category/${category_id}`);
+			const response = await api.delete(`/superuser/category/${category_id}`);
+			toast.success("Категория была успешно удалена");
 			return response.status;
 		} catch (error) {
 			console.log(error);

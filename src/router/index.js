@@ -55,12 +55,12 @@ const router = createRouter({
 			},
 		},
 		{
-			path: "/chains/edit/:chain_id",
-			name: "chains-edit",
-			component: () => import("../views/chain/EditChain.vue"),
+			path: "/chain/:chain_id",
+			name: "chain",
+			component: () => import("../views/chain/Chain.vue"),
 			meta: {
 				layout: "content",
-				page: "Редактирование сети",
+				page: "Сеть",
 				auth: true,
 			},
 		},
@@ -71,16 +71,6 @@ const router = createRouter({
 			meta: {
 				layout: "content",
 				page: "Создание филиала",
-				auth: true,
-			},
-		},
-		{
-			path: "/chain/:chain_id",
-			name: "chain",
-			component: () => import("../views/chain/Chain.vue"),
-			meta: {
-				layout: "content",
-				page: "Сеть",
 				auth: true,
 			},
 		},

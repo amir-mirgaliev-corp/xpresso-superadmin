@@ -5,73 +5,42 @@
 		</CustomButton>
 
 		<Tabs :initial-tab="initialTab">
+			<Tab name="info" title="Информация"><ChainInfo /></Tab>
 			<Tab name="branches" title="Филиалы"><ChainBranches /></Tab>
 			<Tab name="categories" title="Категории"><ChainCategories /></Tab>
-			<Tab name="admins" title="Администраторы"><ChainAdmins /></Tab>
-			<Tab name="menu" title="Меню"><ChainMenu /></Tab>
+			<Tab name="additives" title="Добавки"><ChainAdditives /></Tab>
 		</Tabs>
-
-		<div class="flex justify-end gap-4 my-6">
-			<CustomButton icon="fi-rr-file-edit" class="h-12 width-fit purple" @click="linkToEdit">
-				Редактировать сеть
-			</CustomButton>
-			<CustomButton icon="fi-rr-trash" class="h-12 width-fit" @click="toggleDelete"> Удалить сеть </CustomButton>
-		</div>
 	</div>
-
-	<DangerModal v-if="deleteModalOpen" @close="toggleDelete" @confirm="deleteChain" />
 </template>
 
 <script>
-import chains from "@/api/chains";
 import Tabs from "@/components/shared/ui/Tabs.vue";
 import Tab from "@/components/shared/ui/Tab.vue";
-import DangerModal from "@/components/shared/modals/DangerModal.vue";
 import CustomButton from "@/components/shared/ui/CustomButton.vue";
+
+import ChainInfo from "./tabs/ChainInfo.vue";
 import ChainBranches from "./tabs/ChainBranches.vue";
 import ChainCategories from "./tabs/ChainCategories.vue";
+import ChainAdditives from "./tabs/ChainAdditives.vue";
 import ChainMenu from "./tabs/ChainMenu.vue";
 import ChainAdmins from "./tabs/ChainAdmins.vue";
 
 export default {
 	data: () => ({
 		initialTab: null,
-		deleteModalOpen: false,
 	}),
 
 	components: {
 		Tabs,
 		Tab,
-		DangerModal,
 		CustomButton,
+		ChainInfo,
 		ChainBranches,
 		ChainCategories,
+		ChainAdditives,
 		ChainMenu,
 		ChainAdmins,
 	},
-
-	computed: {},
-
-	methods: {
-		toggleDelete() {
-			this.deleteModalOpen = !this.deleteModalOpen;
-		},
-
-		async deleteChain() {
-			const id = this.$route.params.chain_id;
-			const deletedChain = await chains.deleteChain(id);
-
-			if (deletedChain === 200) {
-				this.$router.push("/chains");
-			}
-		},
-
-		linkToEdit() {
-			this.$router.push(`/chains/edit/${this.$route.params.chain_id}`);
-		},
-	},
-
-	watch: {},
 
 	mounted() {
 		const tabParam = this.$route.query.tab;

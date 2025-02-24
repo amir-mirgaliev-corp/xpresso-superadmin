@@ -110,9 +110,9 @@ export default {
 
 			if (response === 400) {
 				this.error = "Неверный логин или пароль";
-			} else if (response.refreshToken && response.accessToken) {
-				localStorage.setItem("accessToken", response.accessToken);
-				localStorage.setItem("refreshToken", response.refreshToken);
+			} else if (response.refresh_token && response.access_token) {
+				localStorage.setItem("accessToken", response.access_token);
+				localStorage.setItem("refreshToken", response.refresh_token);
 				this.$router.push("/dashboard");
 				location.reload();
 			}
