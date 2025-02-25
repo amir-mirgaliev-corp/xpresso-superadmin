@@ -29,6 +29,8 @@ import TableLayout from "@/components/shared/TableLayout.vue";
 
 import { mapActions, mapGetters } from "vuex";
 
+import defaultAvatar from "@/assets/images/coffee_avatar.svg";
+
 export default {
 	data: () => ({
 		chains: [],
@@ -66,7 +68,7 @@ export default {
 			this.tableOptions.content = this.chains.map((chain, index) => {
 				return {
 					index: (this.paginationOptions.page - 1) * this.paginationOptions.limit + index + 1,
-					avatar: chain.logo || "/src/assets/images/coffee_avatar.svg",
+					avatar: chain.logo || defaultAvatar,
 					name: chain.name,
 					info: chain.additional_info,
 					id: chain.id,

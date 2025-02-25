@@ -33,6 +33,8 @@ import CustomButton from "@/components/shared/ui/CustomButton.vue";
 
 import { mapActions, mapGetters } from "vuex";
 
+import defaultAvatar from "@/assets/images/coffee_avatar.svg";
+
 export default {
 	data: () => ({
 		branches: [],
@@ -76,7 +78,7 @@ export default {
 			this.tableOptions.content = this.branches.map((branch, i) => {
 				return {
 					index: i + 1,
-					avatar: branch.chain_logo || "/src/assets/images/coffee_avatar.svg",
+					avatar: branch.chain_logo || defaultAvatar,
 					name: branch.full_name,
 					phone: branch.phone_number,
 					id: branch.id,
