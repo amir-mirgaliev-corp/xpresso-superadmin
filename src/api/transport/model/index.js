@@ -6,7 +6,7 @@ const toast = useToast();
 export const transportModelApi = {
 	async getTransportModelList(make_id) {
 		try {
-			const response = await api.get(`/superuser/vehicle/model/${make_id}`);
+			const response = await api.get(`/vehicle/model/${make_id}`);
 			return response.data;
 		} catch (error) {
 			console.log(error);
@@ -15,7 +15,7 @@ export const transportModelApi = {
 
 	async getTransportModelById(model_id) {
 		try {
-			const response = await api.get(`/superuser/vehicle/model/${model_id}`);
+			const response = await api.get(`/vehicle/model/${model_id}`);
 			return response.data;
 		} catch (error) {
 			console.log(error);

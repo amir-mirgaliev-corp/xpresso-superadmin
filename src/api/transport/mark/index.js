@@ -6,7 +6,7 @@ const toast = useToast();
 export const transportMakeApi = {
 	async getTransportMakeList() {
 		try {
-			const response = await api.get("/superuser/vehicle/make");
+			const response = await api.get("/vehicle/make");
 			return response.data;
 		} catch (error) {
 			console.log(error);
@@ -14,7 +14,7 @@ export const transportMakeApi = {
 	},
 	async getTransportMakeById(make_id) {
 		try {
-			const response = await api.get(`/superuser/vehicle/make${make_id}`);
+			const response = await api.get(`/vehicle/make${make_id}`);
 			return response.data;
 		} catch (error) {
 			console.log(error);

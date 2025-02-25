@@ -48,7 +48,7 @@ export default {
 
     async createQuestion (data) {
         try {
-            const newQuestion = await api.post('/daq', data, {
+            const newQuestion = await api.post('/faq', data, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }
