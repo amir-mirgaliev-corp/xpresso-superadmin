@@ -17,6 +17,9 @@ import transactions from "./models/transactions";
 import avatar from "./models/avatar";
 import faq from "./models/faq";
 import docs from "./models/docs";
+import categories from "./models/categories";
+import additives from "./models/additives";
+import admins from "./models/admins";
 
 export default createStore({
 	modules: {
@@ -37,5 +40,8 @@ export default createStore({
 		avatar,
 		faq,
 		docs,
+		categories,
+		additives,
+		admins,
 	},
 });

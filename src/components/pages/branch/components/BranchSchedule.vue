@@ -71,10 +71,7 @@ export default {
 			this.dayKeys.forEach(day => {
 				const value = rawSchedule[day];
 
-				console.log(value);
-
 				if (value === "24h") {
-					console.log(rawSchedule[day]);
 					parsed[day] = { open: true, start: "08:00", end: "23:00", allDay: true };
 				} else if (typeof value === "string" && value.includes("-")) {
 					const [start, end] = value.split("-");
@@ -127,7 +124,6 @@ export default {
 			deep: true,
 			immediate: true,
 			handler(newSchedule) {
-				console.log(newSchedule);
 				this.localSchedule = this.parseSchedule(newSchedule);
 			},
 		},

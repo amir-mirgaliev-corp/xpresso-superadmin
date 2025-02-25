@@ -16,8 +16,8 @@
 							class="form__input"
 							name="modifier-name-ru"
 							placeholder="Большой"
-							v-model="modifier.name.ru"
-							:class="{ error: v$.modifier.name.ru.$error }"
+							v-model="modifier.name.name_ru"
+							:class="{ error: v$.modifier.name.name_ru.$error }"
 						/>
 					</div>
 
@@ -28,8 +28,8 @@
 							class="form__input"
 							name="modifier-name-en"
 							placeholder="Katta"
-							v-model="modifier.name.en"
-							:class="{ error: v$.modifier.name.en.$error }"
+							v-model="modifier.name.name_en"
+							:class="{ error: v$.modifier.name.name_en.$error }"
 						/>
 					</div>
 
@@ -40,23 +40,28 @@
 							class="form__input"
 							name="modifier-name-uz"
 							placeholder="Big"
-							v-model="modifier.name.uz"
-							:class="{ error: v$.modifier.name.uz.$error }"
+							v-model="modifier.name.name_uz"
+							:class="{ error: v$.modifier.name.name_uz.$error }"
 						/>
 					</div>
 
 					<div class="form__field">
-						<label for="modifier-name-uz" class="form__label">Цена (сум)</label>
+						<label for="modifier-price" class="form__label">Цена (сум)</label>
 						<input
 							type="text"
 							class="form__input"
 							name="modifier-price"
 							placeholder="20 000"
 							v-model="formattedPrice"
-							:class="{ error: v$.modifier.price.$error }"
 							@input="handleInput"
+							:class="{ error: v$.modifier.price.$error }"
 						/>
 					</div>
+
+					<!-- <div v-if="modifier.price" class="form__field">
+						<label for="additive-en" class="form__label">ИКПУ код:</label>
+						<input v-model="modifier.ofd" type="text" class="form__input" placeholder="Введите код ИКПУ" />
+					</div> -->
 
 					<CustomButton class="mt-4 h-14" :loading="loading">{{ submitText }}</CustomButton>
 				</form>
@@ -76,12 +81,8 @@ import formatNumberWithSpaces from "@/utils/formatters/formatNumbers";
 import categories from "@/api/categories";
 
 export default {
-	emits: ["close"],
+	emits: ["close", "update"],
 	props: {
-		category: {
-			type: String,
-			required: true,
-		},
 		initialData: {
 			type: Object || null,
 			default: null,
@@ -99,9 +100,9 @@ export default {
 			modifier: {
 				price: { required },
 				name: {
-					ru: { required },
-					uz: { required },
-					en: { required },
+					name_ru: { required },
+					name_uz: { required },
+					name_en: { required },
 				},
 			},
 		};
@@ -113,9 +114,9 @@ export default {
 			modifier: {
 				price: "",
 				name: {
-					ru: "",
-					uz: "",
-					en: "",
+					name_ru: "",
+					name_uz: "",
+					name_en: "",
 				},
 			},
 		};
@@ -136,73 +137,40 @@ export default {
 	},
 
 	methods: {
-		async createModifier() {
-			const category_id = this.category === "size" ? "1" : "2";
-
-			const params = {
-				category_id,
-				price: this.modifier.price,
-				name_la: this.modifier.name.uz,
-				name_ru: this.modifier.name.ru,
-				name_en: this.modifier.name.en,
-				is_global: false,
-			};
-
-			this.loading = true;
-			const response_status = await categories.createModificator(params);
-			this.loading = false;
-
-			if (response_status === 200) {
-			}
-		},
-
-		async updateModifier() {
-			const category_id = +this.initialData.id;
-
-			const params = {
-				...this.category,
-				description_la: " ",
-				description_ru: " ",
-				description_en: " ",
-			};
-
-			this.loading = true;
-			const response_status = await categories.updateModifier(category_id, params);
-			this.loading = false;
-
-			if (response_status === 200) location.reload();
-		},
-
 		async submitForm() {
 			const result = await this.v$.$validate();
 
 			if (result) {
-				if (this.initialData) {
-					this.updateModifier();
-				} else {
-					this.createModifier();
-				}
+				this.$emit("update", {
+					modifier: this.modifier,
+					modifier_index: this.initialData ? this.initialData.modifier_index : null,
+				});
 			}
 		},
 
 		handleInput(event) {
 			let value = event.target.value.replace(/\D/g, "");
+
+			if (value === "") {
+				this.modifier.price = "";
+				return;
+			}
+
 			value = value.replace(/^0+(?=\d)/, "");
-			this.product.price = value;
+			this.modifier.price = +value;
 		},
 	},
 
 	mounted() {
 		if (this.initialData) {
-			this.modifier.name.ru = this.initialData.name.ru;
-			this.modifier.name.uz = this.initialData.name.uz;
-			this.modifier.name.en = this.initialData.name.en;
+			this.modifier.name.name_ru = this.initialData.name?.name_ru;
+			this.modifier.name.name_uz = this.initialData.name?.name_uz;
+			this.modifier.name.name_en = this.initialData.name?.name_en;
+			this.modifier.price = this.initialData?.price;
 		}
 	},
 
-	components: {
-		CustomButton,
-	},
+	components: { CustomButton },
 };
 </script>
 

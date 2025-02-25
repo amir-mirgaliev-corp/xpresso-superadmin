@@ -1,12 +1,17 @@
 <template>
-	<div class="flex justify-end mt-[-63px] mb-6">
+	<div class="flex justify-end mt-[-63px] mb-6 max-lg:mt-0 max-lg:justify-start">
 		<CustomButton icon="fi-br-plus" class="h-12 width-fit" @click="adminModalOpen = true">
 			Добавить администратора
 		</CustomButton>
 	</div>
 
 	<div v-if="admins.length">
-		<TableLayout :table-options="tableOptions" @action="handleAction">
+		<TableLayout
+			:table-options="tableOptions"
+			:pagination-options="paginationOptions"
+			@update:page="handlePageChange"
+			@action="handleAction"
+		>
 			<template #title>
 				<h2 class="table-title">Список администраторов филиала</h2>
 			</template>
@@ -19,20 +24,16 @@
 
 	<AdminModal
 		v-if="adminModalOpen"
-		:title="adminUnderAction ? 'Редактирование админа филиала' : 'Создание админа филиала'"
+		type="branch"
 		:initial-data="adminUnderAction"
 		@create="createBranchAdmin"
 		@update="updateBranchAdmin"
 		@close="closeAdminModal"
 	/>
 
-	<DangerModal v-if="deleteModalOpen" @confirm="deleteChainAdmin(adminUnderAction.id)" @close="closeDangerModal" />
+	<DangerModal v-if="deleteModalOpen" @confirm="deleteBranchAdmin(adminUnderAction.id)" @close="closeDangerModal" />
 
-	<NewPasswordModal
-		v-if="changePasswordModalOpen"
-		@submit="handlePasswordChange"
-		@close="changePasswordModalOpen = false"
-	/>
+	<NewPasswordModal v-if="changePasswordModalOpen" @submit="changePassword" @close="closePasswordModal" />
 </template>
 
 <script>
@@ -42,13 +43,28 @@ import DangerModal from "@/components/shared/modals/DangerModal.vue";
 import AdminModal from "@/components/shared/modals/AdminModal.vue";
 import NewPasswordModal from "@/components/shared/modals/NewPasswordModal.vue";
 
+import { useToast } from "vue-toastification";
+import { mapActions, mapGetters } from "vuex";
+import admins from "@/api/admins";
+
 export default {
+	setup() {
+		return {
+			toast: useToast(),
+		};
+	},
+
 	data: () => ({
-		admins,
+		admins: [],
 		adminModalOpen: false,
 		deleteModalOpen: false,
 		changePasswordModalOpen: false,
 		adminUnderAction: null,
+		paginationOptions: {
+			page: 1,
+			limit: 10,
+			count: 0,
+		},
 		tableOptions: {
 			thead: ["№", "Имя администратора", "Логин", "Роль", "Действия"],
 			content: [],
@@ -68,12 +84,30 @@ export default {
 		NewPasswordModal,
 	},
 
+	computed: {
+		...mapGetters(["getBranchAdmins"]),
+	},
+
 	methods: {
-		loadAdmins() {
+		...mapActions(["fetchBranchAdmins"]),
+
+		async loadAdmins() {
+			const branch_id = this.$route.params.branch_id;
+
+			// pagination
+			const { page, limit } = this.paginationOptions;
+			const filters = { page, limit };
+
+			await this.fetchBranchAdmins({ branch_id, filters });
+
+			this.setAdminsTable();
+		},
+
+		setAdminsTable() {
 			this.tableOptions.content = this.admins.map((admin, i) => {
 				return {
 					index: i + 1,
-					name: `${admin.first_name} ${admin.last_name}`,
+					name: `${admin.name} ${admin.last_name}`,
 					login: admin.login,
 					role: "Админ. филиала",
 					actions: true,
@@ -84,8 +118,6 @@ export default {
 
 		handleAction(data) {
 			this.adminUnderAction = this.admins.find(admin => admin.id === data.id);
-
-			console.log(this.adminUnderAction);
 
 			switch (data.action) {
 				case "edit":
@@ -102,17 +134,43 @@ export default {
 			}
 		},
 
-		createBranchAdmin(data) {
-			console.log("CREATE: ", data);
+		async createBranchAdmin(data) {
+			data.branch_id = this.$route.params.branch_id;
+			const response_status = await admins.createBranchAdmin(data);
+			if (response_status === 201) this.loadAdmins();
+			this.closeAdminModal();
 		},
 
-		updateBranchAdmin(data) {
-			console.log("UPDATE: ", data);
+		async updateBranchAdmin(data) {
+			if (
+				this.adminUnderAction.name === data.name &&
+				this.adminUnderAction.last_name === data.last_name &&
+				this.adminUnderAction.login === data.login
+			) {
+				this.toast.info("Нет изменений для обновления");
+				return;
+			} else {
+				const response_status = await admins.updateAdmin(data);
+				if (response_status === 200) this.loadAdmins();
+				this.closeAdminModal();
+			}
 		},
 
-		deleteChainAdmin(id) {},
+		async deleteBranchAdmin(id) {
+			const response_status = await admins.deleteAdmin(id);
+			if (response_status === 204) this.loadAdmins();
+			this.closeDangerModal();
+		},
 
-		handlePasswordChange(newPassword) {},
+		async changePassword(newPassword) {
+			const response_status = await admins.updateAdminPassword(this.adminUnderAction.id, newPassword);
+			if (response_status === 200) this.loadAdmins();
+			this.closePasswordModal();
+		},
+
+		handlePageChange(newPage) {
+			this.paginationOptions.page = newPage;
+		},
 
 		closeAdminModal() {
 			this.adminModalOpen = false;
@@ -123,17 +181,28 @@ export default {
 			this.deleteModalOpen = false;
 			this.adminUnderAction = null;
 		},
+
+		closePasswordModal() {
+			this.changePasswordModalOpen = false;
+			this.adminUnderAction = null;
+		},
 	},
 
 	mounted() {
 		this.loadAdmins();
 	},
-};
 
-const admins = [
-	{ id: 0, first_name: "Зохир", last_name: "Сабитов", login: "zoxir_admin", role: "CHAIN ADMIN" },
-	{ id: 1, first_name: "Зохир", last_name: "Сабитов", login: "zoxir_admin1", role: "CHAIN ADMIN" },
-	{ id: 2, first_name: "Зохир", last_name: "Сабитов", login: "zoxir_admin2", role: "CHAIN ADMIN" },
-	{ id: 3, first_name: "Зохир", last_name: "Сабитов", login: "zoxir_admin3", role: "CHAIN ADMIN" },
-];
+	watch: {
+		getBranchAdmins: {
+			deep: true,
+			handler(newValue) {
+				if (newValue) {
+					this.admins = newValue.items;
+					this.paginationOptions.count = newValue.total;
+					this.setAdminsTable();
+				}
+			},
+		},
+	},
+};
 </script>

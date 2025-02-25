@@ -69,7 +69,6 @@ const logoutModalOpen = ref(false);
 
 onMounted(async () => {
 	await fetchProfile();
-	console.log(profile.value);
 });
 
 const toggleDropdown = () => {

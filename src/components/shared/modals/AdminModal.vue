@@ -12,12 +12,12 @@
 					<div class="form__field">
 						<label for="admin-name" class="form__label">Имя:</label>
 						<input
-							v-model="admin.first_name"
+							v-model="admin.name"
 							type="text"
 							class="form__input"
 							placeholder="Введите имя"
 							id="admin-name"
-							:class="{ error: v$.admin.first_name.$errors.length }"
+							:class="{ error: v$.admin.name.$errors.length }"
 						/>
 					</div>
 
@@ -55,7 +55,7 @@
 								id="loginpage-password"
 								placeholder="Пароль"
 								:class="{ error: v$.admin.password.$errors.length }"
-								@input="v$.formData.password.$reset()"
+								@input="v$.admin.password.$reset()"
 							/>
 
 							<span @click="passwordVisible = !passwordVisible">
@@ -85,7 +85,10 @@ import { required, requiredIf, minLength } from "@vuelidate/validators";
 export default {
 	emits: ["create", "update", "close"],
 	props: {
-		title: String,
+		type: {
+			type: String,
+			required: true,
+		},
 		initialData: {
 			type: Object || null,
 			default: null,
@@ -101,7 +104,7 @@ export default {
 	validations() {
 		return {
 			admin: {
-				first_name: { required },
+				name: { required },
 				last_name: { required },
 				login: { required },
 				password: {
@@ -119,7 +122,7 @@ export default {
 			loading: false,
 			passwordVisible: false,
 			admin: {
-				first_name: "",
+				name: "",
 				last_name: "",
 				login: "",
 				password: "",
@@ -128,6 +131,14 @@ export default {
 	},
 
 	computed: {
+		title() {
+			if (this.title === "chain") {
+				return this.initialData ? "Редактирование админа сети" : "Создание админа сети";
+			} else if (this.title === "branch") {
+				return this.initialData ? "Редактирование админа филиала" : "Создание админа филиала";
+			}
+		},
+
 		submitText() {
 			return this.initialData ? "Сохранить" : "Создать";
 		},
@@ -139,6 +150,7 @@ export default {
 
 			if (result) {
 				if (this.initialData) {
+					delete this.admin.password;
 					this.$emit("update", this.admin);
 				} else {
 					this.$emit("create", this.admin);
@@ -149,7 +161,8 @@ export default {
 
 	mounted() {
 		if (this.initialData) {
-			this.admin.first_name = this.initialData.first_name;
+			this.admin.id = this.initialData.id;
+			this.admin.name = this.initialData.name;
 			this.admin.last_name = this.initialData.last_name;
 			this.admin.login = this.initialData.login;
 		}

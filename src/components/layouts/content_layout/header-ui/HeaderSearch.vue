@@ -27,6 +27,11 @@ export default {
 			"fetchUsers",
 			"fetchChains",
 			"fetchBranches",
+			"fetchCategories",
+			"fetchAdditives",
+			"fetchChainAdmins",
+			"fetchBranchAdmins",
+			"fetchProducts",
 			"fetchUserOrders",
 			"fetchTransactions",
 		]),
@@ -56,21 +61,39 @@ export default {
 						paginate: { page, limit },
 					});
 					break;
-				case "restaurants":
-					await this.fetchChains({
-						searchField: "name",
-						search,
-					});
+				case "chains":
+					await this.fetchChains({ search });
 					break;
-				case "restaurants-chain":
-					const chainId = this.$route.params.chain_id;
+				case "chain":
+					const chain_id = this.$route.params.chain_id;
 
-					await this.fetchBranches({
-						id: chainId,
-						params: {
-							search,
-						},
-					});
+					if (chain_id) {
+						switch (this.$route.query.tab) {
+							case "branches":
+								await this.fetchBranches({ chain_id, filters: { search } });
+								break;
+							case "categories":
+								await this.fetchCategories({ chain_id, filters: { search } });
+								break;
+							case "additives":
+								await this.fetchAdditives({ chain_id, filters: { search } });
+								break;
+							case "admins":
+								await this.fetchChainAdmins({ chain_id, filters: { search } });
+								break;
+							case "menu":
+								await this.fetchProducts({ chain_id, filters: { search } });
+								break;
+							default:
+								break;
+						}
+					}
+					break;
+				case "branch":
+					if (this.$route.query.tab === "admins") {
+						const branch_id = this.$route.params.branch_id;
+						await this.fetchBranchAdmins({ branch_id, filters: { search } });
+					}
 					break;
 				case "transactions":
 					await this.fetchTransactions({

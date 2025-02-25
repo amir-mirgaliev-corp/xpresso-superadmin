@@ -10,7 +10,12 @@
 	</div>
 
 	<div v-if="menu.length">
-		<TableLayout :table-options="tableOptions" :pagination-options="paginationOptions">
+		<TableLayout
+			:table-options="tableOptions"
+			:pagination-options="paginationOptions"
+			@update:page="handlePageChange"
+			@action="handleAction"
+		>
 			<template #title>
 				<h2 class="table-title">Список продуктов</h2>
 			</template>
@@ -27,11 +32,9 @@ import CustomButton from "@/components/shared/ui/CustomButton.vue";
 import CustomSelect from "@/components/shared/ui/CustomSelect.vue";
 import TableLayout from "@/components/shared/TableLayout.vue";
 
-import products from "@/api/products";
+import { mapActions, mapGetters } from "vuex";
 
 import formatNumberWithSpaces from "@/utils/formatters/formatNumbers";
-
-const env = import.meta.env;
 
 export default {
 	data() {
@@ -39,7 +42,7 @@ export default {
 			menu: [],
 			tableOptions: {
 				editLink: "/product/edit",
-				thead: ["№", "Картинка", "Название", "ID", "Цена"],
+				thead: ["№", "Картинка", "Название", "Цена"],
 				content: [],
 			},
 			paginationOptions: {
@@ -50,27 +53,63 @@ export default {
 		};
 	},
 
-	methods: {
-		async getMenu() {
-			const chain_id = this.$route.params.chain_id;
-			const response = await products.getChainProducts(chain_id);
-			this.menu = response.menuData;
-			console.log(response);
+	computed: {
+		...mapGetters(["getProducts"]),
+	},
 
+	methods: {
+		...mapActions(["fetchProducts"]),
+
+		async loadMenu() {
+			const chain_id = this.$route.params.chain_id;
+
+			// pagination
+			const { page, limit } = this.paginationOptions;
+			const filters = { page, limit };
+
+			await this.fetchProducts({ chain_id, filters });
+
+			this.setProductsTable();
+		},
+
+		setProductsTable() {
 			this.tableOptions.content = this.menu.map((product, i) => {
 				return {
 					index: i + 1,
-					avatar: env.VITE_APP_STATIC_URL + product.photo,
-					name: product.name.ru,
-					id: product.id,
+					avatar: product.img,
+					name: product.name_ru,
 					price: formatNumberWithSpaces(product.price) + " сум",
+					id: product.id,
 				};
 			});
+		},
+
+		handlePageChange(newPage) {
+			this.paginationOptions.page = newPage;
 		},
 	},
 
 	mounted() {
-		this.getMenu();
+		this.loadMenu();
+	},
+
+	watch: {
+		getProducts: {
+			deep: true,
+			handler(newValue) {
+				if (newValue) {
+					this.menu = newValue.items;
+					this.paginationOptions.count = newValue.total;
+					this.setProductsTable();
+				}
+			},
+		},
+
+		"paginationOptions.page": {
+			handler() {
+				this.loadMenu();
+			},
+		},
 	},
 
 	components: {

@@ -6,7 +6,12 @@
 	</div>
 
 	<div v-if="categories.length">
-		<TableLayout :table-options="tableOptions" @action="handleAction">
+		<TableLayout
+			:table-options="tableOptions"
+			:pagination-options="paginationOptions"
+			@update:page="handlePageChange"
+			@action="handleAction"
+		>
 			<template #title>
 				<h2 class="table-title">Список категорий</h2>
 			</template>
@@ -35,12 +40,19 @@ import DangerModal from "@/components/shared/modals/DangerModal.vue";
 
 import categories from "@/api/categories";
 
+import { mapActions, mapGetters } from "vuex";
+
 export default {
 	data: () => ({
 		categoryModalOpen: false,
 		deleteModalOpen: false,
 		categoryUnderAction: null,
 		categories: [],
+		paginationOptions: {
+			page: 1,
+			limit: 10,
+			count: 0,
+		},
 		tableOptions: {
 			thead: ["№", "Название на русском", "Название на узб.", "Название на англ.", "Действия"],
 			content: [],
@@ -58,18 +70,35 @@ export default {
 		DangerModal,
 	},
 
+	computed: {
+		...mapGetters(["getCategories"]),
+	},
+
 	methods: {
+		...mapActions(["fetchCategories"]),
+
 		async loadCategories() {
-			const chaid_id = this.$route.params.chain_id;
+			const chain_id = this.$route.params.chain_id;
 
-			const response = await categories.getCategories(chaid_id);
+			// pagination
+			const { page, limit } = this.paginationOptions;
+			const filters = { page, limit };
 
-			if (response && response.length) {
-				this.categories = response;
-			} else {
-				this.categories = [];
+			await this.fetchCategories({ chain_id, filters });
+
+			this.setCategoriesTable();
+		},
+
+		async deleteCategory(id) {
+			const response_status = await categories.deleteCategory(id);
+
+			if (response_status === 204) {
+				this.loadCategories();
+				this.closeDeleteModal();
 			}
+		},
 
+		setCategoriesTable() {
 			this.tableOptions.content = this.categories.map((category, i) => {
 				return {
 					index: i + 1,
@@ -82,13 +111,8 @@ export default {
 			});
 		},
 
-		async deleteCategory(id) {
-			const response_status = await categories.deleteCategory(id);
-
-			if (response_status === 204) {
-				this.loadCategories();
-				this.closeDeleteModal();
-			}
+		handlePageChange(newPage) {
+			this.paginationOptions.page = newPage;
 		},
 
 		handleAction(data) {
@@ -114,6 +138,25 @@ export default {
 
 	mounted() {
 		this.loadCategories();
+	},
+
+	watch: {
+		getCategories: {
+			deep: true,
+			handler(newValue) {
+				if (newValue) {
+					this.categories = newValue.items;
+					this.paginationOptions.count = newValue.total;
+					this.setCategoriesTable();
+				}
+			},
+		},
+
+		"paginationOptions.page": {
+			handler() {
+				this.loadCategories();
+			},
+		},
 	},
 };
 </script>

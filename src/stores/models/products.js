@@ -1,40 +1,40 @@
 import products from "@/api/products";
 
 export default {
-    state: {
-        products: [],
-        product: {}
-    },
+	state: {
+		products: [],
+		product: {},
+	},
 
-    actions: {
-        async fetchBranchProducts(context, id) {
-            const resProducts = await products.getBranchProducts(id);
-            context.commit('setProducts', resProducts);
-        },
+	actions: {
+		async fetchProducts(context, data) {
+			const resProducts = await products.getChainProducts(data.chain_id, data.filters);
+			context.commit("setProducts", resProducts);
+		},
 
-        async fetchOneProductById(context, id) {
-            const resProduct = await products.getOneProduct(id);
-            context.commit('setOneProduct', resProduct);
-        }
-    },
+		async fetchOneProductById(context, id) {
+			const resProduct = await products.getOneProduct(id);
+			context.commit("setOneProduct", resProduct);
+		},
+	},
 
-    mutations: {
-        setProducts(state, products) {
-            state.products = products;
-        },
+	mutations: {
+		setProducts(state, products) {
+			state.products = products;
+		},
 
-        setOneProduct(state, product) {
-            state.product = product;
-        }
-    },
+		setOneProduct(state, product) {
+			state.product = product;
+		},
+	},
 
-    getters: {
-        getBranchProducts(state) {
-            return state.products;
-        },
+	getters: {
+		getProducts(state) {
+			return state.products;
+		},
 
-        getOneProduct(state) {
-            return state.product;
-        }
-    }
+		getOneProduct(state) {
+			return state.product;
+		},
+	},
 };

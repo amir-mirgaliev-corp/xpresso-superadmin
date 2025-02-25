@@ -6,7 +6,12 @@
 	</div>
 
 	<div v-if="additives.length">
-		<TableLayout :table-options="tableOptions" @action="handleAction">
+		<TableLayout
+			:table-options="tableOptions"
+			:pagination-options="paginationOptions"
+			@update:page="handlePageChange"
+			@action="handleAction"
+		>
 			<template #title>
 				<h2 class="table-title">Список добавок</h2>
 			</template>
@@ -35,6 +40,8 @@ import DangerModal from "@/components/shared/modals/DangerModal.vue";
 
 import additives from "@/api/additives";
 
+import { mapActions, mapGetters } from "vuex";
+
 import formatNumberWithSpaces from "@/utils/formatters/formatNumbers";
 
 export default {
@@ -43,6 +50,11 @@ export default {
 		deleteModalOpen: false,
 		additiveUnderAction: null,
 		additives: [],
+		paginationOptions: {
+			page: 1,
+			limit: 10,
+			count: 0,
+		},
 		tableOptions: {
 			thead: ["№", "Название на русском", "Название на узб.", "Название на англ.", "Цена", "Действия"],
 			content: [],
@@ -60,18 +72,35 @@ export default {
 		DangerModal,
 	},
 
+	computed: {
+		...mapGetters(["getAdditives"]),
+	},
+
 	methods: {
+		...mapActions(["fetchAdditives"]),
+
 		async loadAdditives() {
-			const chaid_id = this.$route.params.chain_id;
+			const chain_id = this.$route.params.chain_id;
 
-			const response = await additives.getAdditives(chaid_id);
+			// pagination
+			const { page, limit } = this.paginationOptions;
+			const filters = { page, limit };
 
-			if (response && response.length) {
-				this.additives = response;
-			} else {
-				this.additives = [];
+			await this.fetchAdditives({ chain_id, filters });
+
+			this.setAdditivesTable();
+		},
+
+		async deleteAdditive(id) {
+			const response_status = await additives.deleteAdditive(id);
+
+			if (response_status === 204) {
+				this.loadAdditives();
+				this.closeDeleteModal();
 			}
+		},
 
+		setAdditivesTable() {
 			this.tableOptions.content = this.additives.map((additive, i) => {
 				return {
 					index: i + 1,
@@ -85,15 +114,6 @@ export default {
 			});
 		},
 
-		async deleteAdditive(id) {
-			const response_status = await additives.deleteAdditive(id);
-
-			if (response_status === 204) {
-				this.loadAdditives();
-				this.closeDeleteModal();
-			}
-		},
-
 		handleAction(data) {
 			this.additiveUnderAction = this.additives.find(add => add.id === add.id);
 
@@ -102,6 +122,10 @@ export default {
 			} else if (data.action === "delete") {
 				this.deleteModalOpen = true;
 			}
+		},
+
+		handlePageChange(newPage) {
+			this.paginationOptions.page = newPage;
 		},
 
 		closeAdditiveModal() {
@@ -117,6 +141,25 @@ export default {
 
 	mounted() {
 		this.loadAdditives();
+	},
+
+	watch: {
+		getAdditives: {
+			deep: true,
+			handler(newValue) {
+				if (newValue) {
+					this.additives = newValue.items;
+					this.paginationOptions.count = newValue.total;
+					this.setAdditivesTable();
+				}
+			},
+		},
+
+		"paginationOptions.page": {
+			handler() {
+				this.loadCategories();
+			},
+		},
 	},
 };
 </script>

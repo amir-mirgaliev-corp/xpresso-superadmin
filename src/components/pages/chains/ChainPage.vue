@@ -9,6 +9,8 @@
 			<Tab name="branches" title="Филиалы"><ChainBranches /></Tab>
 			<Tab name="categories" title="Категории"><ChainCategories /></Tab>
 			<Tab name="additives" title="Добавки"><ChainAdditives /></Tab>
+			<Tab name="admins" title="Админы"><ChainAdmins /></Tab>
+			<Tab name="menu" title="Меню"><ChainMenu /></Tab>
 		</Tabs>
 	</div>
 </template>

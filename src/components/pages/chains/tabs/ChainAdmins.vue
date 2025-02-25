@@ -6,7 +6,12 @@
 	</div>
 
 	<div v-if="admins.length">
-		<TableLayout :table-options="tableOptions" @action="handleAction">
+		<TableLayout
+			:table-options="tableOptions"
+			:pagination-options="paginationOptions"
+			@update:page="handlePageChange"
+			@action="handleAction"
+		>
 			<template #title>
 				<h2 class="table-title">Список администраторов сети</h2>
 			</template>
@@ -19,7 +24,7 @@
 
 	<AdminModal
 		v-if="adminModalOpen"
-		:title="adminUnderAction ? 'Редактирование админа сети' : 'Создание админа сети'"
+		type="chain"
 		:initial-data="adminUnderAction"
 		@create="createChainAdmin"
 		@update="updateChainAdmin"
@@ -28,11 +33,7 @@
 
 	<DangerModal v-if="deleteModalOpen" @confirm="deleteChainAdmin(adminUnderAction.id)" @close="closeDangerModal" />
 
-	<NewPasswordModal
-		v-if="changePasswordModalOpen"
-		@submit="handlePasswordChange"
-		@close="changePasswordModalOpen = false"
-	/>
+	<NewPasswordModal v-if="changePasswordModalOpen" @submit="changePassword" @close="closePasswordModal" />
 </template>
 
 <script>
@@ -42,13 +43,28 @@ import DangerModal from "@/components/shared/modals/DangerModal.vue";
 import AdminModal from "@/components/shared/modals/AdminModal.vue";
 import NewPasswordModal from "@/components/shared/modals/NewPasswordModal.vue";
 
+import { useToast } from "vue-toastification";
+import { mapActions, mapGetters } from "vuex";
+import admins from "@/api/admins";
+
 export default {
+	setup() {
+		return {
+			toast: useToast(),
+		};
+	},
+
 	data: () => ({
-		admins,
+		admins: [],
 		adminModalOpen: false,
 		deleteModalOpen: false,
 		changePasswordModalOpen: false,
 		adminUnderAction: null,
+		paginationOptions: {
+			page: 1,
+			limit: 10,
+			count: 0,
+		},
 		tableOptions: {
 			thead: ["№", "Имя администратора", "Логин", "Роль", "Действия"],
 			content: [],
@@ -68,12 +84,30 @@ export default {
 		NewPasswordModal,
 	},
 
+	computed: {
+		...mapGetters(["getChainAdmins"]),
+	},
+
 	methods: {
-		loadAdmins() {
+		...mapActions(["fetchChainAdmins"]),
+
+		async loadAdmins() {
+			const chain_id = this.$route.params.chain_id;
+
+			// pagination
+			const { page, limit } = this.paginationOptions;
+			const filters = { page, limit };
+
+			await this.fetchChainAdmins({ chain_id, filters });
+
+			this.setAdminsTable();
+		},
+
+		setAdminsTable() {
 			this.tableOptions.content = this.admins.map((admin, i) => {
 				return {
 					index: i + 1,
-					name: `${admin.first_name} ${admin.last_name}`,
+					name: `${admin.name} ${admin.last_name}`,
 					login: admin.login,
 					role: "Админ. сети",
 					actions: true,
@@ -84,8 +118,6 @@ export default {
 
 		handleAction(data) {
 			this.adminUnderAction = this.admins.find(admin => admin.id === data.id);
-
-			console.log(this.adminUnderAction);
 
 			switch (data.action) {
 				case "edit":
@@ -102,17 +134,43 @@ export default {
 			}
 		},
 
-		createChainAdmin(data) {
-			console.log("CREATE: ", data);
+		async createChainAdmin(data) {
+			data.chain_id = this.$route.params.chain_id;
+			const response_status = await admins.createChainAdmin(data);
+			if (response_status === 201) this.loadAdmins();
+			this.closeAdminModal();
 		},
 
-		updateChainAdmin(data) {
-			console.log("UPDATE: ", data);
+		async updateChainAdmin(data) {
+			if (
+				this.adminUnderAction.name === data.name &&
+				this.adminUnderAction.last_name === data.last_name &&
+				this.adminUnderAction.login === data.login
+			) {
+				this.toast.info("Нет изменений для обновления");
+				return;
+			} else {
+				const response_status = await admins.updateAdmin(data);
+				if (response_status === 200) this.loadAdmins();
+				this.closeAdminModal();
+			}
 		},
 
-		deleteChainAdmin(id) {},
+		async deleteChainAdmin(id) {
+			const response_status = await admins.deleteAdmin(id);
+			if (response_status === 204) this.loadAdmins();
+			this.closeDangerModal();
+		},
 
-		handlePasswordChange(newPassword) {},
+		async changePassword(newPassword) {
+			const response_status = await admins.updateAdminPassword(this.adminUnderAction.id, newPassword);
+			if (response_status === 200) this.loadAdmins();
+			this.closePasswordModal();
+		},
+
+		handlePageChange(newPage) {
+			this.paginationOptions.page = newPage;
+		},
 
 		closeAdminModal() {
 			this.adminModalOpen = false;
@@ -123,17 +181,28 @@ export default {
 			this.deleteModalOpen = false;
 			this.adminUnderAction = null;
 		},
+
+		closePasswordModal() {
+			this.changePasswordModalOpen = false;
+			this.adminUnderAction = null;
+		},
 	},
 
 	mounted() {
 		this.loadAdmins();
 	},
-};
 
-const admins = [
-	{ id: 0, first_name: "Данил", last_name: "Сабитов", login: "danil_admin", role: "CHAIN ADMIN" },
-	{ id: 1, first_name: "Данил", last_name: "Сабитов", login: "danil_admin1", role: "CHAIN ADMIN" },
-	{ id: 2, first_name: "Данил", last_name: "Сабитов", login: "danil_admin2", role: "CHAIN ADMIN" },
-	{ id: 3, first_name: "Данил", last_name: "Сабитов", login: "danil_admin3", role: "CHAIN ADMIN" },
-];
+	watch: {
+		getChainAdmins: {
+			deep: true,
+			handler(newValue) {
+				if (newValue) {
+					this.admins = newValue.items;
+					this.paginationOptions.count = newValue.total;
+					this.setAdminsTable();
+				}
+			},
+		},
+	},
+};
 </script>

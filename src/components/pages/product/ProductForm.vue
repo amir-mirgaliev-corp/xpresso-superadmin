@@ -1,8 +1,11 @@
 <template>
-	<CustomButton icon="fi-rr-arrow-left" class="mb-8 width-fit" @click="$router.push('/chains')"> Назад </CustomButton>
+	<CustomButton icon="fi-rr-arrow-left" class="mb-8 width-fit" @click="$router.go(-1)"> Назад </CustomButton>
 
-	<div class="product-form bg-white p-[24px] rounded-[12px] border-[1px]">
-		<h2 class="table-title">Новый продукт</h2>
+	<div
+		class="product-form bg-white p-[24px] rounded-[12px] border-[1px]"
+		:class="{ 'pointer-events-none': !editEnabled }"
+	>
+		<h2 class="table-title">{{ title }}</h2>
 
 		<form class="form" @submit.prevent="submitForm">
 			<div class="flex items-start gap-8 w-full">
@@ -55,20 +58,20 @@
 								name="product-name-la"
 								id="product-name-la"
 								placeholder="Kapuchino"
-								v-model="product.name_la"
-								:class="{ error: v$.product.name_la.$error }"
+								v-model="product.name_uz"
+								:class="{ error: v$.product.name_uz.$error }"
 							/>
 						</div>
 
 						<div class="form__field">
 							<label for="product-description-la" class="form__label">Описание на узбекском</label>
 							<textarea
-								v-model="product.description_la"
+								v-model="product.description_uz"
 								class="form__input"
 								name="product-description-la"
 								id="product-description-la"
 								placeholder="Mahsulot tavsifini kiriting"
-								:class="{ error: v$.product.description_la.$error }"
+								:class="{ error: v$.product.description_uz.$error }"
 							/>
 						</div>
 
@@ -102,15 +105,24 @@
 						<div class="form__field">
 							<label for="product-category" class="form__label">Категория продукта</label>
 							<CustomSelect
-								v-model="product.category"
+								v-model="selectedCategory"
 								selectClass="h-[52px]"
 								:options="categories"
 								:disabled="!editEnabled"
-								:showError="v$.product.category.$error"
+								:showError="v$.product.category_id.$error"
 							/>
 						</div>
 
-						<!-- <Modifiers /> -->
+						<div class="form__field">
+							<label for="product-type" class="form__label">Тип продукта</label>
+							<CustomSelect
+								v-model="selectedDrinkType"
+								selectClass="h-[52px]"
+								:options="drink_types"
+								:disabled="!editEnabled"
+								:showError="v$.product.drink_type.$error"
+							/>
+						</div>
 
 						<div class="form__field">
 							<label for="product-price" class="form__label">Цена продукта (сум)</label>
@@ -123,6 +135,54 @@
 								v-model="formattedPrice"
 								:class="{ error: v$.product.price.$error }"
 								@input="handleInput"
+							/>
+						</div>
+
+						<div class="form__field">
+							<label for="product-iiko-id" class="form__label">IIKO ID продукта</label>
+							<input
+								type="text"
+								class="form__input"
+								name="product-iiko-id"
+								id="product-iiko-id"
+								placeholder="Введите ID"
+								v-model="product.iiko_product_id"
+								:class="{ error: v$.product.iiko_product_id.$error }"
+							/>
+						</div>
+
+						<div class="form__field">
+							<div class="flex gap-4 items-center mb-4">
+								<label class="form__label !mb-0">Модификаторы</label>
+								<Switcher
+									v-if="!product.product_modificators.length"
+									v-model="noModifiers"
+									label="Без модификаторов"
+								/>
+							</div>
+
+							<ProductModifiers
+								v-if="!noModifiers"
+								v-model="product.product_modificators"
+								:editEnabled="editEnabled"
+							/>
+						</div>
+
+						<div class="form__field">
+							<div class="flex gap-4 items-center mb-4">
+								<label class="form__label !mb-0">Добавки</label>
+								<Switcher
+									v-if="!product.product_additives.length"
+									v-model="noAdditives"
+									label="Без добавок"
+								/>
+							</div>
+
+							<ProductAdditives
+								v-if="!noAdditives"
+								v-model="product.product_additives"
+								:chain_id="product?.chain_id"
+								:editEnabled="editEnabled"
 							/>
 						</div>
 					</div>
@@ -145,25 +205,30 @@
 </template>
 
 <script>
-import { useVuelidate } from "@vuelidate/core";
-import { required, requiredIf } from "@vuelidate/validators";
 import ImageUploader from "@/components/shared/ui/ImageUploader.vue";
-import Modifiers from "./Modifiers.vue";
+import ProductModifiers from "./ProductModifiers.vue";
+import ProductAdditives from "./ProductAdditives.vue";
 import CustomButton from "@/components/shared/ui/CustomButton.vue";
 import CustomSelect from "@/components/shared/ui/CustomSelect.vue";
+import Switcher from "@/components/shared/ui/Switcher.vue";
 
-import { mapGetters } from "vuex";
+import { useToast } from "vue-toastification";
+import { useVuelidate } from "@vuelidate/core";
+import { required, requiredIf } from "@vuelidate/validators";
+import { toRaw } from "vue";
+
 import formatNumberWithSpaces from "@/utils/formatters/formatNumbers";
 
 import products from "@/api/products";
 import categories from "@/api/categories";
 
 export default {
-	emits: ["cancelEdit"],
+	emits: ["cancel-edit", "update"],
 
 	setup() {
 		return {
 			v$: useVuelidate(),
+			toast: useToast(),
 		};
 	},
 
@@ -173,46 +238,76 @@ export default {
 	},
 
 	computed: {
-		...mapGetters(["getProfile"]),
+		title() {
+			return this.initialProductData ? "Редактирование продукта" : "Новый продукт";
+		},
 
 		formattedPrice() {
 			return formatNumberWithSpaces(this.product.price);
 		},
+
+		selectedCategory: {
+			get() {
+				return this.categories.find(cat => cat.category_id === this.product.category_id) || null;
+			},
+			set(value) {
+				this.product.category_id = value ? value.category_id : null;
+			},
+		},
+
+		selectedDrinkType: {
+			get() {
+				return this.drink_types.find(type => type.name === this.product.drink_type) || null;
+			},
+			set(value) {
+				this.product.drink_type = value ? value.name : null;
+			},
+		},
 	},
 
 	data: () => ({
+		drink_types,
 		loading: false,
 		photoPreview: null,
 		categories: [],
+		noModifiers: false,
+		noAdditives: false,
 		product: {
-			category: null,
+			photo: null,
 			name_ru: "",
-			name_la: "",
+			name_uz: "",
 			name_en: "",
 			description_ru: "",
-			description_la: "",
+			description_uz: "",
 			description_en: "",
-			photo: null,
 			price: "",
+			ikpu_code: "",
+			category_id: "",
+			drink_type: "",
+			iiko_product_id: "",
+			product_modificators: [],
+			product_additives: [],
 		},
 	}),
 
 	validations() {
 		return {
 			product: {
-				name_ru: { required },
-				name_la: { required },
-				name_en: { required },
-				description_ru: { required },
-				description_la: { required },
-				description_en: { required },
 				photo: {
 					required: requiredIf(() => {
 						return !this.initialProductData;
 					}),
 				},
+				name_ru: { required },
+				name_uz: { required },
+				name_en: { required },
+				description_ru: { required },
+				description_uz: { required },
+				description_en: { required },
 				price: { required },
-				category: { required },
+				category_id: { required },
+				drink_type: { required },
+				iiko_product_id: { required },
 			},
 		};
 	},
@@ -222,67 +317,68 @@ export default {
 			const chain_id = this.$route.params.chain_id;
 			const fd = new FormData();
 
-			fd.append("chain_id", chain_id);
-			fd.append("category_id", this.product.category.category_id);
-			fd.append("name_la", this.product.name_la);
-			fd.append("name_ru", this.product.name_ru);
-			fd.append("name_en", this.product.name_en);
-			fd.append("description_la", this.product.description_la);
-			fd.append("description_ru", this.product.description_ru);
-			fd.append("description_en", this.product.description_en);
-			fd.append("photo", this.product.photo);
-			fd.append("price", this.product.price);
+			const { photo, ...dataWithoutPhoto } = this.product;
+			dataWithoutPhoto.chain_id = chain_id;
+			fd.append("data", JSON.stringify(dataWithoutPhoto));
+			fd.append("img", photo);
 
-			// static
-			fd.append("ml", 300);
-			fd.append("min_time", 1);
-			fd.append("max_time", 2);
-			fd.append("user_id", this.getProfile.admin.id);
+			this.loading = true;
+			const response_status = await products.createProduct(fd);
+			this.loading = false;
 
-			try {
-				this.loading = true;
-				const status = await products.createProduct(fd);
-				if (status === 200) this.$router.push(`/chain/${chain_id}?tab=menu`);
-			} catch (err) {
-				console.log("Error creating product: ", err);
-			} finally {
-				this.loading = false;
+			if (response_status === 201) {
+				setTimeout(() => {
+					this.$router.push(`/chain/${chain_id}?tab=menu`);
+				}, 1000);
 			}
 		},
 
 		async updateProduct() {
-			const chain_id = this.initialProductData.chainId;
 			const product_id = this.$route.params.product_id;
 			const fd = new FormData();
+			const updatedFields = {};
 
-			console.log(chain_id);
+			Object.keys(this.product).forEach(key => {
+				if (key !== "photo") {
+					const currentValue = this.product[key];
+					const initialValue = this.initialProductData[key];
 
-			fd.append("chain_id", chain_id);
-			fd.append("category_id", this.product.category.category_id);
-			fd.append("name_la", this.product.name_la);
-			fd.append("name_ru", this.product.name_ru);
-			fd.append("name_en", this.product.name_en);
-			fd.append("description_la", this.product.description_la);
-			fd.append("description_ru", this.product.description_ru);
-			fd.append("description_en", this.product.description_en);
-			fd.append("price", this.product.price);
+					const isObject = typeof currentValue === "object" && currentValue !== null;
 
-			if (this.product.photo) fd.append("photo", this.product.photo);
+					if (!isObject && currentValue !== initialValue) {
+						updatedFields[key] = currentValue;
+					} else if (isObject && JSON.stringify(currentValue) !== JSON.stringify(initialValue)) {
+						updatedFields[key] = currentValue;
+					}
+				}
+			});
 
-			// static
-			fd.append("ml", 300);
-			fd.append("min_time", 1);
-			fd.append("max_time", 2);
-			fd.append("user_id", this.getProfile.admin.id);
+			if (Object.keys(updatedFields).length > 0) {
+				if (updatedFields?.product_modificators) {
+					updatedFields.product_modificators.forEach(category => {
+						category.data.forEach(modificator => delete modificator.id);
+					});
+				}
 
-			try {
-				this.loading = true;
-				const status = await products.updateProduct(product_id, fd);
-				if (status === 200) location.reload();
-			} catch (err) {
-				console.log("Error creating product: ", err);
-			} finally {
-				this.loading = false;
+				fd.append("data", JSON.stringify(updatedFields));
+			}
+
+			if (this.product.photo) {
+				fd.append("img", this.product.photo);
+			}
+
+			if (!fd.has("data") && !fd.has("img")) {
+				this.toast.info("Нет изменений для обновления");
+				return;
+			}
+
+			this.loading = true;
+			const status = await products.updateProduct(product_id, fd);
+			this.loading = false;
+
+			if (status === 200) {
+				this.$emit("update");
+				this.$emit("cancel-edit");
 			}
 		},
 
@@ -295,34 +391,43 @@ export default {
 		},
 
 		async getChainCategories() {
-			const chain_id = this.initialProductData ? this.initialProductData.chainId : this.$route.params.chain_id;
-			const response = await categories.getCategories(chain_id);
+			const chain_id = this.initialProductData ? this.initialProductData.chain_id : this.$route.params.chain_id;
+			const response = await categories.getCategories(chain_id, { page: 1, limit: 99 });
 
-			this.categories = response.map(category => {
-				return {
-					category_id: category.id,
-					name: category.name.ru,
-					title: category.name.ru,
-				};
-			});
+			if (response === 404) {
+				this.$router.push(`/chain/${chain_id}?tab=categories`);
+				this.toast.info("Сначала создайте категории");
+			}
+
+			if (response.items && response.items.length) {
+				this.categories = response.items.map(category => {
+					return {
+						category_id: category.id,
+						name: category.name_ru,
+						title: category.name_ru,
+					};
+				});
+			}
 		},
 
 		setProductData() {
-			console.log(this.initialProductData);
-
-			this.photoPreview = import.meta.env.VITE_APP_STATIC_URL + this.initialProductData.photo;
+			this.photoPreview = this.initialProductData.img;
 
 			this.product = {
-				category: this.categories.find(
-					category => +category.category_id === +this.initialProductData.categoryId,
-				),
-				name_ru: this.initialProductData.name.ru,
-				name_la: this.initialProductData.name.uz,
-				name_en: this.initialProductData.name.en,
-				description_ru: this.initialProductData.description.ru,
-				description_la: this.initialProductData.description.uz,
-				description_en: this.initialProductData.description.en,
 				photo: null,
+				chain_id: this.initialProductData.chain_id,
+				category_id: this.initialProductData.category_id,
+				drink_type: this.initialProductData.drink_type,
+				name_ru: this.initialProductData.name_ru,
+				name_uz: this.initialProductData.name_uz,
+				name_en: this.initialProductData.name_en,
+				description_ru: this.initialProductData.description_ru,
+				description_uz: this.initialProductData.description_uz,
+				description_en: this.initialProductData.description_en,
+				ikpu_code: this.initialProductData.ikpu_code,
+				iiko_product_id: this.initialProductData.iiko_product_id,
+				product_modificators: structuredClone(toRaw(this.initialProductData.product_modificators)),
+				product_additives: structuredClone(toRaw(this.initialProductData.product_additives)),
 				price: this.initialProductData.price,
 			};
 		},
@@ -330,12 +435,12 @@ export default {
 		handleInput(event) {
 			let value = event.target.value.replace(/\D/g, "");
 			value = value.replace(/^0+(?=\d)/, "");
-			this.product.price = value;
+			this.product.price = +value;
 		},
 
 		cancelEdit() {
 			this.setProductData();
-			this.$emit("cancelEdit");
+			this.$emit("cancel-edit");
 		},
 	},
 
@@ -344,13 +449,46 @@ export default {
 		if (this.initialProductData) this.setProductData();
 	},
 
+	watch: {
+		initialProductData: {
+			deep: true,
+			handler(newValue) {
+				if (newValue) this.setProductData();
+			},
+		},
+
+		noModifiers(newVal) {
+			if (newVal === false) this.product.product_modificators = [];
+		},
+
+		noAdditives(newVal) {
+			if (newVal === false) this.product.product_additives = [];
+		},
+	},
+
 	components: {
 		ImageUploader,
-		Modifiers,
+		ProductModifiers,
+		ProductAdditives,
 		CustomButton,
 		CustomSelect,
+		Switcher,
 	},
 };
+
+const drink_types = [
+	{ name: "espresso", title: "Эспрессо" },
+	{ name: "cappuccino", title: "Капучино" },
+	{ name: "latte", title: "Латте" },
+	{ name: "americano", title: "Американо" },
+	{ name: "mocha", title: "Моккачино" },
+	{ name: "macchiato", title: "Макиато" },
+	{ name: "flat_white", title: "Флэт уайт" },
+	{ name: "ristretto", title: "Ристретто" },
+	{ name: "cold_brew", title: "Колд брю" },
+	{ name: "raf", title: "Раф" },
+	{ name: "bubble_tea", title: "Баббл-ти" },
+];
 </script>
 
 <style lang="scss" scoped>

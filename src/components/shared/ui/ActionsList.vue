@@ -1,6 +1,6 @@
 <template>
 	<div class="actions-list" ref="target">
-		<button class="actions-list__button bg-neutral-200" @click.stop="toggleMenu">
+		<button class="actions-list__button bg-neutral-200" type="button" @click.stop="toggleMenu">
 			<i class="fi fi-bs-menu-dots"></i>
 		</button>
 
