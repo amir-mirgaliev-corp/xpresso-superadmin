@@ -10,7 +10,12 @@
 	</div>
 
 	<div v-if="branches.length">
-		<TableLayout :table-options="tableOptions" :pagination-options="paginationOptions">
+		<TableLayout
+			:table-options="tableOptions"
+			:pagination-options="paginationOptions"
+			@update:page="handlePageChange"
+			@action="handleAction"
+		>
 			<template #title>
 				<h2 class="table-title">Список филиалов</h2>
 			</template>
@@ -27,6 +32,8 @@ import TableLayout from "@/components/shared/TableLayout.vue";
 import CustomButton from "@/components/shared/ui/CustomButton.vue";
 
 import { mapActions, mapGetters } from "vuex";
+
+import defaultAvatar from "@/assets/images/coffee_avatar.svg";
 
 export default {
 	data: () => ({
@@ -58,19 +65,29 @@ export default {
 		async loadBranches() {
 			const chain_id = this.$route.params.chain_id;
 
-			await this.fetchBranches({ chain_id });
-			console.log(this.getBranches);
-			this.branches = this.getBranches || [];
+			// pagination
+			const { page, limit } = this.paginationOptions;
+			const filters = { page, limit };
 
+			await this.fetchBranches({ chain_id, filters });
+
+			this.setBranchesTable();
+		},
+
+		setBranchesTable() {
 			this.tableOptions.content = this.branches.map((branch, i) => {
 				return {
 					index: i + 1,
-					avatar: branch.chain_logo || "/src/assets/images/coffee_avatar.svg",
+					avatar: branch.chain_logo || defaultAvatar,
 					name: branch.full_name,
 					phone: branch.phone_number,
 					id: branch.id,
 				};
 			});
+		},
+
+		handlePageChange(newPage) {
+			this.paginationOptions.page = newPage;
 		},
 	},
 
@@ -82,7 +99,17 @@ export default {
 		getBranches: {
 			deep: true,
 			handler(newValue) {
-				if (newValue) this.branches = newValue;
+				if (newValue) {
+					this.branches = newValue.items;
+					this.paginationOptions.count = newValue.total;
+					this.setBranchesTable();
+				}
+			},
+		},
+
+		"paginationOptions.page": {
+			handler() {
+				this.loadBranches();
 			},
 		},
 	},

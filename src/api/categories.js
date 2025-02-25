@@ -5,12 +5,19 @@ import { useToast } from "vue-toastification";
 const toast = useToast();
 
 export default {
-	async getCategories(chain_id) {
+	async getCategories(chain_id, filters) {
 		try {
-			const response = await api.get(`/superuser/categories/by_chain/${chain_id}`);
+			const params = {
+				name: filters?.search,
+				page: filters?.page || 1,
+				size: filters?.limit || 10,
+			};
+
+			const response = await api.get(`/categories/by_chain/${chain_id}`, { params });
 			return response.data;
 		} catch (error) {
 			console.log(error);
+			return error.status;
 		}
 	},
 

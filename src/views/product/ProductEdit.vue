@@ -1,6 +1,12 @@
 <template>
 	<section class="product-edit">
-		<ProductForm v-if="product" :initial-product-data="product" :edit-enabled="editEnabled" />
+		<ProductForm
+			v-if="product"
+			:initial-product-data="product"
+			:edit-enabled="editEnabled"
+			@update="getProduct"
+			@cancel-edit="editEnabled = false"
+		/>
 
 		<div v-if="!editEnabled" class="flex justify-end gap-4 mt-4">
 			<CustomButton icon="fi-rr-file-edit" class="h-12 width-fit purple" @click="toggleEdit">
@@ -40,7 +46,6 @@ export default {
 			const product_id = this.$route.params.product_id;
 			const response = await products.getOneProduct(product_id);
 			this.product = response;
-			console.log(this.product);
 		},
 
 		toggleEdit() {
@@ -53,11 +58,10 @@ export default {
 
 		async deleteProduct() {
 			const product_id = this.$route.params.product_id;
-			const chain_id = this.product.chainId;
-			const response_status = await products.deleteProduct(product_id, chain_id);
-			if (response_status === 200) {
-				this.$router.push(`/chain/${this.product.chainId}?tab=menu`);
-				location.reload();
+			const response_status = await products.deleteProduct(product_id);
+
+			if (response_status === 204) {
+				this.$router.push(`/chain/${this.product.chain_id}?tab=menu`);
 			}
 		},
 	},

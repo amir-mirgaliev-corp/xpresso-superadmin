@@ -19,6 +19,8 @@ import { mapActions, mapGetters } from "vuex";
 
 const env = import.meta.env;
 
+import defaultAvatar from "@/assets/images/default_avatar.svg";
+
 export default {
 	data: () => ({
 		paginationOptions: {
@@ -65,9 +67,7 @@ export default {
 
 				return {
 					index: (this.paginationOptions.page - 1) * this.paginationOptions.limit + index + 1,
-					avatar: user.userAvatar
-						? `${env.VITE_APP_STATIC_URL}${user.userAvatar}`
-						: "/src/assets/images/default_avatar.svg",
+					avatar: user.userAvatar ? `${env.VITE_APP_STATIC_URL}${user.userAvatar}` : defaultAvatar,
 					fullName: `${user.firstName} ${user.lastName}`,
 					phone: user.userPhone || "Не указан",
 					id: user.userId,

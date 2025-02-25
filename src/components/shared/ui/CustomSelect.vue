@@ -267,6 +267,20 @@ onUnmounted(() => {
 		&--hidden {
 			display: none;
 		}
+		&::-webkit-scrollbar {
+			display: block;
+			width: 12px;
+		}
+		&::-webkit-scrollbar-track {
+			opacity: 0;
+		}
+		&::-webkit-scrollbar-thumb {
+			height: 3rem;
+			border: 4px solid rgba(0, 0, 0, 0);
+			background-clip: padding-box;
+			border-radius: 9999px;
+			background-color: #eaecf0;
+		}
 	}
 	&__item {
 		padding: 0.75rem 1rem;

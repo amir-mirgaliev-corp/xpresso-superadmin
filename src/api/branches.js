@@ -4,9 +4,15 @@ import { useToast } from "vue-toastification";
 const toast = useToast();
 
 export default {
-	async getBranchesByChain(id) {
+	async getBranchesByChain(id, filters) {
 		try {
-			const response = await api.get(`/superuser/branches/by_chain/${id}`);
+			const params = {
+				name: filters?.search,
+				page: filters?.page || 1,
+				size: filters?.limit || 10,
+			};
+
+			const response = await api.get(`/superuser/branches/${id}`, { params });
 			return response.data;
 		} catch (error) {
 			console.log(error);

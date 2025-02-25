@@ -39,7 +39,8 @@ export default {
 				"transport",
 				"restaurants",
 				"chains",
-				"restaurants-chain",
+				"chain",
+				"branch",
 				"restaurants-menu",
 				"transactions",
 			];

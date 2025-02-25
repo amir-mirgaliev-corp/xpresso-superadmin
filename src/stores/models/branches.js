@@ -7,8 +7,8 @@ export default {
 	},
 
 	actions: {
-		async fetchBranches(context, { chain_id }) {
-			const resBranches = await branches.getBranchesByChain(chain_id);
+		async fetchBranches(context, data) {
+			const resBranches = await branches.getBranchesByChain(data.chain_id, data.filters);
 			context.commit("setBranches", resBranches);
 		},
 

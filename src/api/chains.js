@@ -5,9 +5,15 @@ import { useToast } from "vue-toastification";
 const toast = useToast();
 
 export default {
-	async getChains() {
+	async getChains(filters) {
 		try {
-			const response = await api.get("/superuser/chains/");
+			const params = {
+				name: filters?.search,
+				page: filters?.page || 1,
+				size: filters?.limit || 10,
+			};
+
+			const response = await api.get("/superuser/chains/", { params });
 			return response.data;
 		} catch (error) {
 			console.log(error);

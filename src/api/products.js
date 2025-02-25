@@ -1,9 +1,19 @@
 import api from "./axios";
 
+import { useToast } from "vue-toastification";
+
+const toast = useToast();
+
 export default {
-	async getChainProducts(chain_id) {
+	async getChainProducts(chain_id, filters) {
 		try {
-			const response = await api.get(`/menu/${chain_id}`);
+			const params = {
+				name: filters?.search,
+				page: filters?.page || 1,
+				size: filters?.limit || 10,
+			};
+
+			const response = await api.get(`/superuser/products/by_chain/${chain_id}`, { params });
 			return response.data;
 		} catch (error) {
 			console.log(error);
@@ -21,27 +31,33 @@ export default {
 
 	async createProduct(data) {
 		try {
-			const newProduct = await api.post("/product", data);
-			return newProduct.status;
+			const response = await api.post("/superuser/product/", data);
+			toast.success("Продукт был успешно создан");
+			return response.status;
 		} catch (error) {
+			toast.error("Ошибка при создании продукта");
 			console.log(error);
 		}
 	},
 
 	async updateProduct(id, data) {
 		try {
-			const updatedProduct = await api.patch(`/product/${id}`, data);
-			return updatedProduct.status;
+			const response = await api.patch(`/superuser/product/${id}`, data);
+			toast.success("Продукт был успешно обновлен");
+			return response.status;
 		} catch (error) {
+			toast.error("Ошибка при обновлении продукта");
 			console.log(error);
 		}
 	},
 
-	async deleteProduct(product_id, chain_id) {
+	async deleteProduct(product_id) {
 		try {
-			const deletedProduct = await api.delete(`/product?id=${product_id}&chain_id=${chain_id}`);
-			return deletedProduct.status;
+			const response = await api.delete(`/superuser/product/${product_id}`);
+			toast.success("Продукт был успешно удален");
+			return response.status;
 		} catch (error) {
+			toast.error("Ошибка при удалении продукта");
 			console.log(error);
 		}
 	},

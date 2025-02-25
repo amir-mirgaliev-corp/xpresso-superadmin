@@ -61,6 +61,7 @@ export default {
 				icon: "fi-rs-marker",
 				path: "/chains",
 				text: "Кофейни",
+				relatedRoutes: ["chains-create", "chain", "branch-create", "branch", "product-create", "product-edit"],
 			},
 			{
 				icon: "fi-rr-shopping-cart",
