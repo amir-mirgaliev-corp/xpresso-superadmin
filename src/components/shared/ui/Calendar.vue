@@ -1,5 +1,5 @@
 <template>
-	<div class="calendar">
+	<div class="calendar max-sm:w-full">
 		<VueDatePicker
 			v-model="date"
 			:model-auto="rangeDisabled ? false : true"

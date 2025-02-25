@@ -1,8 +1,8 @@
 <template>
 	<section
-		class="flex justify-between items-end bg-white gap-[16px] p-[16px_24px] rounded-[12px] border-[1px] w-full"
+		class="flex justify-between items-end bg-white gap-[16px] p-[16px_24px] rounded-[12px] border-[1px] w-full max-sm:flex-col max-sm:items-start"
 	>
-		<div class="flex gap-4 items-end max-lg:flex-col">
+		<div class="flex gap-4 items-end max-lg:flex-col max-sm:w-full max-sm:items-start">
 			<CustomSelect
 				v-for="filter in filters"
 				:key="filter.id"
@@ -10,7 +10,7 @@
 				:options="filter.options"
 				:label="filter.label"
 				:sort="filter?.sort"
-				selectClass="w-[220px] h-[46px]"
+				selectClass="w-[220px] h-[46px] max-sm:w-full"
 			/>
 
 			<CustomButton
@@ -26,18 +26,29 @@
 		<Calendar :initial-date="new Date()" clear-disabled range-disabled />
 	</section>
 
-	<section class="orders__filters flex items-center justify-between mt-4">
-		<div class="orders__filters-tabs">
+	<section class="orders__filters flex items-center justify-between mt-4  max-sm:flex-col max-sm:gap-y-3 max-sm:items-start">
+		<div class="orders__filters-tabs max-sm:w-full">
 			<div class="tabs__header">
-				<div
-					v-for="status in statuses"
-					:key="status.value"
-					class="tabs__header-item"
-					:class="{ active: status.value === activeStatus }"
-					@click="setActiveStatus(status.value)"
-				>
-					{{ status.name }}
-				</div>
+				<template v-if="screenWidth > 1024">
+					<div
+						v-for="status in statuses"
+						:key="status.name"
+						class="tabs__header-item"
+						:class="{ active: status.name === activeStatus }"
+						@click="setActiveStatus(status.name)"
+					>
+						{{ status.title }}
+					</div>
+				</template>
+				<template v-else>
+					<CustomSelect
+						:options="statuses"
+						v-model="activeStatus"
+						selectClass="w-[240px] h-[46px] bg-white max-sm:w-full"
+						placeholder="Выберите статус заказа"
+						queryName="status"
+					/>
+				</template>
 			</div>
 		</div>
 
@@ -75,6 +86,9 @@ export default {
 	computed: {
 		hasAppliedFilters() {
 			return this.$route.query.chain_id || this.$route.query.branch_id;
+		},
+		screenWidth() {
+			return window.screen.width;
 		},
 	},
 
@@ -125,6 +139,7 @@ export default {
 		activeStatus: {
 			immediate: true,
 			handler(newStatus) {
+				console.log(newStatus);
 				this.$router.replace({ query: { ...this.$route.query, status: newStatus } });
 			},
 		},
@@ -155,12 +170,12 @@ export default {
 };
 
 const statuses = [
-	{ name: "Все", value: "all" },
-	{ name: "Новый", value: "received" },
-	{ name: "Отложенные", value: "scheduled" },
-	{ name: "Готовится", value: "processing" },
-	{ name: "Готов к выдаче", value: "pending" },
-	{ name: "Завершен", value: "completed" },
-	{ name: "Отменен", value: "canceled" },
+	{ title: "Все", name: "all" },
+	{ title: "Новый", name: "received" },
+	{ title: "Отложенные", name: "scheduled" },
+	{ title: "Готовится", name: "processing" },
+	{ title: "Готов к выдаче", name: "pending" },
+	{ title: "Завершен", name: "completed" },
+	{ title: "Отменен", name: "canceled" },
 ];
 </script>

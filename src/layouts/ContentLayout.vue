@@ -2,7 +2,7 @@
 	<section class="flex bg-[#F7F7F7] w-full h-full">
 		<Sidebar />
 
-		<section class="w-full max-w-mainContent p-[0_auto]">
+		<section class="w-[calc(100%-60px)] max-w-mainContent p-[0_auto]">
 			<Navbar />
 
 			<main class="p-[30px] max-lg:p-[16px] h-section bg-[#F7F7F7] overflow-x-clip overflow-y-auto">

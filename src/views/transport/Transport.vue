@@ -6,7 +6,7 @@
 
 <script>
 
-import AddMark from '@/components/pages/transport/AddMark.vue';
+import AddMark from '@/components/pages/transport/mark/AddMark.vue';
 import TransportContent from '@/components/pages/transport/TransportContent.vue';
 
 

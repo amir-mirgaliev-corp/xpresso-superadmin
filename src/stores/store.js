@@ -20,6 +20,7 @@ import docs from "./models/docs";
 import categories from "./models/categories";
 import additives from "./models/additives";
 import admins from "./models/admins";
+import sidebar from "./models/sidebar";
 
 export default createStore({
 	modules: {
@@ -43,5 +44,6 @@ export default createStore({
 		categories,
 		additives,
 		admins,
+		sidebar,
 	},
 });

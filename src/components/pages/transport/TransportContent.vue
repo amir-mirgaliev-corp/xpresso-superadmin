@@ -3,7 +3,7 @@
 		<h2 class="table-title">Транспорт</h2>
 
 		<div class="flex justify-between items-center">
-			<div class="flex justify-center gap-16 max-2xl:gap-10 max-lg:gap-6 w-full">
+			<div class="flex justify-center gap-16 max-2xl:gap-10 max-lg:gap-6 w-full" v-if="screenWidth > 640">
 				<div>
 					<div
 						class="transport-tab"
@@ -52,22 +52,54 @@
 					</div>
 				</div>
 			</div>
+			<div v-else class="w-full">
+				<Accordion accordionClass="p-0" triggerClass="w-full">
+					<template #trigger>
+						<div class="transport-tab !w-full !border-none">
+							<div class="transport-tab__icon">
+								<img src="@/assets/images/icons/car.svg" alt="car" />
+							</div>
+
+							<p class="transport-tab__name">Транспорт</p>
+						</div>
+					</template>
+					<template #content>
+						<TransportMarks @mark-selected="handleMarkSelected" />
+					</template>
+				</Accordion>
+				<Accordion accordionClass="p-0 mt-3" triggerClass="w-full">
+					<template #trigger>
+						<div class="transport-tab !w-full !border-none">
+							<div class="transport-tab__icon">
+								<span></span>
+							</div>
+
+							<p class="transport-tab__name">Цвет автомобиля</p>
+						</div>
+					</template>
+					<template #content>
+						<TransportColors />
+					</template>
+				</Accordion>
+			</div>
 		</div>
 	</section>
 </template>
 
 <script>
-import TransportColors from "./TransportColors.vue";
-import TransportMarks from "./TransportMarks.vue";
-import TransportModels from "./TransportModels.vue";
+import Accordion from "@/components/shared/ui/Accordion.vue";
+import TransportColors from "./color/TransportColors.vue";
+import TransportMarks from "./mark/TransportMarks.vue";
+import TransportModels from "./model/TransportModels.vue";
 
-import transport from "@/api/transport";
+// import transport from "@/api/transport";
 
 export default {
 	components: {
 		TransportColors,
 		TransportMarks,
 		TransportModels,
+		Accordion,
 	},
 
 	data: () => ({
@@ -93,14 +125,20 @@ export default {
 		},
 	},
 
+	computed: {
+		screenWidth() {
+			return window.screen.width;
+		},
+	},
+
 	async mounted() {
 		if (this.$route.query.tab) this.activeTab = this.$route.query.tab;
 
-		if (this.$route.query.mark_id) {
-			const response = await transport.getOneTransportCategory(this.$route.query.mark_id);
-			this.selectedMark = response;
-			this.activeTab = "models";
-		}
+		// if (this.$route.query.mark_id) {
+		// 	const response = await transport.getOneTransportCategory(this.$route.query.mark_id);
+		// 	this.selectedMark = response;
+		// 	this.activeTab = "models";
+		// }
 	},
 };
 </script>
@@ -123,6 +161,9 @@ export default {
 	}
 	&:not(:last-child) {
 		margin-bottom: 1.25rem;
+		@media screen and (max-width: 640px) {
+		margin-bottom: 0;
+	}
 	}
 	&__icon {
 		@include flex-center;
@@ -147,6 +188,11 @@ export default {
 
 	@media screen and (max-width: 768px) {
 		width: 200px;
+	}
+	@media screen and (max-width: 640px) {
+		width: 100%;
+		border: 0;
+		margin-bottom: 0;
 	}
 }
 </style>

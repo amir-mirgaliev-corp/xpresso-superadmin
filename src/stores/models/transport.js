@@ -1,63 +1,65 @@
-import transport from "@/api/transport";
+import { transportColorApi, transportMakeApi, transportModelApi } from "@/api/transport";
 
 export default {
-    state: {
-        transport: {},
-        transports: [],
-        transportModel: {},
-        transportModels: [],
-        transportCategory: {},
-        transportCategories: [],
-    },
+	state: {
+		transportMakeDetails: {},
+		transportModelDetails: {},
+		transportColorDetails: {},
+		transportMakeList: [],
+		transportModelList: [],
+		transportColorList: [],
+		// transportCategory: {},
+		// transportCategories: [],
+	},
 
-    actions: {
-        async fetchTransport (context, id) {
-            const resTransport = await transport.getTransport(id);
-            context.commit('setTransport', resTransport);
-        },
+	actions: {
+		async fetchTransportMakeList(context) {
+			const resTransportMakeList = await transportMakeApi.getTransportMakeList();
+			context.commit("setTransportMakeList", resTransportMakeList);
+		},
 
-        async fetchTransports (context, { filter, pagination }) {
-            const resTransports = await transport.getTransports(filter, pagination);
-            context.commit('setTransports', resTransports);
-        },
+		async fetchTransportModelList(context, id) {
+			const resTransportModelList = await transportModelApi.getTransportModelList(id);
+			context.commit("setTransportModelList", resTransportModelList);
+		},
 
-        async fetchTransportModel (context, id) {
-            const resModel = await transport.getOneTransportModel(id);
-            context.commit('setTransportModel', resModel);
-        },
+		async fetchTransportColorList(context) {
+			const resTransportColorList = await transportColorApi.getTransportColorList();
+			context.commit("setTransportColorList", resTransportColorList);
+		},
 
-        async fetchTransportModels (context) {
-            const resModels = await transport.getTransportModel();
-            context.commit('setTransportModels', resModels);
-        },
+		async fetchTransportModelById(context, id) {
+			const resModel = await transportModelApi.getTransportModelById(id);
+			context.commit("setTransportModelDetails", resModel);
+		},
 
-        async fetchTransportCategory (context, id) {
-            const resCategory = await transport.getOneTransportCategory(id);
-            context.commit('setTransportCategory', resCategory);
-        },
+		async fetchTransportMakeById(context, id) {
+			const resMake = await transportMakeApi.getTransportMakeById(id);
+			context.commit("setTransportMakeDetails", resMake);
+		},
 
-        async fetchTransportCategories (context) {
-            const resCategories = await transport.getTransportCategory();
-            context.commit('setTransportCategories', resCategories);
-        },
-    },
+		async fetchTransportColorById(context, id) {
+			const resColor = await transportColorApi.getTransportColorById(id);
+			context.commit("setTransportColorDetails", resColor);
+		},
+	},
 
-    // чуть-чуть сократил код для тебя мой пупсик ❤️
-    mutations: {
-        setTransport: (state, transport) => (state.transport = transport),
-        setTransports: (state, transports) => (state.transports = transports),
-        setTransportModels: (state, models) => (state.transportModels = models),
-        setTransportModel: (state, model) => (state.transportModel = model),
-        setTransportCategory: (state, category) => (state.transportCategory = category),
-        setTransportCategories: (state, categories) => (state.transportCategories = categories),
-    },
-    
-    getters: {
-        getTransport: state => state.transport,
-        getTransports: state => state.transports,
-        getTransportModel: state => state.transportModel,
-        getTransportModels: state => state.transportModels,
-        getTransportCategory: state => state.transportCategory,
-        getTransportCategories: state => state.transportCategories,
-    },
+	// чуть-чуть сократил код для тебя мой пупсик ❤️
+	mutations: {
+		setTransportMakeList: (state, makesList) => (state.transportMakeList = makesList),
+		setTransportModelList: (state, modelList) => (state.transportModelList = modelList),
+		setTransportColorList: (state, colorList) => (state.transportColorList = colorList),
+		setTransportMakeDetails: (state, make) => (state.transportMakeDetails = make),
+		setTransportModelDetails: (state, model) => (state.transportModelDetails = model),
+		setTransportColorDetails: (state, color) => (state.transportColorDetails = color),
+	},
+
+	getters: {
+		getTransportMakeList: state => state.transportMakeList,
+		getTransportModelList: state => state.transportModelList,
+		getTransportColorList: state => state.transportColorList,
+		getTransportMakeDetails: state => state.transportMakeDetails,
+		getTransportModelDetails: state => state.transportModelDetails,
+		getTransportColorDetails: state => state.transportColorDetails,
+	},
 };
