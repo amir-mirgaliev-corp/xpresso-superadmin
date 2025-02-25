@@ -1,6 +1,6 @@
 <template>
-	<div class="publications__content bg-white p-6 rounded-[12px] border-[1px] w-full">
-		<div class="publications__header flex justify-between items-end gap-8 mb-4">
+	<div class="publications__content bg-white p-6 rounded-[12px] border-[1px] w-full max-sm:p-3">
+		<div class="publications__header flex justify-between items-end gap-8 mb-4 max-sm:gap-4">
 			<h2 class="table-title !mb-0">Публикации</h2>
 
 			<div>
@@ -8,12 +8,12 @@
 			</div>
 		</div>
 
-		<div class="publications__filters flex justify-between items-center mb-6">
+		<div class="publications__filters flex justify-between items-center mb-6 max-sm:flex-col max-sm:gap-y-4">
 			<SearchInput v-model="searchQuery" />
 			<Calendar />
 		</div>
 
-		<ul class="publications__items grid grid-cols-3 gap-4">
+		<ul class="publications__items grid grid-cols-3 max-sm:grid-cols-1 gap-4">
 			<li v-for="item in filteredNews" :key="item.id" class="publications__item">
 				<img :src="item.image" class="publications__item-image" alt="" />
 				<span class="publications__item-date">Дата: {{ formatDate(item.scheduled_time) }}</span>

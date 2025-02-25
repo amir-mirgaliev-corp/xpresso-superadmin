@@ -26,13 +26,13 @@
 						class="sidebar__list-link"
 						:class="{
 							'router-link-active': link.relatedRoutes?.includes($route.name),
-							'md:!pl-4': !getIsSidebarShown,
+							'justify-center': !getIsSidebarShown,
 						}"
 					>
 						<i :class="['fi', link.icon]"></i>
-						<!-- <transition> -->
-						<p v-if="getIsSidebarShown">{{ link.text }}</p>
-						<!-- </transition> -->
+						<transition>
+							<p v-if="getIsSidebarShown">{{ link.text }}</p>
+						</transition>
 					</router-link>
 				</li>
 			</ul>
@@ -42,6 +42,7 @@
 
 <script>
 import { mapGetters } from "vuex";
+import HeaderSearch from "./header-ui/HeaderSearch.vue";
 
 export default {
 	data: () => ({
@@ -102,6 +103,24 @@ export default {
 	}),
 	computed: {
 		...mapGetters(["getIsSidebarShown"]),
+		showSearch() {
+			const pagesWithSearch = [
+				"orders",
+				"clients",
+				"user-profile",
+				"transport",
+				"restaurants",
+				"chains",
+				"restaurants-chain",
+				"restaurants-menu",
+				"transactions",
+			];
+
+			return pagesWithSearch.includes(this.$route.name);
+		},
+	},
+	components: {
+		HeaderSearch,
 	},
 };
 </script>

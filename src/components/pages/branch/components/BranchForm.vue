@@ -6,15 +6,17 @@
 			<div class="mb-6">
 				<label class="form__label">Фотография филиала</label>
 
-				<ImageUploader
-					width="400px"
-					height="175px"
-					border-radius="16px"
-					:disabled="!editEnabled"
-					:image="background_preview"
-					@update:image="background_preview = $event"
-					@send:file="branchData.background_img = $event"
-				/>
+				<div class="w-[400px] max-sm:max-w-full">
+					<ImageUploader
+						width="100%"
+						height="175px"
+						border-radius="16px"
+						:disabled="!editEnabled"
+						:image="background_preview"
+						@update:image="background_preview = $event"
+						@send:file="branchData.background_img = $event"
+					/>
+				</div>
 
 				<span v-if="v$.branchData.background_img.$errors.length" class="form__error">Загрузите фото</span>
 			</div>
@@ -25,8 +27,8 @@
 					<Switcher v-if="initialBranchData" v-model="branchData.is_open_now" label="Технические работы" />
 				</div>
 
-				<fieldset class="block grid grid-cols-2 gap-4 w-full" :disabled="!editEnabled">
-					<div class="form__field">
+				<fieldset class="grid grid-cols-2 gap-4 w-full" :disabled="!editEnabled">
+					<div class="form__field max-sm:flex max-sm:flex-col max-sm:justify-between">
 						<label for="branch-name" class="form__label">Название филиала</label>
 						<input
 							v-model="branchData.name"
@@ -39,7 +41,7 @@
 						/>
 					</div>
 
-					<div class="form__field">
+					<div class="form__field max-sm:flex max-sm:flex-col max-sm:justify-between">
 						<label for="branch-phone" class="form__label">Номер телефона</label>
 						<input
 							v-model="branchData.phone_number"
@@ -52,13 +54,13 @@
 						/>
 					</div>
 
-					<div class="form__field">
+					<div class="form__field max-sm:flex max-sm:flex-col max-sm:justify-between">
 						<label for="branch-time" class="form__label">Время приготовления</label>
 						<div class="form__field-preparing_time">
 							<input
 								v-model="branchData.preparing_time"
 								type="text"
-								class="form__input"
+								class="form__input max-sm:!w-full"
 								id="branch-time"
 								name="branch-time"
 								placeholder="Введите время"
@@ -70,7 +72,7 @@
 						</div>
 					</div>
 
-					<div class="form__field">
+					<div class="form__field max-sm:flex max-sm:flex-col max-sm:justify-between">
 						<label for="branch-latitude" class="form__label">Широта</label>
 						<input
 							v-model="branchData.latitude"
@@ -83,7 +85,7 @@
 						/>
 					</div>
 
-					<div class="form__field">
+					<div class="form__field max-sm:flex max-sm:flex-col max-sm:justify-between">
 						<label for="branch-longitude" class="form__label">Долгота</label>
 						<input
 							v-model="branchData.longitude"
@@ -96,7 +98,7 @@
 						/>
 					</div>
 
-					<div class="form__field">
+					<div class="form__field max-sm:flex max-sm:flex-col max-sm:justify-between">
 						<label for="branch-address-ru" class="form__label">Адрес на русском</label>
 						<input
 							v-model="branchData.address_ru"
@@ -109,7 +111,7 @@
 						/>
 					</div>
 
-					<div class="form__field">
+					<div class="form__field max-sm:flex max-sm:flex-col max-sm:justify-between">
 						<label for="branch-address-uz" class="form__label">Адрес на узбекском</label>
 						<input
 							v-model="branchData.address_uz"
@@ -122,7 +124,7 @@
 						/>
 					</div>
 
-					<div class="form__field">
+					<div class="form__field max-sm:flex max-sm:flex-col max-sm:justify-between">
 						<label for="branch-address-en" class="form__label">Адрес на английском</label>
 						<input
 							v-model="branchData.address_en"
@@ -135,7 +137,7 @@
 						/>
 					</div>
 
-					<div class="form__field">
+					<div class="form__field max-sm:flex max-sm:flex-col max-sm:justify-between">
 						<label for="branch-iiko-id" class="form__label">API Login IIKO</label>
 						<input
 							v-model="branchData.iiko_id"
@@ -148,7 +150,7 @@
 						/>
 					</div>
 
-					<div class="form__field">
+					<div class="form__field max-sm:flex max-sm:flex-col max-sm:justify-between">
 						<label for="branch-atmos-id" class="form__label">ATMOS ID</label>
 						<input
 							v-model="branchData.payment_id_atmos"
@@ -161,7 +163,7 @@
 						/>
 					</div>
 
-					<div class="form__field">
+					<div class="form__field max-sm:flex max-sm:flex-col max-sm:justify-between">
 						<label for="branch-atmos-id" class="form__label">PAYLOV ID</label>
 						<input
 							v-model="branchData.payment_id_paylov"

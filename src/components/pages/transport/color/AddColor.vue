@@ -7,20 +7,20 @@
 		>
 			<h2 class="table-title">Добавление новой цвета</h2>
 
-			<div class="py-4 w-[700px]">
-				<div class="flex justify-center gap-6">
+			<div class="py-4 w-[700px] max-md:w-full">
+				<div class="flex justify-center gap-6 max-md:flex-col max-md:items-center">
 					<Vue3ColorPicker
 						v-model="formData.hex_code"
 						mode="solid"
 						type="HEX"
-						class="!w-[50%] !shadow-none !p-0"
+						class="!w-[50%] !shadow-none !p-0 max-sm:!w-full"
 						:showInputMenu="false"
 						:showPickerMode="false"
 						:showAlpha="false"
 						:showColorList="false"
 					/>
 
-					<form @submit.prevent="submitForm" class="form w-[50%]">
+					<form @submit.prevent="submitForm" class="form w-[50%] max-sm:w-full">
 						<div
 							class="color-preview h-[100px] rounded-[12px] mb-4 shadow"
 							:style="{ backgroundColor: formData.hex_code }"
@@ -150,10 +150,10 @@ export default {
 		if (this.isEditMode) {
 			const response = await transportColorApi.getTransportColorById(this.$route.query.color_id);
 			console.log(response)
-			this.formData.name_en = response.nameEn;
-			this.formData.name_uz = response.nameUz;
-			this.formData.name_ru = response.nameRu;
-			this.formData.hex_code = response.hexCode;
+			this.formData.name_en = response.name_en;
+			this.formData.name_uz = response.name_uz;
+			this.formData.name_ru = response.name_ru;
+			this.formData.hex_code = response.hex_code;
 		}
 	},
 };

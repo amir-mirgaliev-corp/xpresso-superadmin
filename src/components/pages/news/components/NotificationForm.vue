@@ -11,7 +11,7 @@
 				<div class="mt-4">
 					<h3 class="text-lg mb-2">Заголовок уведомления:</h3>
 
-					<div class="grid grid-cols-3 gap-4">
+					<div class="grid grid-cols-3 gap-4 max-sm:grid-cols-1">
 						<div class="form__field">
 							<input
 								v-model="formData.title.ru"
@@ -45,7 +45,7 @@
 
 					<h3 class="text-lg mt-6 mb-2">Текст уведомления:</h3>
 
-					<div class="grid grid-cols-3 gap-4">
+					<div class="grid grid-cols-3 gap-4 max-sm:grid-cols-1">
 						<div class="form__field">
 							<textarea
 								v-model="formData.description.ru"

@@ -1,8 +1,8 @@
 <template>
 	<form class="form create-chain" @submit.prevent="submitForm">
 		<fieldset :disabled="!editEnabled">
-			<div class="bg-white p-[24px_32px] rounded-[12px] border-[1px]">
-				<div class="flex items-center gap-8">
+			<div class="bg-white p-[24px_32px] rounded-[12px] border-[1px] max-sm:p-[16px]">
+				<div class="flex items-center gap-8 max-sm:flex-col">
 					<div>
 						<ImageUploader
 							:image="logoPreview"
@@ -16,7 +16,7 @@
 						</span>
 					</div>
 
-					<div class="form__field">
+					<div class="form__field max-sm:w-full">
 						<input
 							type="text"
 							name="new-chain"
@@ -30,7 +30,7 @@
 					</div>
 				</div>
 
-				<div class="grid grid-cols-3 gap-4 my-6">
+				<div class="grid grid-cols-3 gap-4 my-6 max-sm:grid-cols-1">
 					<div class="form__field">
 						<label for="chain-info" class="form__label">Дополнительная информация:</label>
 						<input
@@ -58,7 +58,7 @@
 					</div>
 				</div>
 
-				<div class="grid grid-cols-3 gap-4">
+				<div class="grid grid-cols-3 gap-4 max-sm:grid-cols-1">
 					<div class="form__field">
 						<label for="chain-description-ru" class="form__label">Описание сети</label>
 						<textarea
@@ -267,6 +267,12 @@ export default {
 		height: 4.5rem;
 		max-width: 600px;
 		border-width: 2px;
+		@media screen and (max-width: 640px) {
+			width: 100%;
+			font-size: 16px;
+			border-radius: 0.75rem;
+			padding: 0.75rem;
+		}
 	}
 	textarea.form__input {
 		height: 140px;

@@ -161,5 +161,8 @@ export default {
 	@media screen and (max-width: 1024px) {
 		width: 200px;
 	}
+	@media screen and (max-width: 640px) {
+		width: 100%;
+	}
 }
 </style>

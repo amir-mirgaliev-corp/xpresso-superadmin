@@ -1,9 +1,9 @@
 <template>
 	<section class="transport-models__content">
-		<div class="transport-models__container max-w-4xl rounded-[12px] border border-[#DCDCDC] p-6">
+		<div class="transport-models__container max-w-4xl rounded-[12px] border border-[#DCDCDC] p-6 max-sm:border-none max-sm:p-0 max-sm:mt-5">
 			<CustomButton icon="fi-rr-arrow-left" class="width-fit" @click="$emit('back')">Назад</CustomButton>
 
-			<h1 class="text-2xl font-bold text-gray-800 mt-4 mb-8">Модели {{ selectedMark.name }}:</h1>
+			<h1 class="text-2xl font-bold text-gray-800 mt-4 mb-8 max-sm:text-lg">Модели {{ selectedMark.name }}:</h1>
 
 			<div v-if="getTransportModelList.length" class="grid grid-cols-3 gap-5 max-xl:grid-cols-1">
 				<TransportItem

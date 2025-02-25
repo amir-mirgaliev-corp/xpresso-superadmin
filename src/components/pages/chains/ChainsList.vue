@@ -1,4 +1,7 @@
 <template>
+	<div class="mb-4 bg-white rounded-[0.5rem] sm:hidden">
+		<HeaderSearch />
+	</div>
 	<div v-if="chains" class="chains__content">
 		<div class="chains__content-container">
 			<CustomButton icon="fi-br-plus" class="width-fit h-12 mb-6 ml-auto" @click="linkToAddChain">
@@ -23,6 +26,7 @@ import CustomButton from "@/components/shared/ui/CustomButton.vue";
 import TableLayout from "@/components/shared/TableLayout.vue";
 
 import { mapActions, mapGetters } from "vuex";
+import HeaderSearch from "@/components/layouts/content_layout/header-ui/HeaderSearch.vue";
 
 export default {
 	data: () => ({
@@ -89,6 +93,6 @@ export default {
 		},
 	},
 
-	components: { CustomButton, TableLayout },
+	components: { CustomButton, TableLayout, HeaderSearch },
 };
 </script>

@@ -1,5 +1,5 @@
 <template>
-	<section class="dashboard__table-other grid grid-cols-3 gap-6">
+	<section class="dashboard__table-other grid grid-cols-3 gap-6 max-sm:grid-cols-1">
 		<TableLayout
 			v-for="table in tables"
 			:key="table.title"

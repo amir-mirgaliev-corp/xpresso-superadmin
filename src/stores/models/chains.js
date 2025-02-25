@@ -9,7 +9,7 @@ export default {
 	actions: {
 		async fetchChains(context, pagination) {
 			const resChains = await chains.getChains(pagination);
-			context.commit("setChains", resChains);
+			context.commit("setChains", resChains.items);
 		},
 
 		async fetchOneChainById(context, id) {

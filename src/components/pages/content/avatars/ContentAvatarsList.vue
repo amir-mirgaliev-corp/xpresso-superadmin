@@ -7,7 +7,7 @@
 			</CustomButton>
 		</div>
 		<div>
-			<div v-if="avatarsList?.length" class="flex items-center flex-wrap gap-3">
+			<div v-if="avatarsList?.length" class="grid items-center grid-cols-9 max-xl:grid-cols-8 max-lg:grid-cols-6 max-md:grid-cols-4 max-sm:grid-cols-2 justify-items-center gap-3">
 				<div v-for="avatar in avatarsList" :key="avatar">
 					<div class="size-[120px] avatar__img-wrapper">
 						<img class="rounded-full w-full h-full object-cover" :src="avatar.image" alt="profile image" />

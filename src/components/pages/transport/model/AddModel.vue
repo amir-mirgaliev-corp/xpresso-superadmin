@@ -9,7 +9,7 @@
 				{{ isEditMode ? "Редактировать модель марки: " : "Добавить модель марки: " }} {{ transportMark.name }}
 			</h2>
 
-			<div class="py-4 w-[400px]">
+			<div class="py-4 w-[400px] max-sm:w-full">
 				<form @submit.prevent="submitForm" class="form">
 					<div class="form__field">
 						<label for="model-name" class="form__label">Название модели:</label>

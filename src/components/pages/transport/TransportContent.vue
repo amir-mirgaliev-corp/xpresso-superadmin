@@ -1,4 +1,7 @@
 <template>
+	<div class="mb-4 bg-white rounded-[0.5rem] sm:hidden">
+		<HeaderSearch />
+	</div>
 	<section class="bg-white p-[24px] rounded-[12px] border-[1px] max-lg:p-4">
 		<h2 class="table-title">Транспорт</h2>
 
@@ -64,7 +67,13 @@
 						</div>
 					</template>
 					<template #content>
-						<TransportMarks @mark-selected="handleMarkSelected" />
+						<div v-if="activeTab === 'marks'" key="marks">
+							<TransportMarks @mark-selected="handleMarkSelected" />
+						</div>
+
+						<div v-else-if="activeTab === 'models'" key="models">
+							<TransportModels :selectedMark="selectedMark" @back="goToBack" />
+						</div>
 					</template>
 				</Accordion>
 				<Accordion accordionClass="p-0 mt-3" triggerClass="w-full">
@@ -91,6 +100,7 @@ import Accordion from "@/components/shared/ui/Accordion.vue";
 import TransportColors from "./color/TransportColors.vue";
 import TransportMarks from "./mark/TransportMarks.vue";
 import TransportModels from "./model/TransportModels.vue";
+import HeaderSearch from "@/components/layouts/content_layout/header-ui/HeaderSearch.vue";
 
 // import transport from "@/api/transport";
 
@@ -100,6 +110,7 @@ export default {
 		TransportMarks,
 		TransportModels,
 		Accordion,
+		HeaderSearch,
 	},
 
 	data: () => ({
@@ -162,8 +173,8 @@ export default {
 	&:not(:last-child) {
 		margin-bottom: 1.25rem;
 		@media screen and (max-width: 640px) {
-		margin-bottom: 0;
-	}
+			margin-bottom: 0;
+		}
 	}
 	&__icon {
 		@include flex-center;
@@ -193,6 +204,7 @@ export default {
 		width: 100%;
 		border: 0;
 		margin-bottom: 0;
+		padding: 0;
 	}
 }
 </style>

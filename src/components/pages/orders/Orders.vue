@@ -1,4 +1,7 @@
 <template>
+	<div class="mb-4 bg-white rounded-[0.5rem] sm:hidden">
+		<HeaderSearch />
+	</div>
 	<OrdersFilters @change-layout="handleLayoutChange" @clear="handleFiltersClear" />
 	<OrdersContent ref="ordersContent" :layout="layout" />
 </template>
@@ -6,6 +9,7 @@
 <script>
 import OrdersFilters from "./components/OrdersFilters.vue";
 import OrdersContent from "./components/OrdersContent.vue";
+import HeaderSearch from "@/components/layouts/content_layout/header-ui/HeaderSearch.vue";
 
 export default {
 	data() {
@@ -28,6 +32,6 @@ export default {
 		},
 	},
 
-	components: { OrdersContent, OrdersFilters },
+	components: { OrdersContent, OrdersFilters, HeaderSearch },
 };
 </script>

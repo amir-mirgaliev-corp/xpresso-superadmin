@@ -22,6 +22,10 @@
 					<div v-if="dropdownOpen" class="dropdown">
 						<ul class="dropdown__list">
 							<li class="dropdown__item">
+								<h2 class="header__profile-name">{{ profile.name }}</h2>
+								<p class="header__profile-role">SUPER ADMIN</p>
+							</li>
+							<li class="dropdown__item">
 								<router-link to="/settings">
 									<i class="fi fi-rr-settings"></i>
 									Настройки

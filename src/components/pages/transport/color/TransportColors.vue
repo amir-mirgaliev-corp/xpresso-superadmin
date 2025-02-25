@@ -8,8 +8,8 @@
 					<TransportItem
 						v-for="(color, index) in getTransportColorList"
 						:key="index"
-						:color="color.hexCode"
-						:title="color.nameEn"
+						:color="color.hex_code"
+						:title="color.name_en"
 						@action="action => handleAction(action, color.id)"
 					/>
 				</template>

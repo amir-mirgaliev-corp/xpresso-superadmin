@@ -4,12 +4,28 @@
 			Назад
 		</CustomButton>
 
-		<Tabs :initial-tab="initialTab">
+		<Tabs :initial-tab="initialTab" v-if="screenWidth > 640">
 			<Tab name="info" title="Информация"><ChainInfo /></Tab>
 			<Tab name="branches" title="Филиалы"><ChainBranches /></Tab>
 			<Tab name="categories" title="Категории"><ChainCategories /></Tab>
 			<Tab name="additives" title="Добавки"><ChainAdditives /></Tab>
 		</Tabs>
+		<template v-else>
+			<CustomSelect
+				:options="tabsList"
+				selectClass="w-[240px] h-[46px] bg-white max-sm:w-full"
+				placeholder="Выберите тип контента"
+				queryName="tab"
+				@update:model-value="console.log($event)"
+				v-model:model-value="activeTab"
+			/>
+			<div class="mt-3">
+				<ChainInfo v-if="activeTab === 'info'" />
+				<ChainBranches v-if="activeTab === 'branches'" />
+				<ChainCategories v-if="activeTab === 'categories'" />
+				<ChainAdditives v-if="activeTab === 'additives'" />
+			</div>
+		</template>
 	</div>
 </template>
 
@@ -24,10 +40,13 @@ import ChainCategories from "./tabs/ChainCategories.vue";
 import ChainAdditives from "./tabs/ChainAdditives.vue";
 import ChainMenu from "./tabs/ChainMenu.vue";
 import ChainAdmins from "./tabs/ChainAdmins.vue";
+import CustomSelect from "@/components/shared/ui/CustomSelect.vue";
 
 export default {
 	data: () => ({
 		initialTab: null,
+		activeTab: "info",
+		tabsList,
 	}),
 
 	components: {
@@ -40,6 +59,13 @@ export default {
 		ChainAdditives,
 		ChainMenu,
 		ChainAdmins,
+		CustomSelect
+	},
+
+	computed: {
+		screenWidth() {
+			return window.screen.width;
+		},
 	},
 
 	mounted() {
@@ -47,4 +73,22 @@ export default {
 		if (tabParam) this.initialTab = tabParam;
 	},
 };
+const tabsList = [
+	{
+		title: "Информация",
+		name: "info",
+	},
+	{
+		title: "Филиалы",
+		name: "branches",
+	},
+	{
+		title: "Категории",
+		name: "categories",
+	},
+	{
+		title: "Добавки",
+		name: "additives",
+	},
+];
 </script>

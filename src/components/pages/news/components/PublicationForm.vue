@@ -9,15 +9,17 @@
 		<form class="form" @submit.prevent="submitForm">
 			<h3 class="text-lg mb-2">Фотография новости:</h3>
 
-			<ImageUploader
-				width="400px"
-				height="175px"
-				border-radius="16px"
-				:image="photoPreview"
-				:disabled="!editEnabled"
-				@update:image="photoPreview = $event"
-				@send:file="formData.image = $event"
-			/>
+			<div class="w-[400px] max-sm:w-full">
+				<ImageUploader
+					width="100%"
+					height="175px"
+					border-radius="16px"
+					:image="photoPreview"
+					:disabled="!editEnabled"
+					@update:image="photoPreview = $event"
+					@send:file="formData.image = $event"
+				/>
+			</div>
 
 			<span v-if="v$.formData.image.$error" class="form__error max-w-[250px]">Загрузите фото для новости</span>
 
@@ -25,7 +27,7 @@
 				<div class="mt-4">
 					<h3 class="text-lg mb-2">Заголовок новости:</h3>
 
-					<div class="grid grid-cols-3 gap-4">
+					<div class="grid grid-cols-3 gap-4 max-sm:grid-cols-1">
 						<div class="form__field">
 							<input
 								v-model="formData.title.ru"
@@ -59,7 +61,7 @@
 
 					<h3 class="text-lg mt-6 mb-2">Текст новости:</h3>
 
-					<div class="grid grid-cols-3 gap-4">
+					<div class="grid grid-cols-3 gap-4 max-sm:grid-cols-1">
 						<div class="form__field">
 							<textarea
 								v-model="formData.description.ru"

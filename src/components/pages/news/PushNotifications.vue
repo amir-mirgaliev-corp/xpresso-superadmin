@@ -1,6 +1,6 @@
 <template>
-	<div class="notifications__content bg-white p-6 rounded-[12px] border-[1px] w-full">
-		<div class="notifications__header flex justify-between items-end gap-8 mb-4">
+	<div class="notifications__content bg-white p-6 rounded-[12px] border-[1px] w-full max-sm:p-3">
+		<div class="notifications__header flex justify-between items-end gap-8 mb-4 max-sm:gap-4">
 			<h2 class="table-title !mb-0">PUSH уведомления</h2>
 
 			<div>
@@ -10,12 +10,12 @@
 			</div>
 		</div>
 
-		<div class="notifications__filters flex justify-between items-center mb-6">
+		<div class="notifications__filters flex justify-between items-center mb-6 max-sm:flex-col max-sm:gap-y-4">
 			<SearchInput v-model="searchQuery" />
 			<Calendar />
 		</div>
 
-		<ul class="notifications__items grid grid-cols-2 gap-4">
+		<ul class="notifications__items grid grid-cols-2 gap-4 max-sm:grid-cols-1">
 			<li v-for="item in filteredNotifications" :key="item.id" class="notifications__item">
 				<div class="notifications__item-icon">
 					<i class="fi fi-rr-bell-notification-social-media"></i>

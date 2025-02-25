@@ -192,7 +192,7 @@ export default {
 			const isValid = await this.v$.$validate();
 			if (!isValid) return;
 
-			initialFormData && Object.keys(this.initialFormData).length ? this.updateQuestion() : this.createQuestion();
+			this.initialFormData && Object.keys(this.initialFormData).length ? this.updateQuestion() : this.createQuestion();
 		},
 
 		async createQuestion() {

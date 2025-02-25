@@ -1,6 +1,6 @@
 <template>
 	<div
-		class="bg-white gap-[16px] p-[16px_24px] rounded-[12px] border-[1px] w-full question-card"
+		class="bg-white gap-[16px] py-4 px-6 rounded-[12px] border-[1px] w-full max-sm:py-3 max-sm:px-3"
 		:class="accordionClass"
 	>
 		<div
@@ -79,6 +79,10 @@ export default {
 
 	&__inner {
 		padding: 12px;
+		@media screen and (max-width: 640px) {
+			padding: 0;
+			margin-top: 8px;
+		}
 	}
 }
 </style>

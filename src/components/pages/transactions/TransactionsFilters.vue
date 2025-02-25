@@ -1,7 +1,7 @@
 <template>
 	<div class="transactions-filters bg-white gap-[16px] p-[16px_24px] rounded-[12px] border-[1px] w-full mb-4">
-		<div class="client__content-container flex items-end gap-4">
-			<div class="client__filter-container flex gap-4">
+		<div class="client__content-container flex items-end gap-4 max-sm:flex-col max-sm:items-start">
+			<div class="client__filter-container flex gap-4 max-sm:w-full">
 				<CustomSelect
 					v-for="filter in filters"
 					:key="filter.id"
@@ -9,7 +9,7 @@
 					:options="filter.options"
 					:label="filter.label"
 					:sort="filter?.sort"
-					selectClass="w-[250px] h-[46px]"
+					selectClass="w-[250px] h-[46px] max-sm:w-full"
 				/>
 			</div>
 
@@ -22,7 +22,7 @@
 				Очистить
 			</CustomButton>
 
-			<div class="ml-auto">
+			<div class="ml-auto max-sm:w-full">
 				<Calendar />
 			</div>
 		</div>

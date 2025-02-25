@@ -7,11 +7,11 @@
 		>
 			<h2 class="table-title">{{ isEditMode ? "Редактирование новой марки" : "Добавление новой марки" }}</h2>
 
-			<div class="py-4 w-[400px]">
+			<div class="py-4 w-[400px] max-sm:w-full">
 				<form @submit.prevent="submitForm" class="form">
 					<ImageUploader :image="preview" @update:image="preview = $event" @send:file="file = $event" />
 
-					<div class="form__field">
+					<div class="form__field mt-6">
 						<label for="mark-name" class="form__label">Производитель:</label>
 
 						<input

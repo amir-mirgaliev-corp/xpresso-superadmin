@@ -3,24 +3,26 @@
 		<div
 			v-for="(dayKey, index) in dayKeys"
 			:key="dayKey"
-			class="flex items-center justify-between border-b-[1px] pb-4 [&:not(:last-child)]:mb-4"
+			class="flex items-center justify-between border-b-[1px] pb-4 [&:not(:last-child)]:mb-4 max-sm:flex-col max-sm:gap-y-2"
 		>
-			<input type="checkbox" v-model="localSchedule[dayKey].open" class="w-5 h-5" @change="updateSchedule" />
-			<span class="text-md font-medium text-gray-700 mr-auto ml-4">{{ daysOfWeek[index] }}</span>
+			<div class="flex items-center">
+				<input type="checkbox" v-model="localSchedule[dayKey].open" class="w-5 h-5" @change="updateSchedule" />
+				<span class="text-md font-medium text-gray-700 mr-auto ml-4">{{ daysOfWeek[index] }}</span>
+			</div>
 
 			<div class="flex items-center space-x-2">
 				<template v-if="!localSchedule[dayKey].allDay">
 					<input
 						type="time"
 						v-model="localSchedule[dayKey].start"
-						class="px-2 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-blue-200"
+						class="px-2 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-blue-200 max-sm:px-1"
 						:disabled="!localSchedule[dayKey].open || localSchedule[dayKey].allDay"
 						@input="updateSchedule"
 					/>
 					<input
 						type="time"
 						v-model="localSchedule[dayKey].end"
-						class="px-2 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-blue-200"
+						class="px-2 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-blue-200 max-sm:px-1"
 						:disabled="!localSchedule[dayKey].open || localSchedule[dayKey].allDay"
 						@input="updateSchedule"
 					/>

@@ -1,6 +1,6 @@
 <template>
 	<div v-if="cardList" class="analytics__card-container mb-6">
-		<div class="analytics__card-content grid grid-cols-3 gap-x-4 gap-y-6 2xl:grid-cols-4 auto-rows-fr">
+		<div class="analytics__card-content grid grid-cols-3 gap-x-4 gap-y-6 2xl:grid-cols-4 auto-rows-fr max-sm:grid-cols-1">
 			<AnalyticsCard v-for="analytic in cardList" :key="analytic.icon" :analytic="analytic" />
 		</div>
 	</div>

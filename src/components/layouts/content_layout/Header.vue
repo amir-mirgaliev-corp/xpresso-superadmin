@@ -10,7 +10,7 @@
 			</div>
 
 			<div class="header__content flex justify-end items-center gap-4">
-				<HeaderSearch v-if="showSearch" />
+				<HeaderSearch v-if="showSearch && screenWidth > 640" />
 
 				<HeaderProfile />
 			</div>
@@ -45,6 +45,9 @@ export default {
 			];
 
 			return pagesWithSearch.includes(this.$route.name);
+		},
+		screenWidth() {
+			return window.screen.width;
 		},
 	},
 	methods: {
