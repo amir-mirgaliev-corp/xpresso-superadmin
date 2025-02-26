@@ -57,11 +57,6 @@ export default {
 		ContentDocumentsList,
 		CustomSelect,
 	},
-	watch: {
-		activeContent(val) {
-			console.log(val);
-		},
-	},
 };
 
 const contents = [

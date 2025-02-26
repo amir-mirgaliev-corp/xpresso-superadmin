@@ -14,6 +14,8 @@
 
 <script>
 export default {
+	emits: ["openEditModal", "onDeleteClick"],
+
 	props: {
 		title: {
 			type: String,
@@ -31,15 +33,21 @@ export default {
 			default: "2",
 		},
 	},
-	emits: ["openEditModal", "onDeleteClick"],
+
 	methods: {
 		openEdit() {
 			this.$emit("openEditModal", this.id);
 		},
+
 		onDeleteClick() {
-			console.log("clicked delete", this.id);
 			this.$emit("onDeleteClick", this.id);
 		},
 	},
 };
 </script>
+
+<style>
+.question-card:not(:last-child) {
+	margin-bottom: 1rem;
+}
+</style>
