@@ -1,5 +1,9 @@
 import api from "./axios.js";
 
+import { useToast } from "vue-toastification";
+
+const toast = useToast();
+
 export default {
 	async login(login, password) {
 		try {
@@ -21,6 +25,23 @@ export default {
 			return response.data;
 		} catch (error) {
 			console.log(error);
+		}
+	},
+
+	async changePassword(data) {
+		try {
+			const response = await api.put("/superuser/auth/change-password", data);
+			toast.success("Пароль был успешно обновлен");
+			return response.status;
+		} catch (error) {
+			if (error.status === 400) {
+				toast.error("Неправильный старый пароль");
+			} else {
+				toast.error("Произошла ошибка, попробуйте позже");
+			}
+
+			console.log(error);
+			return error.status;
 		}
 	},
 };

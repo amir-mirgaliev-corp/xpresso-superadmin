@@ -17,7 +17,9 @@
 								:type="oldPasswordVisible ? 'text' : 'password'"
 								class="form__input"
 								placeholder="Введите старый пароль"
-								:class="{ error: v$.formData.old_password.$errors.length }"
+								:class="{
+									error: v$.formData.old_password.$errors.length || error === 'invalid_old_password',
+								}"
 								@input="v$.formData.old_password.$reset()"
 							/>
 
@@ -102,6 +104,7 @@ export default {
 
 	props: {
 		oldPasswordRequired: Boolean,
+		error: String,
 	},
 
 	validations() {
@@ -144,7 +147,14 @@ export default {
 			const result = await this.v$.$validate();
 
 			if (result) {
-				this.$emit("submit", this.formData.password);
+				if (this.oldPasswordRequired) {
+					this.$emit("submit", {
+						old_password: this.formData.old_password,
+						new_password: this.formData.password,
+					});
+				} else {
+					this.$emit("submit", this.formData.password);
+				}
 			}
 		},
 	},

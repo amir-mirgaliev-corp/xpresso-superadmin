@@ -38,19 +38,28 @@
 		</div>
 	</section>
 
-	<NewPasswordModal v-if="newPasswordModalOpen" @close="closeModal" old-password-required />
+	<NewPasswordModal
+		v-if="newPasswordModalOpen"
+		old-password-required
+		:error="error"
+		@submit="handleSubmit"
+		@close="closeModal"
+	/>
 </template>
 
 <script>
 import NewPasswordModal from "@/components/shared/modals/NewPasswordModal.vue";
 import CustomButton from "@/components/shared/ui/CustomButton.vue";
 
-import { mapGetters } from "vuex";
+import { mapGetters, mapActions } from "vuex";
+
+import auth from "@/api/auth";
 
 export default {
 	data() {
 		return {
 			newPasswordModalOpen: false,
+			error: "",
 			profile: {
 				name: "",
 				lastName: "",
@@ -64,6 +73,21 @@ export default {
 	},
 
 	methods: {
+		...mapActions(["fetchProfile"]),
+
+		async handleSubmit(data) {
+			this.error = "";
+
+			const response_status = await auth.changePassword(data);
+
+			if (response_status === 200) {
+				this.fetchProfile();
+				this.closeModal();
+			} else if (response_status === 400) {
+				this.error = "invalid_old_password";
+			}
+		},
+
 		openModal() {
 			this.newPasswordModalOpen = true;
 		},
