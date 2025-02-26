@@ -20,7 +20,7 @@
 			</TableLayout>
 
 			<div v-else class="p-6 bg-white border rounded-[12px]">
-				<p>У этой сети еще нет заведений</p>
+				<p>Нет сетей</p>
 			</div>
 		</div>
 	</div>
@@ -64,7 +64,6 @@ export default {
 
 			await this.fetchChains(pagination);
 
-			this.chains = this.getChains?.items || [];
 			this.setChainsTable();
 		},
 
@@ -98,8 +97,8 @@ export default {
 			immediate: true,
 			deep: true,
 			handler(newValue) {
-				// Проверяем, что данные существуют и это массив
 				this.chains = newValue?.items || [];
+				this.paginationOptions.count = newValue.total;
 				this.setChainsTable();
 			},
 		},

@@ -9,7 +9,7 @@ export default {
 	actions: {
 		async fetchChains(context, filters) {
 			const resChains = await chains.getChains(filters);
-			context.commit("setChains", resChains.items);
+			context.commit("setChains", resChains);
 		},
 
 		async fetchOneChainById(context, id) {
