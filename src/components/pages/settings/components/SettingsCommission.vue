@@ -58,6 +58,8 @@ import { required, helpers } from "@vuelidate/validators";
 import { formatDate } from "@/utils/formatters/formatDate";
 import formatNumberWithSpaces from "@/utils/formatters/formatNumbers";
 
+import commission from "@/api/commission";
+
 export default {
 	setup() {
 		return {
@@ -68,10 +70,10 @@ export default {
 	data() {
 		return {
 			editEnabled: false,
-			updated_at: "2025-02-19T10:45:10.828Z",
 			initialCommission: null,
+			updated_at: "",
 			formData: {
-				commission: 2100,
+				commission: "",
 			},
 		};
 	},
@@ -98,6 +100,28 @@ export default {
 	},
 
 	methods: {
+		async fetchCommission() {
+			const response = await commission.getCommission();
+			this.initialCommission = response.fee_amount;
+			this.formData.commission = response.fee_amount;
+			this.updated_at = response.created_at;
+		},
+
+		async updateCommission() {
+			const params = { fee_amount: this.formData.commission };
+			const response_status = await commission.updateCommission(params);
+
+			if (response_status === 201) {
+				this.fetchCommission();
+				this.toggleEdit();
+			}
+		},
+
+		async submitForm() {
+			const result = await this.v$.$validate();
+			if (result) this.updateCommission();
+		},
+
 		toggleEdit() {
 			this.editEnabled = !this.editEnabled;
 		},
@@ -105,13 +129,6 @@ export default {
 		cancelEdit() {
 			this.toggleEdit();
 			this.formData.commission = this.initialCommission;
-		},
-
-		async updateCommission() {},
-
-		async submitForm() {
-			const result = await this.v$.$validate();
-			if (result) this.updateCommission();
 		},
 
 		handleInput(event) {
@@ -128,7 +145,7 @@ export default {
 	},
 
 	mounted() {
-		this.initialCommission = this.formData.commission;
+		this.fetchCommission();
 	},
 
 	components: { CustomButton },
