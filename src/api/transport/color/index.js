@@ -6,7 +6,7 @@ const toast = useToast();
 export const transportColorApi = {
 	async getTransportColorList() {
 		try {
-			const response = await api.get("/vehicle/color");
+			const response = await api.get("/vehicle/colors/");
 			return response.data;
 		} catch (error) {
 			console.log(error);
@@ -24,7 +24,7 @@ export const transportColorApi = {
 
 	async createTransportColor(data) {
 		try {
-			const response = await api.post("/superuser/vehicle/color", data);
+			const response = await api.post("/superuser/vehicle/color/", data);
 			toast.success("Цвет транспорта создана успешно");
 			return response.status;
 		} catch (error) {

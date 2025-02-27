@@ -1,6 +1,8 @@
 <template>
 	<section class="transport-colors__content">
-		<div class="transport-colors__container rounded-[12px] border border-[#DCDCDC] p-6 max-lg:p-4 max-sm:border-none max-sm:p-0">
+		<div
+			class="transport-colors__container rounded-[12px] border border-[#DCDCDC] p-6 max-lg:p-4 max-sm:border-none max-sm:p-0"
+		>
 			<h1 class="text-2xl font-bold text-gray-800 mb-6 max-lg:text-xl">Список цветов</h1>
 
 			<div class="grid grid-cols-3 max-xl:grid-cols-1 gap-5">
@@ -9,7 +11,7 @@
 						v-for="(color, index) in getTransportColorList"
 						:key="index"
 						:color="color.hex_code"
-						:title="color.name_en"
+						:title="color.name_ru"
 						@action="action => handleAction(action, color.id)"
 					/>
 				</template>

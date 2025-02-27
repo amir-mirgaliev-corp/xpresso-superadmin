@@ -9,7 +9,10 @@
 
 			<div class="py-4 w-[400px] max-sm:w-full">
 				<form @submit.prevent="submitForm" class="form">
-					<ImageUploader :image="preview" @update:image="preview = $event" @send:file="file = $event" />
+					<div>
+						<ImageUploader :image="preview" @update:image="preview = $event" @send:file="file = $event" />
+						<span v-if="file_error" class="form__error" v-text="file_error" />
+					</div>
 
 					<div class="form__field mt-6">
 						<label for="mark-name" class="form__label">Производитель:</label>
@@ -42,8 +45,6 @@ import { transportMakeApi } from "@/api/transport";
 import CustomButton from "@/components/shared/ui/CustomButton.vue";
 import { mapActions, mapGetters } from "vuex";
 
-const env = import.meta.env;
-
 export default {
 	components: {
 		ImageUploader,
@@ -54,6 +55,7 @@ export default {
 		isEditMode: false,
 		preview: null,
 		file: null,
+		file_error: "",
 		loading: false,
 		mark: {
 			value: "",
@@ -77,6 +79,8 @@ export default {
 			if (!mark) {
 				this.mark.isValid = false;
 				this.mark.message = "Название не может быть пустым";
+			} else if (!this.file && !this.preview) {
+				this.file_error = "Загрузите логотип";
 			} else {
 				this.isEditMode ? this.updateMark() : this.createMark();
 			}

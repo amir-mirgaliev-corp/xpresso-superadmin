@@ -6,15 +6,16 @@ const toast = useToast();
 export const transportMakeApi = {
 	async getTransportMakeList() {
 		try {
-			const response = await api.get("/vehicle/make");
+			const response = await api.get("/vehicle/makes/");
 			return response.data;
 		} catch (error) {
 			console.log(error);
 		}
 	},
+
 	async getTransportMakeById(make_id) {
 		try {
-			const response = await api.get(`/vehicle/make${make_id}`);
+			const response = await api.get(`/vehicle/make/${make_id}`);
 			return response.data;
 		} catch (error) {
 			console.log(error);
@@ -23,7 +24,7 @@ export const transportMakeApi = {
 
 	async createTransportMake(data) {
 		try {
-			const response = await api.post("/superuser/vehicle/make", data);
+			const response = await api.post("/superuser/vehicle/make/", data);
 			toast.success("Марка транспорта создана успешно");
 			return response.status;
 		} catch (error) {

@@ -1,6 +1,8 @@
 <template>
 	<section class="transport-models__content">
-		<div class="transport-models__container max-w-4xl rounded-[12px] border border-[#DCDCDC] p-6 max-sm:border-none max-sm:p-0 max-sm:mt-5">
+		<div
+			class="transport-models__container max-w-4xl rounded-[12px] border border-[#DCDCDC] p-6 max-sm:border-none max-sm:p-0 max-sm:mt-5"
+		>
 			<CustomButton icon="fi-rr-arrow-left" class="width-fit" @click="$emit('back')">Назад</CustomButton>
 
 			<h1 class="text-2xl font-bold text-gray-800 mt-4 mb-8 max-sm:text-lg">Модели {{ selectedMark.name }}:</h1>
@@ -81,7 +83,7 @@ export default {
 			await transportModelApi.deleteTransportModel(this.deleteModelId);
 			this.deleteModelId = null;
 			this.deleteModalOpen = false;
-			await this.fetchTransportModelList(markId);
+			await this.fetchTransportModelList(this.selectedMark.id);
 		},
 
 		handleAction(action, model_id) {
