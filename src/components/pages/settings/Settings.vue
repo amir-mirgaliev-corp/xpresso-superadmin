@@ -2,6 +2,7 @@
 	<Tabs :initial-tab="initialTab">
 		<Tab name="profile" title="Профиль"><SettingsProfile /></Tab>
 		<Tab name="comission" title="Комиссия"><SettingsCommission /></Tab>
+		<Tab name="hotline" title="Горячая линия"><SettingsHotline /></Tab>
 	</Tabs>
 </template>
 
@@ -10,6 +11,7 @@ import Tab from "@/components/shared/ui/Tab.vue";
 import Tabs from "@/components/shared/ui/Tabs.vue";
 import SettingsProfile from "./components/SettingsProfile.vue";
 import SettingsCommission from "./components/SettingsCommission.vue";
+import SettingsHotline from "./components/SettingsHotline.vue";
 
 export default {
 	data: () => ({
@@ -26,6 +28,7 @@ export default {
 		Tab,
 		SettingsProfile,
 		SettingsCommission,
+		SettingsHotline,
 	},
 };
 </script>
