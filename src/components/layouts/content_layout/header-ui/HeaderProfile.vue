@@ -57,12 +57,10 @@
 
 <script setup>
 import { ref, computed, onMounted } from "vue";
-import { useRouter } from "vue-router";
 import { useStore } from "vuex";
 import { onClickOutside } from "@vueuse/core";
 import DangerModal from "@/components/shared/modals/DangerModal.vue";
 
-const router = useRouter();
 const store = useStore();
 
 const profile = computed(() => store.getters.getProfile);
@@ -90,7 +88,7 @@ const fetchProfile = () => store.dispatch("fetchProfile");
 const logout = () => {
 	localStorage.removeItem("refreshToken");
 	localStorage.removeItem("accessToken");
-	router.push("/login");
+	location.reload();
 };
 </script>
 
