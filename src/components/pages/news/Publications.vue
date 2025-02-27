@@ -14,12 +14,18 @@
 		</div>
 
 		<ul class="publications__items grid grid-cols-3 max-sm:grid-cols-1 gap-4">
-			<li v-for="item in filteredNews" :key="item.id" class="publications__item">
+			<li v-for="item in news" :key="item.id" class="publications__item" @click="linkToEdit(item.id)">
 				<img :src="item.image" class="publications__item-image" alt="" />
-				<span class="publications__item-date">Дата: {{ formatDate(item.scheduled_time) }}</span>
-				<p class="publications__item-title">{{ item.title.ru }}</p>
+				<span class="publications__item-date">
+					Дата: {{ formatDate(item.scheduled_time || item.created_at) }}
+				</span>
+				<p class="publications__item-title">{{ item.title_ru }}</p>
 			</li>
 		</ul>
+
+		<div class="flex justify-end mt-4">
+			<Pagination :page="pagination.page" :count="pagination.count" :limit="pagination.limit" />
+		</div>
 	</div>
 </template>
 
@@ -27,314 +33,65 @@
 import Calendar from "@/components/shared/ui/Calendar.vue";
 import CustomButton from "@/components/shared/ui/CustomButton.vue";
 import SearchInput from "@/components/shared/ui/SearchInput.vue";
+import Pagination from "@/components/shared/ui/Pagination.vue";
 
 import { formatDate } from "@/utils/formatters/formatDate";
+
+import news from "@/api/news";
 
 export default {
 	data() {
 		return {
-			news,
+			news: [],
 			searchQuery: "",
+			pagination: {
+				page: 1,
+				limit: 10,
+				count: 0,
+			},
 		};
-	},
-
-	computed: {
-		filteredNews() {
-			return this.news;
-		},
 	},
 
 	methods: {
 		formatDate(date) {
 			return formatDate(date, true);
 		},
+
+		async fetchNews() {
+			const { page, limit } = this.pagination;
+			const to_date = this.$route.query.to_date;
+			const from_date = this.$route.query.from_date;
+			const search = this.searchQuery;
+			const filters = { page, limit, from_date, to_date, search };
+			const response = await news.getPublications(filters);
+			this.news = response.items;
+		},
+
+		handlePageChange(newPage) {
+			this.pagination.page = newPage;
+		},
+
+		linkToEdit(id) {
+			this.$router.push(`/news/publication/${id}`);
+		},
 	},
 
 	components: { CustomButton, SearchInput, Calendar },
-};
 
-const news = [
-	{
-		id: 1,
-		title: {
-			ru: "Открытие новой кофейни",
-			uz: "Yangi qahvaxona ochilishi",
-			en: "Opening of a new coffee shop",
+	watch: {
+		"$route.query.to_date": {
+			deep: true,
+			immediate: true,
+			handler() {
+				this.fetchNews();
+			},
 		},
-		image: "https://coffeebean.com.au/cdn/shop/articles/nathan-dumlao-6VhPY27jdps-unsplash_1600x.jpg?v=1670108329",
-		scheduled_time: "2025-02-20T10:00:00Z",
-	},
-	{
-		id: 2,
-		title: {
-			ru: "Скидки на кофе",
-			uz: "Qahva uchun chegirmalar",
-			en: "Discounts on coffee",
+
+		searchQuery() {
+			this.fetchNews();
 		},
-		image: "https://beannbeancoffee.com/cdn/shop/articles/latte.jpg?crop=center&height=2294&v=1626909784&width=4100",
-		scheduled_time: "2025-03-01T08:00:00Z",
 	},
-	{
-		id: 1,
-		title: {
-			ru: "Открытие новой кофейни",
-			uz: "Yangi qahvaxona ochilishi",
-			en: "Opening of a new coffee shop",
-		},
-		image: "https://coffeebean.com.au/cdn/shop/articles/nathan-dumlao-6VhPY27jdps-unsplash_1600x.jpg?v=1670108329",
-		scheduled_time: "2025-02-20T10:00:00Z",
-	},
-	{
-		id: 2,
-		title: {
-			ru: "Скидки на кофе",
-			uz: "Qahva uchun chegirmalar",
-			en: "Discounts on coffee",
-		},
-		image: "https://beannbeancoffee.com/cdn/shop/articles/latte.jpg?crop=center&height=2294&v=1626909784&width=4100",
-		scheduled_time: "2025-03-01T08:00:00Z",
-	},
-	{
-		id: 1,
-		title: {
-			ru: "Открытие новой кофейни",
-			uz: "Yangi qahvaxona ochilishi",
-			en: "Opening of a new coffee shop",
-		},
-		image: "https://coffeebean.com.au/cdn/shop/articles/nathan-dumlao-6VhPY27jdps-unsplash_1600x.jpg?v=1670108329",
-		scheduled_time: "2025-02-20T10:00:00Z",
-	},
-	{
-		id: 2,
-		title: {
-			ru: "Скидки на кофе",
-			uz: "Qahva uchun chegirmalar",
-			en: "Discounts on coffee",
-		},
-		image: "https://beannbeancoffee.com/cdn/shop/articles/latte.jpg?crop=center&height=2294&v=1626909784&width=4100",
-		scheduled_time: "2025-03-01T08:00:00Z",
-	},
-	{
-		id: 1,
-		title: {
-			ru: "Открытие новой кофейни",
-			uz: "Yangi qahvaxona ochilishi",
-			en: "Opening of a new coffee shop",
-		},
-		image: "https://coffeebean.com.au/cdn/shop/articles/nathan-dumlao-6VhPY27jdps-unsplash_1600x.jpg?v=1670108329",
-		scheduled_time: "2025-02-20T10:00:00Z",
-	},
-	{
-		id: 2,
-		title: {
-			ru: "Скидки на кофе",
-			uz: "Qahva uchun chegirmalar",
-			en: "Discounts on coffee",
-		},
-		image: "https://beannbeancoffee.com/cdn/shop/articles/latte.jpg?crop=center&height=2294&v=1626909784&width=4100",
-		scheduled_time: "2025-03-01T08:00:00Z",
-	},
-	{
-		id: 1,
-		title: {
-			ru: "Открытие новой кофейни",
-			uz: "Yangi qahvaxona ochilishi",
-			en: "Opening of a new coffee shop",
-		},
-		image: "https://coffeebean.com.au/cdn/shop/articles/nathan-dumlao-6VhPY27jdps-unsplash_1600x.jpg?v=1670108329",
-		scheduled_time: "2025-02-20T10:00:00Z",
-	},
-	{
-		id: 2,
-		title: {
-			ru: "Скидки на кофе",
-			uz: "Qahva uchun chegirmalar",
-			en: "Discounts on coffee",
-		},
-		image: "https://beannbeancoffee.com/cdn/shop/articles/latte.jpg?crop=center&height=2294&v=1626909784&width=4100",
-		scheduled_time: "2025-03-01T08:00:00Z",
-	},
-	{
-		id: 1,
-		title: {
-			ru: "Открытие новой кофейни",
-			uz: "Yangi qahvaxona ochilishi",
-			en: "Opening of a new coffee shop",
-		},
-		image: "https://coffeebean.com.au/cdn/shop/articles/nathan-dumlao-6VhPY27jdps-unsplash_1600x.jpg?v=1670108329",
-		scheduled_time: "2025-02-20T10:00:00Z",
-	},
-	{
-		id: 2,
-		title: {
-			ru: "Скидки на кофе",
-			uz: "Qahva uchun chegirmalar",
-			en: "Discounts on coffee",
-		},
-		image: "https://beannbeancoffee.com/cdn/shop/articles/latte.jpg?crop=center&height=2294&v=1626909784&width=4100",
-		scheduled_time: "2025-03-01T08:00:00Z",
-	},
-	{
-		id: 1,
-		title: {
-			ru: "Открытие новой кофейни",
-			uz: "Yangi qahvaxona ochilishi",
-			en: "Opening of a new coffee shop",
-		},
-		image: "https://coffeebean.com.au/cdn/shop/articles/nathan-dumlao-6VhPY27jdps-unsplash_1600x.jpg?v=1670108329",
-		scheduled_time: "2025-02-20T10:00:00Z",
-	},
-	{
-		id: 2,
-		title: {
-			ru: "Скидки на кофе",
-			uz: "Qahva uchun chegirmalar",
-			en: "Discounts on coffee",
-		},
-		image: "https://beannbeancoffee.com/cdn/shop/articles/latte.jpg?crop=center&height=2294&v=1626909784&width=4100",
-		scheduled_time: "2025-03-01T08:00:00Z",
-	},
-	{
-		id: 1,
-		title: {
-			ru: "Открытие новой кофейни",
-			uz: "Yangi qahvaxona ochilishi",
-			en: "Opening of a new coffee shop",
-		},
-		image: "https://coffeebean.com.au/cdn/shop/articles/nathan-dumlao-6VhPY27jdps-unsplash_1600x.jpg?v=1670108329",
-		scheduled_time: "2025-02-20T10:00:00Z",
-	},
-	{
-		id: 2,
-		title: {
-			ru: "Скидки на кофе",
-			uz: "Qahva uchun chegirmalar",
-			en: "Discounts on coffee",
-		},
-		image: "https://beannbeancoffee.com/cdn/shop/articles/latte.jpg?crop=center&height=2294&v=1626909784&width=4100",
-		scheduled_time: "2025-03-01T08:00:00Z",
-	},
-	{
-		id: 1,
-		title: {
-			ru: "Открытие новой кофейни",
-			uz: "Yangi qahvaxona ochilishi",
-			en: "Opening of a new coffee shop",
-		},
-		image: "https://coffeebean.com.au/cdn/shop/articles/nathan-dumlao-6VhPY27jdps-unsplash_1600x.jpg?v=1670108329",
-		scheduled_time: "2025-02-20T10:00:00Z",
-	},
-	{
-		id: 2,
-		title: {
-			ru: "Скидки на кофе",
-			uz: "Qahva uchun chegirmalar",
-			en: "Discounts on coffee",
-		},
-		image: "https://beannbeancoffee.com/cdn/shop/articles/latte.jpg?crop=center&height=2294&v=1626909784&width=4100",
-		scheduled_time: "2025-03-01T08:00:00Z",
-	},
-	{
-		id: 1,
-		title: {
-			ru: "Открытие новой кофейни",
-			uz: "Yangi qahvaxona ochilishi",
-			en: "Opening of a new coffee shop",
-		},
-		image: "https://coffeebean.com.au/cdn/shop/articles/nathan-dumlao-6VhPY27jdps-unsplash_1600x.jpg?v=1670108329",
-		scheduled_time: "2025-02-20T10:00:00Z",
-	},
-	{
-		id: 2,
-		title: {
-			ru: "Скидки на кофе",
-			uz: "Qahva uchun chegirmalar",
-			en: "Discounts on coffee",
-		},
-		image: "https://beannbeancoffee.com/cdn/shop/articles/latte.jpg?crop=center&height=2294&v=1626909784&width=4100",
-		scheduled_time: "2025-03-01T08:00:00Z",
-	},
-	{
-		id: 1,
-		title: {
-			ru: "Открытие новой кофейни",
-			uz: "Yangi qahvaxona ochilishi",
-			en: "Opening of a new coffee shop",
-		},
-		image: "https://coffeebean.com.au/cdn/shop/articles/nathan-dumlao-6VhPY27jdps-unsplash_1600x.jpg?v=1670108329",
-		scheduled_time: "2025-02-20T10:00:00Z",
-	},
-	{
-		id: 2,
-		title: {
-			ru: "Скидки на кофе",
-			uz: "Qahva uchun chegirmalar",
-			en: "Discounts on coffee",
-		},
-		image: "https://beannbeancoffee.com/cdn/shop/articles/latte.jpg?crop=center&height=2294&v=1626909784&width=4100",
-		scheduled_time: "2025-03-01T08:00:00Z",
-	},
-	{
-		id: 1,
-		title: {
-			ru: "Открытие новой кофейни",
-			uz: "Yangi qahvaxona ochilishi",
-			en: "Opening of a new coffee shop",
-		},
-		image: "https://coffeebean.com.au/cdn/shop/articles/nathan-dumlao-6VhPY27jdps-unsplash_1600x.jpg?v=1670108329",
-		scheduled_time: "2025-02-20T10:00:00Z",
-	},
-	{
-		id: 2,
-		title: {
-			ru: "Скидки на кофе",
-			uz: "Qahva uchun chegirmalar",
-			en: "Discounts on coffee",
-		},
-		image: "https://beannbeancoffee.com/cdn/shop/articles/latte.jpg?crop=center&height=2294&v=1626909784&width=4100",
-		scheduled_time: "2025-03-01T08:00:00Z",
-	},
-	{
-		id: 1,
-		title: {
-			ru: "Открытие новой кофейни",
-			uz: "Yangi qahvaxona ochilishi",
-			en: "Opening of a new coffee shop",
-		},
-		image: "https://coffeebean.com.au/cdn/shop/articles/nathan-dumlao-6VhPY27jdps-unsplash_1600x.jpg?v=1670108329",
-		scheduled_time: "2025-02-20T10:00:00Z",
-	},
-	{
-		id: 2,
-		title: {
-			ru: "Скидки на кофе",
-			uz: "Qahva uchun chegirmalar",
-			en: "Discounts on coffee",
-		},
-		image: "https://beannbeancoffee.com/cdn/shop/articles/latte.jpg?crop=center&height=2294&v=1626909784&width=4100",
-		scheduled_time: "2025-03-01T08:00:00Z",
-	},
-	{
-		id: 1,
-		title: {
-			ru: "Открытие новой кофейни",
-			uz: "Yangi qahvaxona ochilishi",
-			en: "Opening of a new coffee shop",
-		},
-		image: "https://coffeebean.com.au/cdn/shop/articles/nathan-dumlao-6VhPY27jdps-unsplash_1600x.jpg?v=1670108329",
-		scheduled_time: "2025-02-20T10:00:00Z",
-	},
-	{
-		id: 2,
-		title: {
-			ru: "Скидки на кофе",
-			uz: "Qahva uchun chegirmalar",
-			en: "Discounts on coffee",
-		},
-		image: "https://beannbeancoffee.com/cdn/shop/articles/latte.jpg?crop=center&height=2294&v=1626909784&width=4100",
-		scheduled_time: "2025-03-01T08:00:00Z",
-	},
-];
+};
 </script>
 
 <style lang="scss" scoped>
@@ -359,7 +116,7 @@ const news = [
 			left: 0;
 			width: 100%;
 			height: 100%;
-			background-color: rgba($color: #000, $alpha: 0.25);
+			background-color: rgba($color: #000, $alpha: 0.5);
 			border-radius: inherit;
 			z-index: 2;
 		}
@@ -386,7 +143,7 @@ const news = [
 			font-weight: 500;
 			font-size: 1.375rem;
 			margin: auto 0;
-			line-height: 1.125;
+			line-height: 1.25;
 		}
 	}
 }

@@ -1,5 +1,10 @@
 <template>
-	<PublicationForm :edit-enabled="editEnabled" />
+	<PublicationForm
+		v-if="publication"
+		:initial-data="publication"
+		:edit-enabled="editEnabled"
+		@cancel-edit="toggleEdit"
+	/>
 
 	<div v-if="!editEnabled" class="flex justify-end gap-4 mt-4">
 		<CustomButton icon="fi-rr-file-edit" class="h-12 width-fit purple" @click="toggleEdit">
@@ -17,15 +22,29 @@ import PublicationForm from "@/components/pages/news/components/PublicationForm.
 import CustomButton from "@/components/shared/ui/CustomButton.vue";
 import DangerModal from "@/components/shared/modals/DangerModal.vue";
 
+import news from "@/api/news";
+
 export default {
 	data() {
 		return {
 			editEnabled: false,
 			deleteModalOpen: false,
+			publication: null,
 		};
 	},
 
 	methods: {
+		async fetchNewsByID() {
+			const publication_id = this.$route.params.publication_id;
+
+			if (publication_id) {
+				const response = await news.getPublicationByID(publication_id);
+				this.publication = response;
+			} else {
+				this.$router.push("/news");
+			}
+		},
+
 		toggleEdit() {
 			this.editEnabled = !this.editEnabled;
 		},
@@ -34,7 +53,19 @@ export default {
 			this.deleteModalOpen = !this.deleteModalOpen;
 		},
 
-		deletePublication() {},
+		async deletePublication() {
+			const id = this.$route.params.publication_id;
+			const status = await news.deletePublication(id);
+
+			if (status === 204) {
+				this.deleteModalOpen = false;
+				this.$router.push("/news");
+			}
+		},
+	},
+
+	mounted() {
+		this.fetchNewsByID();
 	},
 
 	components: { PublicationForm, CustomButton, DangerModal },
