@@ -251,7 +251,8 @@ export default {
 				return this.categories.find(cat => cat.category_id === this.product.category_id) || null;
 			},
 			set(value) {
-				this.product.category_id = value ? value.category_id : null;
+				const id = this.categories.find(cat => cat.name === value).category_id;
+				this.product.category_id = value ? id : null;
 			},
 		},
 
@@ -260,7 +261,7 @@ export default {
 				return this.drink_types.find(type => type.name === this.product.drink_type) || null;
 			},
 			set(value) {
-				this.product.drink_type = value ? value.name : null;
+				this.product.drink_type = value || null;
 			},
 		},
 	},
