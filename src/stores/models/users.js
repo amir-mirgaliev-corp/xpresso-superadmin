@@ -1,4 +1,3 @@
-import api from "@/api/axios";
 import users from "@/api/users";
 
 export default {
@@ -10,8 +9,8 @@ export default {
 	},
 
 	actions: {
-		async fetchUsers(context, { filter, pagination }) {
-			const resUsers = await users.getUsers(filter, pagination);
+		async fetchUsers(context, data) {
+			const resUsers = await users.getUsers(data);
 			context.commit("setUsers", resUsers);
 		},
 

@@ -113,9 +113,9 @@ const updateSelectedValue = () => {
 		let option;
 
 		if (props.sort) {
-			option = props.sort_options.find(item => item.name === queryValue);
+			option = props.sort_options.find(item => String(item.name) === queryValue);
 		} else {
-			option = props.options.find(item => item.name === queryValue);
+			option = props.options.find(item => String(item.name) === queryValue);
 		}
 
 		selectedValue.value = option ? option.title || option.name : "";

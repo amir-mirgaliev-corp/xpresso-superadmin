@@ -30,7 +30,7 @@ export default {
 		},
 		tableOptions: {
 			editLink: "/user/profile",
-			thead: ["№", "Аватар", "Имя", "Номер телефона", "Машина", "Кол-во заказов"],
+			thead: ["№", "Аватар", "Имя", "Логин", "Номер телефона", "Машина", "Кол-во заказов"],
 			content: [],
 		},
 	}),
@@ -43,36 +43,31 @@ export default {
 		...mapActions(["fetchUsers"]),
 
 		async loadClients() {
-			// pagination
+			// filters
 			const { page, limit } = this.paginationOptions;
 			const pagination = { page, limit };
+			const make_id = this.$route.query.make_id;
+			const model_id = this.$route.query.model_id;
+			const sort_by_orders = this.$route.query.orders;
+			const gender = this.$route.query.gender;
+			const filters = { pagination, make_id, model_id, sort_by_orders, gender };
 
-			// filters
-			const transport_mark = this.$route.query.transport_mark;
-			const transport_model = this.$route.query.transport_model;
-			const orders_count_sort = this.$route.query.orders;
-			const filter = { transport_mark, transport_model, orders_count_sort };
+			await this.fetchUsers(filters);
+			this.paginationOptions.count = this.getUsers.total;
+			this.setUsersTable();
+		},
 
-			console.log(filter);
-
-			await this.fetchUsers({ filter, pagination });
-
-			console.log(this.getUsers.users);
-
-			this.paginationOptions.count = this.getUsers.count;
-
-			this.tableOptions.content = this.getUsers.users.map((user, index) => {
-				const transportName = user.userTransport?.userTransportName || "";
-				const transportNumber = user.userTransport?.userTransportNumber || "";
-
+		setUsersTable() {
+			this.tableOptions.content = this.getUsers.items.map((user, index) => {
 				return {
 					index: (this.paginationOptions.page - 1) * this.paginationOptions.limit + index + 1,
-					avatar: user.userAvatar ? `${env.VITE_APP_STATIC_URL}${user.userAvatar}` : defaultAvatar,
-					fullName: `${user.firstName} ${user.lastName}`,
-					phone: user.userPhone || "Не указан",
-					id: user.userId,
-					transport: [transportName, transportNumber].filter(Boolean).join(", ") || "-",
-					ordersCount: user.userOrderCount,
+					avatar: user.avatar || defaultAvatar,
+					fullName: `${user.name} ${user.last_name}`,
+					username: user.username || "",
+					phone: user.phone_number || "",
+					transport: user.vehicle || "",
+					ordersCount: user.order_count,
+					id: user.id,
 				};
 			});
 		},
@@ -83,9 +78,19 @@ export default {
 	},
 
 	watch: {
+		getUsers: {
+			deep: true,
+			handler(newValue) {
+				if (newValue) {
+					this.paginationOptions.count = newValue.total;
+					this.setUsersTable();
+				}
+			},
+		},
+
 		"paginationOptions.page": {
-			async handler() {
-				await this.loadClients();
+			handler() {
+				this.loadClients();
 			},
 		},
 

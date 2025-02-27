@@ -38,7 +38,7 @@ export default {
 	},
 
 	computed: {
-		...mapGetters(["getTransportCategories", "getTransportModels"]),
+		...mapGetters(["getTransportMakeList", "getTransportModelList"]),
 
 		hasAppliedFilters() {
 			return this.filters.some(filter => Object.keys(this.$route.query).includes(filter.queryName));
@@ -50,7 +50,7 @@ export default {
 		filters: [
 			{
 				id: 0,
-				queryName: "transport_mark",
+				queryName: "make_id",
 				label: "Марка автомобиля",
 				options: [],
 			},
@@ -61,42 +61,49 @@ export default {
 				label: "Количество заказов",
 				options: [],
 			},
+			{
+				id: 3,
+				sort: false,
+				queryName: "gender",
+				label: "Пол",
+				options: [
+					{ name: "MALE", title: "Мужской" },
+					{ name: "FEMALE", title: "Женский" },
+				],
+			},
 		],
 	}),
 
 	methods: {
-		...mapActions(["fetchTransportCategories", "fetchTransportModels"]),
+		...mapActions(["fetchTransportMakeList", "fetchTransportModelList"]),
 
 		async loadTransportModels() {
-			const filterModelIndex = this.filters.findIndex(filter => filter.queryName === "transport_model");
+			const filterModelIndex = this.filters.findIndex(filter => filter.queryName === "model_id");
+
 			if (filterModelIndex !== -1) {
 				this.filters.splice(filterModelIndex, 1);
 				const query = Object.assign({}, this.$route.query);
-				delete query.transport_model;
+				delete query.model_id;
 				this.$router.replace({ query });
 			}
 
-			await this.fetchTransportModels();
+			await this.fetchTransportModelList(this.$route.query.make_id);
 
-			if (this.getTransportModels.length) {
-				const appliedCategory = this.getTransportCategories.find(
-					category => category.name === this.$route.query.transport_mark,
-				);
-
-				if (!appliedCategory) return;
-
+			if (this.getTransportModelList.length) {
 				this.filters.splice(1, 0, {
 					id: 1,
-					queryName: "transport_model",
+					queryName: "model_id",
 					label: "Модель автомобиля",
-					options: this.getTransportModels.filter(model => +model.categoryId === +appliedCategory.id),
+					options: this.getTransportModelList.map(model => {
+						return { id: model.id, name: model.id, title: model.name };
+					}),
 				});
 			}
 		},
 
 		clearFilters() {
 			const updatedQuery = { ...this.$route.query };
-			const filterModelIndex = this.filters.findIndex(filter => filter.queryName === "transport_model");
+			const filterModelIndex = this.filters.findIndex(filter => filter.queryName === "model_id");
 
 			this.filters.forEach(filter => {
 				delete updatedQuery[filter.queryName];
@@ -110,22 +117,25 @@ export default {
 		},
 	},
 	async mounted() {
-		await this.fetchTransportCategories();
-		this.filters[0].options = this.getTransportCategories;
+		await this.fetchTransportMakeList();
+		this.filters[0].options = this.getTransportMakeList.map(make => {
+			return { id: make.id, name: make.id, title: make.name };
+		});
 	},
 
 	watch: {
-		"$route.query.transport_mark": {
+		"$route.query.make_id": {
 			immediate: true,
 
 			async handler(newValue) {
 				if (newValue) {
-					console.log(newValue);
-
-					if (!this.getTransportCategories.length) {
-						await this.fetchTransportCategories();
-						this.filters[0].options = this.getTransportCategories;
+					if (!this.getTransportMakeList.length) {
+						await this.fetchTransportMakeList();
+						this.filters[0].options = this.getTransportMakeList.map(make => {
+							return { id: make.id, name: make.id, title: make.name };
+						});
 					}
+
 					this.loadTransportModels();
 				}
 			},

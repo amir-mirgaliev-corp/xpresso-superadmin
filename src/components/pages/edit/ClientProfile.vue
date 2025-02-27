@@ -3,8 +3,8 @@
 		v-if="profile"
 		class="client__table user-profile bg-white p-[24px] rounded-[12px] border-[1px] shadow-drop"
 	>
-		<div class="user-profile__avatar drop-shadow-sm mb-6">
-			<img :src="userAvatar" class="w-[124px] rounded-[50%]" alt="User avatar" />
+		<div class="user-profile__avatar w-fit drop-shadow-sm mb-6">
+			<img :src="userAvatar" class="w-[124px] h-[124px] object-cover rounded-[50%]" alt="User avatar" />
 		</div>
 
 		<form class="form user-profile__form max-w-[550px]" @submit.prevent="submitForm">
@@ -15,10 +15,10 @@
 						type="text"
 						name="user-name"
 						class="form__input"
-						:class="{ error: v$.profile.firstName.$errors.length }"
+						:class="{ error: v$.profile.name.$errors.length }"
 						id="user-name"
 						:placeholder="editable ? 'Введите имя' : ''"
-						v-model="profile.firstName"
+						v-model="profile.name"
 					/>
 				</div>
 
@@ -28,10 +28,10 @@
 						type="text"
 						name="user-surname"
 						class="form__input"
-						:class="{ error: v$.profile.lastName.$errors.length }"
+						:class="{ error: v$.profile.last_name.$errors.length }"
 						id="user-surname"
 						:placeholder="editable ? 'Введите фамилию' : ''"
-						v-model="profile.lastName"
+						v-model="profile.last_name"
 					/>
 				</div>
 
@@ -42,10 +42,10 @@
 							type="text"
 							name="user-login"
 							class="form__input"
-							:class="{ error: v$.profile.userLogin.$errors.length }"
+							:class="{ error: v$.profile.username.$errors.length }"
 							id="user-login"
 							:placeholder="editable ? 'Введите логин' : ''"
-							v-model="profile.userLogin"
+							v-model="profile.username"
 						/>
 					</div>
 
@@ -56,7 +56,7 @@
 							name="user-id"
 							class="form__input"
 							id="user-id"
-							:value="profile.userId"
+							:value="profile.id"
 							readonly
 						/>
 					</div>
@@ -67,10 +67,10 @@
 							type="text"
 							name="user-phone"
 							class="form__input"
-							:class="{ error: v$.profile.userPhone.$errors.length }"
 							id="user-phone"
 							:placeholder="editable ? 'Введите номер' : ''"
-							v-model="profile.userPhone"
+							v-model="profile.phone_number"
+							readonly
 						/>
 					</div>
 
@@ -99,25 +99,13 @@
 					</div>
 
 					<div class="form__field">
-						<label class="form__label" for="user-transport-number">Номер автомобиля</label>
-						<input
-							type="text"
-							name="user-transport-number"
-							class="form__input"
-							id="user-transport-number"
-							:value="profile.userTransport.userTransportNumber"
-							readonly
-						/>
-					</div>
-
-					<div class="form__field">
 						<label class="form__label" for="user-transport-color">Цвет автомобиля</label>
 						<input
 							type="text"
 							name="user-transport-color"
 							class="form__input"
 							id="user-transport-color"
-							:value="profile.userTransport.userTransportColor.userTransportColorName"
+							:value="profile.vehicle_color"
 							readonly
 						/>
 					</div>
@@ -125,35 +113,44 @@
 			</fieldset>
 
 			<div v-if="editable" class="user-profile__controls grid grid-cols-2 gap-4 mt-8">
-				<CustomButton type="secondary" btn-type="button" class="h-12" @click="cancelEdit"
-					>Отменить</CustomButton
-				>
+				<CustomButton type="secondary" btn-type="button" class="h-12" @click="cancelEdit">
+					Отменить
+				</CustomButton>
+
 				<CustomButton class="h-12">Сохранить</CustomButton>
 			</div>
 		</form>
 	</section>
 
 	<div v-if="profile && !editable" class="user-profile__actions flex justify-end gap-4 mt-4">
-		<CustomButton class="user-profile__delete h-12 width-fit" @click="deleteModalOpen = true"
-			>Удалить пользователя</CustomButton
+		<CustomButton class="user-profile__delete h-12 width-fit" icon="fi-rr-trash" @click="deleteModalOpen = true">
+			Удалить пользователя
+		</CustomButton>
+
+		<CustomButton
+			class="h-12 width-fit"
+			:class="banButtonClass"
+			:icon="profile.is_blocked ? 'fi-rr-lock-open-alt' : 'fi-rr-lock'"
+			@click="blockModalOpen = true"
 		>
-		<CustomButton class="h-12 width-fit" :class="banButtonClass" @click="blockModalOpen = true">{{
-			banConfirmButtonText
-		}}</CustomButton>
-		<CustomButton class="user-profile__edit h-12 width-fit purple" @click="editProfile"
-			>Редактировать информацию</CustomButton
-		>
+			{{ banConfirmButtonText }}
+		</CustomButton>
+
+		<CustomButton class="user-profile__edit h-12 width-fit purple" icon="fi-rr-edit" @click="editProfile">
+			Редактировать
+		</CustomButton>
+
 		<!-- <CustomButton class="user-profile__download h-12 width-fit" icon="fi-rr-download">Скачать данные</CustomButton> -->
 	</div>
 
-	<DangerModal v-if="deleteModalOpen" @confirm="deleteThisUser" @close="deleteModalOpen = false" />
+	<DangerModal v-if="deleteModalOpen" @confirm="deleteUser" @close="deleteModalOpen = false" />
 
 	<DangerModal
 		v-if="blockModalOpen"
 		:title="banModalTitle"
 		icon="fi-rr-ban"
 		:confirmText="banConfirmButtonText"
-		@confirm="changeBanStatus"
+		@confirm="changeBlockStatus"
 		@close="blockModalOpen = false"
 	/>
 </template>
@@ -164,11 +161,13 @@ import { toRaw } from "vue";
 import { useToast } from "vue-toastification";
 import { useVuelidate } from "@vuelidate/core";
 import { required } from "@vuelidate/validators";
+
 import CustomButton from "@/components/shared/ui/CustomButton.vue";
 import DangerModal from "@/components/shared/modals/DangerModal.vue";
+
 import users from "@/api/users";
 
-const env = import.meta.env;
+import defaultAvatar from "@/assets/images/default_avatar.svg";
 
 export default {
 	setup() {
@@ -189,18 +188,14 @@ export default {
 		editable: false,
 		deleteModalOpen: false,
 		blockModalOpen: false,
-		isBaned: false,
-		baseUrl: env.VITE_APP_STATIC_URL,
-		defaultAvatar: "/src/assets/images/default_avatar.svg",
 	}),
 
 	validations() {
 		return {
 			profile: {
-				firstName: { required },
-				lastName: { required },
-				userLogin: { required },
-				userPhone: { required },
+				name: { required },
+				last_name: { required },
+				username: { required },
 			},
 		};
 	},
@@ -213,13 +208,13 @@ export default {
 		},
 
 		userAvatar() {
-			return this.profile.userAvatar ? this.baseUrl + this.profile.userAvatar : this.defaultAvatar;
+			return this.profile.avatar || defaultAvatar;
 		},
 
 		translatedGender() {
 			let result = "Не указан";
 
-			switch (this.profile.userGender) {
+			switch (this.profile.gender) {
 				case "male":
 					result = "Мужской";
 					break;
@@ -232,21 +227,25 @@ export default {
 		},
 
 		userTransport() {
-			return `${this.profile.userTransport.userTransportCategory || ""} ${this.profile.userTransport.userTransportModel || ""}`;
+			if (this.profile.vehicle_make && this.profile.vehicle_model && this.profile.license_plate) {
+				return `${this.profile.vehicle_make} ${this.profile.vehicle_model}, ${this.profile.license_plate}`;
+			} else {
+				return "";
+			}
 		},
 
 		banModalTitle() {
-			return this.profile.userIsBaned
+			return this.profile.is_blocked
 				? "Уверены, что хотите разблокировать пользователя?"
 				: "Уверены, что хотите заблокировать этого пользователя?";
 		},
 
 		banConfirmButtonText() {
-			return this.profile.userIsBaned ? "Разблокировать" : "Заблокировать";
+			return this.profile.is_blocked ? "Разблокировать" : "Заблокировать";
 		},
 
 		banButtonClass() {
-			return this.profile.userIsBaned ? "user-profile__unban" : "user-profile__ban";
+			return this.profile.is_blocked ? "user-profile__unban" : "user-profile__ban";
 		},
 	},
 
@@ -254,12 +253,10 @@ export default {
 		...mapActions(["fetchUserProfile"]),
 
 		async fetchProfile() {
-			const userId = this.$route.params.user_id;
-			await this.fetchUserProfile(userId);
-			this.profile = this.getUserProfile;
+			const user_id = this.$route.params.user_id;
+			await this.fetchUserProfile(user_id);
+			this.profile = structuredClone(toRaw(this.getUserProfile));
 			this.initialProfile = structuredClone(toRaw(this.profile));
-			this.profile.userIsBaned = this.profile.userIsBaned === "true";
-			console.log(this.profile);
 		},
 
 		editProfile() {
@@ -274,48 +271,52 @@ export default {
 
 		async submitForm() {
 			const result = await this.v$.$validate();
-
-			if (result) {
-				this.updateProfile();
-			}
+			if (result) this.updateProfile();
 		},
 
 		async updateProfile() {
-			const params = {
-				name: this.profile.firstName,
-				surname: this.profile.lastName,
-				login: this.profile.userLogin,
-				phone: this.profile.userPhone,
-			};
+			const updatedFields = {};
 
-			const userId = this.$route.params.user_id;
-			const status = await users.updateUserProfile(userId, params);
-			if (status === 200) location.reload();
+			Object.keys(this.profile).forEach(key => {
+				if (key !== "avatar" && this.profile[key] !== this.initialProfile[key]) {
+					updatedFields[key] = this.profile[key];
+				}
+			});
+
+			if (!Object.keys(updatedFields).length) {
+				this.toast.info("Нет изменений для обновления");
+				return;
+			}
+
+			const user_id = this.$route.params.user_id;
+			const status = await users.updateUserProfile(user_id, updatedFields);
+
+			if (status === 200) {
+				this.editable = false;
+				this.fetchProfile();
+			}
 		},
 
-		async deleteThisUser() {
-			const response = await users.deleteUser(this.$route.params.user_id);
-			if (response === 200) {
-				this.$router.push("/clients");
-			} else {
+		async deleteUser() {
+			const status = await users.deleteUser(this.$route.params.user_id);
+
+			if (status === 204) {
 				this.deleteModalOpen = false;
-				this.toast.error("У пользователя есть активные заказы");
+				this.$router.push("/clients");
 			}
 		},
 
-		async changeBanStatus() {
-			const data = {
-				user_id: this.$route.params.user_id,
-				is_ban: !this.profile.userIsBaned,
-			};
+		async changeBlockStatus() {
+			const user_id = this.$route.params.user_id;
 
-			const baned = await users.banUser(data);
-
-			if (baned === 200) {
-				location.reload();
+			if (this.profile.is_blocked) {
+				await users.unblockUser(user_id);
 			} else {
-				this.toast.error("Ошибка, попробуйте позже");
+				await users.blockUser(user_id);
 			}
+
+			this.blockModalOpen = false;
+			this.fetchProfile();
 		},
 	},
 

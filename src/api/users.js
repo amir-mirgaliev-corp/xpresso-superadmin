@@ -1,19 +1,23 @@
 import api from "./axios";
 
+import { useToast } from "vue-toastification";
+
+const toast = useToast();
+
 export default {
-	async getUsers(filter, pagination) {
+	async getUsers(filters) {
 		try {
 			const params = {
-				limit: pagination?.limit || 10,
-				page: pagination?.page || 1,
-				transport_mark: filter?.transport_mark,
-				transport_model: filter?.transport_model,
-				orders: filter?.orders_count_sort,
-				search: filter?.search,
+				size: filters?.limit || 10,
+				page: filters?.page || 1,
+				make_id: filters?.make_id,
+				model_id: filters?.model_id,
+				sort_by_orders: filters?.sort_by_orders,
+				gender: filters?.gender,
+				search: filters?.search,
 			};
 
-			const response = await api.get("/admin-users", { params });
-
+			const response = await api.get("/superuser/users/", { params });
 			return response.data;
 		} catch (error) {
 			console.log(error);
@@ -22,7 +26,7 @@ export default {
 
 	async getUserProfile(id) {
 		try {
-			const response = await api.get(`/admin-user-statistic-by-id/${id}`);
+			const response = await api.get(`/superuser/user/profile/${id}`);
 			return response.data;
 		} catch (error) {
 			console.log(error);
@@ -66,28 +70,49 @@ export default {
 
 	async updateUserProfile(id, data) {
 		try {
-			const response = await api.put(`/admin-user-edit/${id}`, data);
+			const response = await api.patch(`/superuser/user/profile/${id}`, data);
+			toast.success("Профиль успешно обновлен");
 			return response.status;
 		} catch (error) {
 			console.log(error);
-			error.status;
+
+			if (error.status === 409) {
+				toast.error("Данный логин уже используется");
+			} else {
+				toast.error("Произошла ошибка, попробуйте позже");
+			}
+		}
+	},
+
+	async blockUser(id) {
+		try {
+			const response = await api.post(`/superuser/user/block/${id}`);
+			toast.success("Пользователь был заблокирован");
+			return response.status;
+		} catch (error) {
+			toast.error("Произошла ошибка, попробуйте позже");
+			console.log(error);
+		}
+	},
+
+	async unblockUser(id) {
+		try {
+			const response = await api.post(`/superuser/user/unblock/${id}`);
+			toast.success("Пользователь был разблокирован");
+			return response.status;
+		} catch (error) {
+			toast.error("Произошла ошибка, попробуйте позже");
+			console.log(error);
 		}
 	},
 
 	async deleteUser(id) {
 		try {
-			const response = await api.delete(`/user/${id}`);
+			const response = await api.delete(`/superuser/user/${id}`);
+			toast.success("Пользователь был успешно удален");
 			return response.status;
 		} catch (error) {
-			console.log(error);
-		}
-	},
-
-	async banUser(data) {
-		try {
-			const banedUser = await api.put(`/admin/user/ban`, data);
-			return banedUser.status;
-		} catch (error) {
+			toast.error("Произошла ошибка, попробуйте позже");
 			console.log(error);
 		}
 	},

@@ -47,10 +47,8 @@ export default {
 					await this.fetchGlobalOrders({ from_date, to_date, search });
 					break;
 				case "clients":
-					await this.fetchUsers({
-						filter: { search },
-						paginate: { page, limit },
-					});
+					const filters = { ...this.$route.query, search };
+					await this.fetchUsers(filters);
 					break;
 				case "user-profile":
 					const id = this.$route.params.user_id;
@@ -121,9 +119,8 @@ export default {
 		$route: {
 			immediate: true,
 			deep: true,
-
-			handler() {
-				this.search = "";
+			handler(newRoute, oldRoute) {
+				if (newRoute?.name !== oldRoute?.name) this.search = "";
 			},
 		},
 	},
