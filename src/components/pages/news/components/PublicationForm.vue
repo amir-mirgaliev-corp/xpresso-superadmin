@@ -137,6 +137,7 @@ import ScheduleModal from "./ScheduleModal.vue";
 
 import news from "@/api/news";
 import { formatDate } from "@/utils/formatters/formatDate";
+import { useToast } from "vue-toastification";
 
 export default {
 	emits: ["update", "cancel-edit"],
@@ -144,6 +145,7 @@ export default {
 	setup() {
 		return {
 			v$: useVuelidate(),
+			toast: useToast(),
 		};
 	},
 
@@ -193,8 +195,12 @@ export default {
 		},
 
 		scheduledTime() {
-			if (this.initialData && this.formData.scheduled_time) {
-				return formatDate(this.formData.scheduled_time || this.formData?.created_at, true);
+			if (this.initialData) {
+				if (this.initialData.scheduled_time) {
+					return formatDate(this.initialData.scheduled_time, true);
+				} else {
+					return formatDate(this.initialData.created_at, true);
+				}
 			}
 		},
 	},
@@ -231,6 +237,37 @@ export default {
 					this.$router.push("/news");
 				}, 1000);
 			}
+		},
+
+		async updatePublication() {
+			const updatedFields = Object.fromEntries(
+				Object.entries(this.formData).filter(
+					([key, value]) => key === "image" || value !== this.initialData[key],
+				),
+			);
+
+			if (!Object.keys(updatedFields).length) {
+				this.toast.info("Нет изменений для обновления");
+				return;
+			}
+
+			delete updatedFields.image;
+
+			const formData = new FormData();
+
+			if (this.formData.image) {
+				formData.append("image", this.formData.image);
+			}
+
+			if (Object.keys(updatedFields).length) {
+				formData.append("data", JSON.stringify(updatedFields));
+			}
+
+			this.loading = true;
+			const status = await news.updatePublication(this.$route.params.publication_id, formData);
+			this.loading = false;
+
+			if (status === 200) this.$emit("update");
 		},
 
 		schedulePublication(time) {

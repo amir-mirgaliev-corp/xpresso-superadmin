@@ -10,7 +10,7 @@
 
 		<span class="search-form__icon">
 			<i v-if="!searchQuery" class="fi fi-rr-search"></i>
-			<i v-else class="fi fi-rr-cross-small search-form__clear text-xl" @click="clearSearch"></i>
+			<i v-else class="fi fi-rr-cross-small search-form__clear text-xl" @click="clear"></i>
 		</span>
 	</form>
 </template>

@@ -3,6 +3,7 @@
 		v-if="publication"
 		:initial-data="publication"
 		:edit-enabled="editEnabled"
+		@update="handleUpdate"
 		@cancel-edit="toggleEdit"
 	/>
 
@@ -51,6 +52,11 @@ export default {
 
 		toggleDelete() {
 			this.deleteModalOpen = !this.deleteModalOpen;
+		},
+
+		handleUpdate() {
+			this.editEnabled = false;
+			this.fetchNewsByID();
 		},
 
 		async deletePublication() {

@@ -13,7 +13,7 @@
 			<Calendar />
 		</div>
 
-		<ul class="publications__items grid grid-cols-3 max-sm:grid-cols-1 gap-4">
+		<ul class="publications__items grid grid-cols-3 max-md:grid-cols-1 max-xl:grid-cols-2 gap-4">
 			<li v-for="item in news" :key="item.id" class="publications__item" @click="linkToEdit(item.id)">
 				<img :src="item.image" class="publications__item-image" alt="" />
 				<span class="publications__item-date">
@@ -76,7 +76,7 @@ export default {
 		},
 	},
 
-	components: { CustomButton, SearchInput, Calendar },
+	components: { CustomButton, SearchInput, Calendar, Pagination },
 
 	watch: {
 		"$route.query.to_date": {

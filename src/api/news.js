@@ -32,11 +32,11 @@ export default {
 
 	async updatePublication(id, data) {
 		try {
-			const response = await api.put(`/superuser/faq/${id}`, data);
-			toast.success("Вопрос был успешно обновлен");
+			const response = await api.patch(`/superuser/news/${id}`, data);
+			toast.success("Новость была успешно обновлена");
 			return response.status;
 		} catch (error) {
-			toast.error("Ошибка при обновлении вопроса");
+			toast.error("Ошибка при обновлении новости");
 			console.log(error);
 		}
 	},
