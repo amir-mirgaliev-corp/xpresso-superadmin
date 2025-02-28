@@ -22,10 +22,18 @@
 import VueDatePicker from "@vuepic/vue-datepicker";
 import CustomButton from "@/components/shared/ui/CustomButton.vue";
 
+import { useToast } from "vue-toastification";
 import { formatDate } from "@/utils/formatters/formatDate";
 
 export default {
 	emits: ["close"],
+
+	setup() {
+		return {
+			toast: useToast(),
+		};
+	},
+
 	components: { VueDatePicker, CustomButton },
 
 	props: {
@@ -46,8 +54,11 @@ export default {
 
 	methods: {
 		save() {
-			this.$emit("update:model-value", new Date(this.date).toISOString());
-			this.$emit("close");
+			if (this.date) {
+				this.$emit("select", new Date(this.date).toISOString());
+			} else {
+				this.toast.error("Выберите дату и время");
+			}
 		},
 	},
 

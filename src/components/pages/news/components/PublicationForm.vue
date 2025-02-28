@@ -6,6 +6,11 @@
 	<div class="bg-white p-[16px_24px] rounded-[12px] border-[1px] w-full">
 		<h2 class="table-title">{{ title }}</h2>
 
+		<h4 v-if="scheduledTime" class="flex items-center gap-2 font-bold my-4">
+			<i class="fi fi-rr-calendar-clock"></i>
+			Дата публикации: {{ scheduledTime }}
+		</h4>
+
 		<form class="form" @submit.prevent="submitForm">
 			<h3 class="text-lg mb-2">Фотография новости:</h3>
 
@@ -30,31 +35,31 @@
 					<div class="grid grid-cols-3 gap-4 max-sm:grid-cols-1">
 						<div class="form__field">
 							<input
-								v-model="formData.title.ru"
+								v-model="formData.title_ru"
 								class="form__input"
 								name="news-title-ru"
 								placeholder="Введите заголовок новости"
-								:class="{ error: v$.formData.title.ru.$error }"
+								:class="{ error: v$.formData.title_ru.$error }"
 							/>
 						</div>
 
 						<div class="form__field">
 							<input
-								v-model="formData.title.uz"
+								v-model="formData.title_uz"
 								class="form__input"
 								name="news-title-uz"
 								placeholder="Yangilik nomini kiriting"
-								:class="{ error: v$.formData.title.uz.$error }"
+								:class="{ error: v$.formData.title_uz.$error }"
 							/>
 						</div>
 
 						<div class="form__field">
 							<input
-								v-model="formData.title.en"
+								v-model="formData.title_en"
 								class="form__input"
 								name="news-title-en"
 								placeholder="Enter news title"
-								:class="{ error: v$.formData.title.en.$error }"
+								:class="{ error: v$.formData.title_en.$error }"
 							/>
 						</div>
 					</div>
@@ -64,31 +69,31 @@
 					<div class="grid grid-cols-3 gap-4 max-sm:grid-cols-1">
 						<div class="form__field">
 							<textarea
-								v-model="formData.description.ru"
+								v-model="formData.description_ru"
 								class="form__input"
 								name="news-description-ru"
 								placeholder="Введите текст новости"
-								:class="{ error: v$.formData.description.ru.$error }"
+								:class="{ error: v$.formData.description_ru.$error }"
 							/>
 						</div>
 
 						<div class="form__field">
 							<textarea
-								v-model="formData.description.uz"
+								v-model="formData.description_uz"
 								class="form__input"
 								name="news-description-uz"
 								placeholder="Yangilik tavsifini kiriting"
-								:class="{ error: v$.formData.description.uz.$error }"
+								:class="{ error: v$.formData.description_uz.$error }"
 							/>
 						</div>
 
 						<div class="form__field">
 							<textarea
-								v-model="formData.description.en"
+								v-model="formData.description_en"
 								class="form__input"
 								name="news-description-en"
 								placeholder="Enter news description"
-								:class="{ error: v$.formData.description.en.$error }"
+								:class="{ error: v$.formData.description_en.$error }"
 							/>
 						</div>
 					</div>
@@ -120,17 +125,22 @@
 		</form>
 	</div>
 
-	<ScheduleModal v-if="scheduleModalOpen" v-model="formData.scheduled_time" @close="scheduleModalOpen = false" />
+	<ScheduleModal v-if="scheduleModalOpen" @select="schedulePublication" @close="scheduleModalOpen = false" />
 </template>
 
 <script>
 import { useVuelidate } from "@vuelidate/core";
-import { required } from "@vuelidate/validators";
+import { required, requiredIf } from "@vuelidate/validators";
 import ImageUploader from "@/components/shared/ui/ImageUploader.vue";
 import CustomButton from "@/components/shared/ui/CustomButton.vue";
 import ScheduleModal from "./ScheduleModal.vue";
 
+import news from "@/api/news";
+import { formatDate } from "@/utils/formatters/formatDate";
+
 export default {
+	emits: ["update", "cancel-edit"],
+
 	setup() {
 		return {
 			v$: useVuelidate(),
@@ -152,16 +162,12 @@ export default {
 			formData: {
 				image: null,
 				scheduled_time: "",
-				title: {
-					ru: "",
-					uz: "",
-					en: "",
-				},
-				description: {
-					ru: "",
-					uz: "",
-					en: "",
-				},
+				title_ru: "",
+				title_en: "",
+				title_uz: "",
+				description_ru: "",
+				description_en: "",
+				description_uz: "",
 			},
 		};
 	},
@@ -169,17 +175,14 @@ export default {
 	validations() {
 		return {
 			formData: {
-				image: { required },
-				title: {
-					uz: { required },
-					ru: { required },
-					en: { required },
-				},
-				description: {
-					uz: { required },
-					ru: { required },
-					en: { required },
-				},
+				image: { required: requiredIf(() => !this.initialData) },
+				scheduled_time: { required: requiredIf(() => this.scheduleModalOpen) },
+				title_ru: { required },
+				title_en: { required },
+				title_uz: { required },
+				description_ru: { required },
+				description_en: { required },
+				description_uz: { required },
 			},
 		};
 	},
@@ -188,6 +191,12 @@ export default {
 		title() {
 			return this.initialData ? "Редактирование публикации" : "Создание публикации";
 		},
+
+		scheduledTime() {
+			if (this.initialData && this.formData.scheduled_time) {
+				return formatDate(this.formData.scheduled_time || this.formData?.created_at, true);
+			}
+		},
 	},
 
 	methods: {
@@ -195,7 +204,7 @@ export default {
 			const result = await this.v$.$validate();
 
 			if (result) {
-				this.createPublication();
+				this.initialData ? this.updatePublication() : this.createPublication();
 			}
 		},
 
@@ -205,14 +214,54 @@ export default {
 		},
 
 		async createPublication() {
-			console.log(this.formData);
+			const formData = new FormData();
+
+			const { image, ...dataWithoutImage } = this.formData;
+			if (!dataWithoutImage.scheduled_time) delete dataWithoutImage.scheduled_time;
+
+			formData.append("data", JSON.stringify(dataWithoutImage));
+			formData.append("image", image);
+
+			this.loading = true;
+			const response_status = await news.createPublication(formData);
+			this.loading = false;
+
+			if (response_status === 201) {
+				setTimeout(() => {
+					this.$router.push("/news");
+				}, 1000);
+			}
+		},
+
+		schedulePublication(time) {
+			this.formData.scheduled_time = time;
+
+			if (this.formData.scheduled_time && !this.v$.$error) {
+				this.scheduleModalOpen = false;
+				this.initialData ? this.updatePublication() : this.createPublication();
+			}
+		},
+
+		cancelEdit() {
+			this.setPublicationData();
+			this.$emit("cancel-edit");
+		},
+
+		setPublicationData() {
+			this.photoPreview = this.initialData.image;
+			this.formData.image = null;
+			this.formData.scheduled_time = this.initialData.scheduled_time;
+			this.formData.title_ru = this.initialData.title_ru;
+			this.formData.title_en = this.initialData.title_en;
+			this.formData.title_uz = this.initialData.title_uz;
+			this.formData.description_ru = this.initialData.description_ru;
+			this.formData.description_en = this.initialData.description_uz;
+			this.formData.description_uz = this.initialData.description_uz;
 		},
 	},
 
-	watch: {
-		"formData.scheduled_time"(newValue) {
-			if (newValue && !this.v$.$error) this.createPublication();
-		},
+	mounted() {
+		if (this.initialData) this.setPublicationData();
 	},
 
 	components: { ImageUploader, CustomButton, ScheduleModal },
