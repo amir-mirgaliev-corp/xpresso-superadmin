@@ -2,12 +2,16 @@
 	<div class="bg-white gap-[16px] px-4 py-6 rounded-[12px] border-[1px] w-full max-sm:px-3 max-sm:py-3">
 		<div class="flex gap-x-6 max-sm:gap-x-3">
 			<h2 class="table-title">Аватарки</h2>
-			<CustomButton icon="fi-br-plus" class="width-fit h-12 mb-6 ml-auto max-sm:!w-[160px]" @click="uploadModalOpen = true">
+			<CustomButton
+				icon="fi-br-plus"
+				class="width-fit h-12 mb-6 ml-auto max-sm:!w-[160px]"
+				@click="uploadModalOpen = true"
+			>
 				Загрузить
 			</CustomButton>
 		</div>
 		<div>
-			<div v-if="avatarsList?.length" class="grid items-center grid-cols-9 max-xl:grid-cols-8 max-lg:grid-cols-6 max-md:grid-cols-4 max-sm:grid-cols-2 justify-items-center gap-3">
+			<div v-if="avatarsList?.length" class="flex items-center gap-6 flex-wrap">
 				<div v-for="avatar in avatarsList" :key="avatar">
 					<div class="size-[120px] avatar__img-wrapper">
 						<img class="rounded-full w-full h-full object-cover" :src="avatar.image" alt="profile image" />

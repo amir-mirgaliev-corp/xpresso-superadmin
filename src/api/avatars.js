@@ -15,7 +15,7 @@ export default {
 
 	async deleteAvatar(id) {
 		try {
-			const deleted = await api.delete(`/avatars/${id}`);
+			const deleted = await api.delete(`/superuser/avatars/${id}`);
 			toast.success("Аватарка успешно удалена");
 			return deleted;
 		} catch (error) {
@@ -26,7 +26,7 @@ export default {
 
 	async updateAvatar(id, data) {
 		try {
-			const updateAvatar = await api.put(`/avatars/${id}`, data);
+			const updateAvatar = await api.put(`/superuser/avatars/${id}`, data);
 			toast.success("Аватарка успешно обновлена");
 			return updateAvatar.data;
 		} catch (error) {
@@ -37,7 +37,7 @@ export default {
 
 	async createAvatar(data) {
 		try {
-			const newAvatar = await api.post("/avatars/", data);
+			const newAvatar = await api.post("/superuser/avatars/", data);
 			toast.success("Аватарка создана успешно");
 			return newAvatar;
 		} catch (error) {
