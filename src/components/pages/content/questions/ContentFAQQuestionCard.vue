@@ -2,7 +2,7 @@
 	<div class="bg-white gap-[16px] p-[16px_24px] rounded-[12px] border-[1px] w-full question-card">
 		<div class="flex items-center justify-between">
 			<h4 class="font-bold">{{ title }}</h4>
-			<div class="flex items-center gap-x-2">
+			<div class="flex items-center gap-x-2 action-btns">
 				<button @click="openEdit"><i class="fi fi-rs-pencil"></i></button>
 				<button @click="onDeleteClick"><i class="fi fi-rr-trash"></i></button>
 			</div>
@@ -46,8 +46,23 @@ export default {
 };
 </script>
 
-<style>
+<style lang="scss" scoped>
 .question-card:not(:last-child) {
 	margin-bottom: 1rem;
+}
+
+.action-btns {
+	& > button {
+		@include flex-center;
+		padding: 0.75rem;
+		border-radius: 0.5rem;
+		color: $white;
+		&:first-child {
+			background-color: $purple;
+		}
+		&:last-child {
+			background-color: $primary;
+		}
+	}
 }
 </style>

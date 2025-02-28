@@ -86,6 +86,7 @@ export default {
 			this.clearOneQuestion();
 			this.questionModalOpen = false;
 			this.questionDeleteModalOpen = false;
+			this.questionDeleteId = null;
 		},
 
 		onDeleteClick(id) {
