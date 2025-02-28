@@ -15,18 +15,28 @@
 			<Calendar />
 		</div>
 
-		<ul class="notifications__items grid grid-cols-2 gap-4 max-sm:grid-cols-1">
-			<li v-for="item in filteredNotifications" :key="item.id" class="notifications__item">
+		<ul v-if="notifications.length" class="notifications__items grid grid-cols-2 gap-4 max-sm:grid-cols-1">
+			<li v-for="item in notifications" :key="item.id" class="notifications__item" @click="linkToEdit(item.id)">
 				<div class="notifications__item-icon">
 					<i class="fi fi-rr-bell-notification-social-media"></i>
 				</div>
 
 				<div>
-					<span class="notifications__item-date">Дата: {{ formatDate(item.scheduled_time) }}</span>
-					<p class="notifications__item-title">{{ item.title.ru }}</p>
+					<span class="notifications__item-date">
+						Дата: {{ formatDate(item.scheduled_time || item.created_at) }}
+					</span>
+					<p class="notifications__item-title">{{ item.title_ru }}</p>
 				</div>
 			</li>
 		</ul>
+
+		<div v-else class="p-6 bg-white border rounded-[12px]">
+			<p>Нет уведомлений</p>
+		</div>
+
+		<div class="flex justify-end mt-4">
+			<Pagination :page="pagination.page" :count="pagination.count" :limit="pagination.limit" />
+		</div>
 	</div>
 </template>
 
@@ -34,70 +44,65 @@
 import Calendar from "@/components/shared/ui/Calendar.vue";
 import CustomButton from "@/components/shared/ui/CustomButton.vue";
 import SearchInput from "@/components/shared/ui/SearchInput.vue";
+import Pagination from "@/components/shared/ui/Pagination.vue";
 
 import { formatDate } from "@/utils/formatters/formatDate";
+
+import push from "@/api/push";
 
 export default {
 	data() {
 		return {
-			notifications,
+			notifications: [],
 			searchQuery: "",
+			pagination: {
+				page: 1,
+				limit: 10,
+				count: 0,
+			},
 		};
-	},
-
-	computed: {
-		filteredNotifications() {
-			return this.notifications;
-		},
 	},
 
 	methods: {
 		formatDate(date) {
 			return formatDate(date, true);
 		},
+
+		async fetchNotifications() {
+			const { page, limit } = this.pagination;
+			const to_date = this.$route.query.to_date;
+			const from_date = this.$route.query.from_date;
+			const search = this.searchQuery;
+			const filters = { page, limit, from_date, to_date, search };
+			const response = await push.getNotifications(filters);
+			this.notifications = response.items;
+		},
+
+		handlePageChange(newPage) {
+			this.pagination.page = newPage;
+		},
+
+		linkToEdit(id) {
+			this.$router.push(`/news/notification/${id}`);
+		},
 	},
 
-	components: { CustomButton, SearchInput, Calendar },
+	watch: {
+		"$route.query.to_date": {
+			deep: true,
+			immediate: true,
+			handler() {
+				this.fetchNotifications();
+			},
+		},
+
+		searchQuery() {
+			this.fetchNotifications();
+		},
+	},
+
+	components: { CustomButton, SearchInput, Calendar, Pagination },
 };
-
-const notifications = [
-	{
-		id: 1,
-		title: {
-			ru: "Открытие новой кофейни",
-			uz: "Yangi qahvaxona ochilishi",
-			en: "Opening of a new coffee shop",
-		},
-		scheduled_time: "2025-02-20T10:00:00Z",
-	},
-	{
-		id: 2,
-		title: {
-			ru: "Скидки на кофе",
-			uz: "Qahva uchun chegirmalar",
-			en: "Discounts on coffee",
-		},
-		scheduled_time: "2025-03-01T08:00:00Z",
-	},
-	{
-		id: 3,
-		title: {
-			ru: "Открытие новой кофейни",
-			uz: "Yangi qahvaxona ochilishi",
-			en: "Opening of a new coffee shop",
-		},
-		scheduled_time: "2025-02-20T10:00:00Z",
-	},
-	{
-		id: 4,
-		title: {
-			ru: "Скидки на кофе",
-			uz: "Qahva uchun chegirmalar",
-			en: "Discounts on coffee",
-		},
-		scheduled_time: "2025-03-01T08:00:00Z",
-	},
-];
 </script>
 
 <style lang="scss" scoped>

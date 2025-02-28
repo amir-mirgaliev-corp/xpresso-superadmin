@@ -6,6 +6,11 @@
 	<div class="bg-white p-[16px_24px] rounded-[12px] border-[1px] w-full">
 		<h2 class="table-title">{{ title }}</h2>
 
+		<h4 v-if="scheduledTime" class="flex items-center gap-2 font-bold my-4">
+			<i class="fi fi-rr-calendar-clock"></i>
+			Дата: {{ scheduledTime }}
+		</h4>
+
 		<form class="form" @submit.prevent="submitForm">
 			<fieldset :disabled="!editEnabled">
 				<div class="mt-4">
@@ -14,31 +19,31 @@
 					<div class="grid grid-cols-3 gap-4 max-sm:grid-cols-1">
 						<div class="form__field">
 							<input
-								v-model="formData.title.ru"
+								v-model="formData.title_ru"
 								class="form__input"
 								name="notification-title-ru"
 								placeholder="Введите заголовок уведомления"
-								:class="{ error: v$.formData.title.ru.$error }"
+								:class="{ error: v$.formData.title_ru.$error }"
 							/>
 						</div>
 
 						<div class="form__field">
 							<input
-								v-model="formData.title.uz"
+								v-model="formData.title_uz"
 								class="form__input"
 								name="notification-title-uz"
 								placeholder="Bildirishnoma nomini kiriting"
-								:class="{ error: v$.formData.title.uz.$error }"
+								:class="{ error: v$.formData.title_uz.$error }"
 							/>
 						</div>
 
 						<div class="form__field">
 							<input
-								v-model="formData.title.en"
+								v-model="formData.title_en"
 								class="form__input"
 								name="notification-title-en"
 								placeholder="Enter notification title"
-								:class="{ error: v$.formData.title.en.$error }"
+								:class="{ error: v$.formData.title_en.$error }"
 							/>
 						</div>
 					</div>
@@ -48,31 +53,31 @@
 					<div class="grid grid-cols-3 gap-4 max-sm:grid-cols-1">
 						<div class="form__field">
 							<textarea
-								v-model="formData.description.ru"
+								v-model="formData.description_ru"
 								class="form__input"
 								name="notification-description-ru"
 								placeholder="Введите текст уведомления"
-								:class="{ error: v$.formData.description.ru.$error }"
+								:class="{ error: v$.formData.description_ru.$error }"
 							/>
 						</div>
 
 						<div class="form__field">
 							<textarea
-								v-model="formData.description.uz"
+								v-model="formData.description_uz"
 								class="form__input"
 								name="notification-description-uz"
 								placeholder="Bildirishnoma tavsifini kiriting"
-								:class="{ error: v$.formData.description.uz.$error }"
+								:class="{ error: v$.formData.description_uz.$error }"
 							/>
 						</div>
 
 						<div class="form__field">
 							<textarea
-								v-model="formData.description.en"
+								v-model="formData.description_en"
 								class="form__input"
 								name="notification-description-en"
 								placeholder="Enter news description"
-								:class="{ error: v$.formData.description.en.$error }"
+								:class="{ error: v$.formData.description_en.$error }"
 							/>
 						</div>
 					</div>
@@ -104,19 +109,26 @@
 		</form>
 	</div>
 
-	<ScheduleModal v-if="scheduleModalOpen" v-model="formData.scheduled_time" @close="scheduleModalOpen = false" />
+	<ScheduleModal v-if="scheduleModalOpen" @select="scheduleNotification" @close="scheduleModalOpen = false" />
 </template>
 
 <script>
+import { useToast } from "vue-toastification";
 import { useVuelidate } from "@vuelidate/core";
-import { required } from "@vuelidate/validators";
+import { required, requiredIf } from "@vuelidate/validators";
+
 import CustomButton from "@/components/shared/ui/CustomButton.vue";
 import ScheduleModal from "./ScheduleModal.vue";
+
+import { formatDate } from "@/utils/formatters/formatDate";
+
+import push from "@/api/push";
 
 export default {
 	setup() {
 		return {
 			v$: useVuelidate(),
+			toast: useToast(),
 		};
 	},
 
@@ -135,16 +147,12 @@ export default {
 			scheduleModalOpen: false,
 			formData: {
 				scheduled_time: "",
-				title: {
-					ru: "",
-					uz: "",
-					en: "",
-				},
-				description: {
-					ru: "",
-					uz: "",
-					en: "",
-				},
+				title_ru: "",
+				title_en: "",
+				title_uz: "",
+				description_ru: "",
+				description_en: "",
+				description_uz: "",
 			},
 		};
 	},
@@ -152,16 +160,13 @@ export default {
 	validations() {
 		return {
 			formData: {
-				title: {
-					uz: { required },
-					ru: { required },
-					en: { required },
-				},
-				description: {
-					uz: { required },
-					ru: { required },
-					en: { required },
-				},
+				scheduled_time: { required: requiredIf(() => this.scheduleModalOpen) },
+				title_ru: { required },
+				title_en: { required },
+				title_uz: { required },
+				description_ru: { required },
+				description_en: { required },
+				description_uz: { required },
 			},
 		};
 	},
@@ -170,6 +175,16 @@ export default {
 		title() {
 			return this.initialData ? "Редактирование PUSH уведомления" : "Создание PUSH уведомления";
 		},
+
+		scheduledTime() {
+			if (this.initialData) {
+				if (this.initialData.scheduled_time) {
+					return formatDate(this.initialData.scheduled_time, true);
+				} else {
+					return formatDate(this.initialData.created_at, true);
+				}
+			}
+		},
 	},
 
 	methods: {
@@ -177,7 +192,7 @@ export default {
 			const result = await this.v$.$validate();
 
 			if (result) {
-				this.createNotification();
+				this.initialData ? this.updateNotification() : this.createNotification();
 			}
 		},
 
@@ -187,14 +202,64 @@ export default {
 		},
 
 		async createNotification() {
-			console.log(this.formData);
+			const request_body = { ...this.formData };
+			if (!request_body.scheduled_time) delete request_body.scheduled_time;
+
+			this.loading = true;
+			const status = await push.createNotification(request_body);
+			this.loading = false;
+
+			if (status === 201) {
+				setTimeout(() => {
+					this.$router.push("/news?tab=push");
+				}, 1000);
+			}
+		},
+
+		async updateNotification() {
+			const updatedFields = Object.fromEntries(
+				Object.entries(this.formData).filter(([key, value]) => value !== this.initialData[key]),
+			);
+
+			if (!Object.keys(updatedFields).length) {
+				this.toast.info("Нет изменений для обновления");
+				return;
+			}
+
+			this.loading = true;
+			const status = await push.updateNotification(this.$route.params.notification_id, updatedFields);
+			this.loading = false;
+
+			if (status === 200) this.$emit("update");
+		},
+
+		scheduleNotification(time) {
+			this.formData.scheduled_time = time;
+
+			if (this.formData.scheduled_time && !this.v$.$error) {
+				this.scheduleModalOpen = false;
+				this.createNotification();
+			}
+		},
+
+		cancelEdit() {
+			this.setNotificationData();
+			this.$emit("cancel-edit");
+		},
+
+		setNotificationData() {
+			this.formData.scheduled_time = this.initialData.scheduled_time;
+			this.formData.title_ru = this.initialData.title_ru;
+			this.formData.title_en = this.initialData.title_en;
+			this.formData.title_uz = this.initialData.title_uz;
+			this.formData.description_ru = this.initialData.description_ru;
+			this.formData.description_en = this.initialData.description_uz;
+			this.formData.description_uz = this.initialData.description_uz;
 		},
 	},
 
-	watch: {
-		"formData.scheduled_time"(newValue) {
-			if (newValue && !this.v$.$error) this.createNotification();
-		},
+	mounted() {
+		if (this.initialData) this.setNotificationData();
 	},
 };
 </script>
