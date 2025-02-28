@@ -17,26 +17,30 @@
 				<form @submit.prevent="submitForm" class="flex flex-col gap-y-3">
 					<div v-for="lang in ['ru', 'uz', 'en']" :key="lang">
 						<div class="flex flex-col gap-y-1">
-							<label :for="`name_${lang}`" class="text-sm"> Документ на {{ lang.toUpperCase() }} </label>
+							<label :for="`title_${lang}`" class="text-sm"> Документ на {{ lang.toUpperCase() }} </label>
 							<input
 								type="text"
-								:id="`name_${lang}`"
+								:id="`title_${lang}`"
 								:placeholder="`Название документа (${lang.toUpperCase()})`"
 								:class="[
 									'form__input',
 									{
-										error: v$.formData[`name_${lang}`].$errors.length,
+										error: v$.formData[`title_${lang}`].$errors.length,
 									},
 								]"
-								v-model="formData[`name_${lang}`]"
+								v-model="formData[`title_${lang}`]"
 							/>
-							<span v-if="v$.formData[`name_${lang}`].$errors.length" class="form__error">
+							<span v-if="v$.formData[`title_${lang}`].$errors.length" class="form__error">
 								Введите название
 							</span>
 						</div>
+						<a v-if="initialFormData[`link_${lang}`]" :href="initialFormData[`link_${lang}`]" class="link">
+							<i class="fi fi-rr-link-alt"></i>
+							{{ initialFormData[`link_${lang}`] }}
+						</a>
 						<div class="mt-2">
-							<input type="file" :id="`file_${lang}`" @change="handleFileUpload($event, lang)" />
-							<span v-if="v$.formData[`file_${lang}`].$errors.length" class="form__error">
+							<input type="file" :id="`${lang}_file`" @change="handleFileUpload($event, lang)" />
+							<span v-if="v$.formData[`${lang}_file`].$errors.length" class="form__error">
 								Загрузите документ
 							</span>
 						</div>
@@ -55,14 +59,17 @@
 
 <script>
 import CustomButton from "@/components/shared/ui/CustomButton.vue";
-import { required } from "@vuelidate/validators";
-import useVuelidate from "@vuelidate/core";
+import { required, requiredIf } from "@vuelidate/validators";
+import { useVuelidate } from "@vuelidate/core";
+import { useToast } from "vue-toastification";
 import documentsApi from "@/api/docs";
 
 export default {
+	emits: ["update", "close"],
 	setup() {
 		return {
 			v$: useVuelidate(),
+			toast: useToast(),
 		};
 	},
 	components: { CustomButton },
@@ -74,37 +81,35 @@ export default {
 	},
 	data: () => ({
 		formData: {
-			name_ru: "",
-			name_uz: "",
-			name_en: "",
-			file_ru: null,
-			file_uz: null,
-			file_en: null,
+			title_ru: "",
+			title_uz: "",
+			title_en: "",
+			ru_file: null,
+			uz_file: null,
+			en_file: null,
 		},
 		loading: false,
 	}),
 	validations() {
 		return {
 			formData: {
-				name_ru: { required },
-				name_uz: { required },
-				name_en: { required },
-				file_ru: { required },
-				file_uz: { required },
-				file_en: { required },
+				title_ru: { required },
+				title_uz: { required },
+				title_en: { required },
+				ru_file: { required: requiredIf(() => !this.initialFormData) },
+				uz_file: { required: requiredIf(() => !this.initialFormData) },
+				en_file: { required: requiredIf(() => !this.initialFormData) },
 			},
 		};
 	},
 	methods: {
 		handleFileUpload(event, lang) {
-			this.formData[`file_${lang}`] = event.target.files[0];
+			this.formData[`${lang}_file`] = event.target.files[0];
 		},
 
 		async submitForm() {
 			const isValid = await this.v$.$validate();
 			if (!isValid) return;
-
-			console.log(this.initialFormData);
 
 			this.initialFormData && Object.keys(this.initialFormData).length
 				? this.updateDocument()
@@ -112,49 +117,62 @@ export default {
 		},
 
 		async createDocument() {
-			const fd = this.prepareFormData();
+			const fd = new FormData();
 
-			try {
-				this.loading = true;
-				const response = await documentsApi.createDocument(fd, this.formData.name_ru);
-				if (response) {
-					this.$emit("close");
-				}
-			} catch (err) {
-				console.error("Ошибка создания документа:", err);
-			} finally {
-				this.loading = false;
-			}
+			const data = {
+				title_ru: this.formData.title_ru,
+				title_uz: this.formData.title_uz,
+				title_en: this.formData.title_en,
+			};
+
+			fd.append("data", JSON.stringify(data));
+			fd.append("ru_file", this.formData.ru_file);
+			fd.append("uz_file", this.formData.uz_file);
+			fd.append("en_file", this.formData.en_file);
+
+			this.loading = true;
+			const status = await documentsApi.createDocument(fd);
+			this.loading = false;
+
+			if (status === 200) this.$emit("update");
 		},
 
 		async updateDocument() {
-			const fd = this.prepareFormData();
-
-			try {
-				this.loading = true;
-				const response = await documentsApi.updateDocument(fd, this.initialFormData.name_ru);
-				if (response) {
-					this.$emit("close");
-				}
-			} catch (err) {
-				console.error("Ошибка обновления документа:", err);
-			} finally {
-				this.loading = false;
-			}
-		},
-
-		prepareFormData() {
 			const fd = new FormData();
-			fd.append("file_ru", this.formData.file_ru);
-			fd.append("file_uz", this.formData.file_uz);
-			fd.append("file_en", this.formData.file_en);
-			return fd;
+			const updatedFields = {};
+
+			["title_ru", "title_uz", "title_en"].forEach(field => {
+				if (this.formData[field] !== this.initialFormData[field]) {
+					updatedFields[field] = this.formData[field];
+				}
+			});
+
+			["ru", "uz", "en"].forEach(lang => {
+				if (this.formData[`${lang}_file`]) {
+					fd.append(`${lang}_file`, this.formData[`${lang}_file`]);
+				}
+			});
+
+			if (Object.keys(updatedFields).length) {
+				fd.append("data", JSON.stringify(updatedFields));
+			}
+
+			if (!Object.keys(updatedFields).length && !fd.has("ru_file") && !fd.has("uz_file") && !fd.has("en_file")) {
+				this.toast.info("Нет изменений для обновления");
+				return;
+			}
+
+			this.loading = true;
+			const status = await documentsApi.updateDocument(this.initialFormData.id, fd);
+			this.loading = false;
+
+			if (status === 200) this.$emit("update");
 		},
 
 		setFormData() {
-			this.formData.name_ru = this.initialFormData?.name_ru || "";
-			this.formData.name_uz = this.initialFormData?.name_uz || "";
-			this.formData.name_en = this.initialFormData?.name_en || "";
+			this.formData.title_ru = this.initialFormData?.title_ru || "";
+			this.formData.title_uz = this.initialFormData?.title_uz || "";
+			this.formData.title_en = this.initialFormData?.title_en || "";
 		},
 	},
 	mounted() {
@@ -164,3 +182,17 @@ export default {
 	},
 };
 </script>
+
+<style scoped>
+.link {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	color: #3b9fd1;
+	max-width: 100%;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	margin: 0.5rem;
+}
+</style>

@@ -12,8 +12,8 @@ export default {
 			context.commit("setDocuments", resQuestions);
 		},
 
-		async fetchOneDocumentByName(context, name) {
-			const resQuestion = await docs.getOneDocument(name);
+		async fetchOneDocumentByID(context, id) {
+			const resQuestion = await docs.getOneDocument(id);
 			context.commit("setOneDocument", resQuestion);
 		},
 

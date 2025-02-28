@@ -1,8 +1,11 @@
 <template>
 	<div class="bg-white gap-[16px] p-[16px_24px] rounded-[12px] border-[1px] w-full question-card">
 		<div class="flex items-center justify-between accordion__header select-none" @click="toggleAccordion">
-			{{ name }}
-			<div class="flex items-center gap-x-2">
+			<p class="flex gap-2 items-center">
+				<i class="fi fi-rs-angle-down transition ease-linear" :class="{ 'rotate-180': isOpen }"></i>
+				{{ document.title_ru }}
+			</p>
+			<div class="flex items-center gap-x-2 action-btns">
 				<button @click.stop="openEdit"><i class="fi fi-rs-pencil"></i></button>
 				<button @click.stop="onDeleteClick"><i class="fi fi-rr-trash"></i></button>
 			</div>
@@ -13,8 +16,7 @@
 					<li v-for="lang in ['ru', 'uz', 'en']" :key="lang">
 						<a
 							class="cursor-pointer inline-flex items-center gap-x-2 text-sm border-b py-4 w-full select-none"
-							:href="links[lang]"
-							download
+							:href="document[`link_${lang}`]"
 						>
 							<span><i class="fi fi-rr-file"></i></span>
 							<span>
@@ -30,30 +32,28 @@
 
 <script>
 export default {
+	emits: ["openEditModal", "onDeleteClick"],
 	props: {
-		name: {
-			type: String,
-			required: true,
-			default: "File title",
-		},
-		links: {
+		document: {
 			type: Object,
 			required: true,
-			default: {},
 		},
 	},
+
 	data: () => ({
 		contentHeight: 0,
 		isOpen: false,
 	}),
-	emits: ["openEditModal", "onDeleteClick"],
+
 	methods: {
 		openEdit() {
-			this.$emit("openEditModal", this.name);
+			this.$emit("openEditModal", this.document.id);
 		},
+
 		onDeleteClick() {
-			this.$emit("onDeleteClick", this.name);
+			this.$emit("onDeleteClick", this.document.id);
 		},
+
 		toggleAccordion() {
 			this.isOpen = !this.isOpen;
 			this.$nextTick(() => {
@@ -85,8 +85,7 @@ export default {
 	}
 
 	&__inner {
-		padding: 12px;
-		padding-bottom: 0;
+		padding-left: 12px;
 	}
 
 	ul {
@@ -99,6 +98,21 @@ export default {
 					color: #0056b3;
 				}
 			}
+		}
+	}
+}
+
+.action-btns {
+	& > button {
+		@include flex-center;
+		padding: 0.75rem;
+		border-radius: 0.5rem;
+		color: $white;
+		&:first-child {
+			background-color: $purple;
+		}
+		&:last-child {
+			background-color: $primary;
 		}
 	}
 }
