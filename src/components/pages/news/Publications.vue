@@ -13,7 +13,7 @@
 			<Calendar />
 		</div>
 
-		<ul class="publications__items grid grid-cols-3 max-md:grid-cols-1 max-xl:grid-cols-2 gap-4">
+		<ul v-if="news.length" class="publications__items grid grid-cols-3 max-md:grid-cols-1 max-xl:grid-cols-2 gap-4">
 			<li v-for="item in news" :key="item.id" class="publications__item" @click="linkToEdit(item.id)">
 				<img :src="item.image" class="publications__item-image" alt="" />
 				<span class="publications__item-date">
@@ -22,6 +22,10 @@
 				<p class="publications__item-title">{{ item.title_ru }}</p>
 			</li>
 		</ul>
+
+		<div v-else class="p-6 bg-white border rounded-[12px]">
+			<p>Нет публикаций</p>
+		</div>
 
 		<div class="flex justify-end mt-4">
 			<Pagination :page="pagination.page" :count="pagination.count" :limit="pagination.limit" />

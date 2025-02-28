@@ -275,7 +275,7 @@ export default {
 
 			if (this.formData.scheduled_time && !this.v$.$error) {
 				this.scheduleModalOpen = false;
-				this.initialData ? this.updatePublication() : this.createPublication();
+				this.createPublication();
 			}
 		},
 

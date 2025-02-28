@@ -7,7 +7,7 @@ export default {
 	async getPublications(filters) {
 		try {
 			const params = {
-				search: filters?.search,
+				search: filters?.search || null,
 				from_date: filters?.from_date,
 				to_date: filters?.to_date,
 				page: filters?.page || 1,
